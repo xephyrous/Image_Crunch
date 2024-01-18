@@ -1,7 +1,12 @@
 import androidx.compose.desktop.ui.tooling.preview.Preview
-import androidx.compose.material.Button
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountBox
+import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.sharp.Build
+import androidx.compose.material.icons.sharp.Edit
+import androidx.compose.material.icons.sharp.List
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -17,14 +22,39 @@ import androidx.compose.ui.window.rememberWindowState
 @Composable
 @Preview
 fun App() {
-    var text by remember { mutableStateOf("Hello, World!") }
+    Scaffold(
+        topBar = {
+            TopAppBar (
+                title = {
+                    Text("Image Crunch α")
+                },
 
-    MaterialTheme {
-        Button(onClick = {
-            text = "Hello, Desktop!"
-        }) {
-            Text(text)
+                actions = {
+                    IconButton(onClick = { /* Do shit */}) {
+                        Icon(
+                            imageVector = Icons.Sharp.Build,
+                            contentDescription = "Settings"
+                        )
+                    }
+
+                    IconButton(onClick = { /* Do shit */}) {
+                        Icon(
+                            imageVector = Icons.Sharp.Edit,
+                            contentDescription = "Test Text"
+                        )
+                    }
+
+                    IconButton(onClick = { /* Do shit */}) {
+                        Icon(
+                            imageVector = Icons.Sharp.List,
+                            contentDescription = "Test Text"
+                        )
+                    }
+                }
+            )
         }
+    ) {
+
     }
 }
 
