@@ -18,10 +18,14 @@ import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
+import utils.GenerateNodes
+import utils.NodeGeneratorType
 
 @Composable
 @Preview
 fun App() {
+    var genBtnState by mutableStateOf(false)
+
     Scaffold(
         topBar = {
             TopAppBar (
@@ -54,7 +58,6 @@ fun App() {
             )
         }
     ) {
-
     }
 }
 
