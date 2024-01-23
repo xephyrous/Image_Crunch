@@ -10,3 +10,11 @@ fun settingsToString(): String {
     // Still nothing to make
     return ""
 }
+
+fun CSVtoSettings() {
+    // The opposite of settingsToCSV()
+}
+
+fun stringToSettings() {
+    // The opposite of settingsToString()
+}

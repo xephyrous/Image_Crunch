@@ -1,3 +1,5 @@
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateIntOffsetAsState
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.Image
@@ -9,7 +11,9 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.loadImageBitmap
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.WindowPosition
@@ -25,6 +29,8 @@ import java.io.FileInputStream
 @Preview
 fun App() {
     // Settings
+    var settingsLines by remember { mutableStateOf(1) }
+    var menuLines by remember { mutableStateOf(2) }
     var compactExportToggle by remember { mutableStateOf(compactExport) }
     var genBtnState by remember { mutableStateOf(false) }
 
@@ -36,31 +42,24 @@ fun App() {
     val snackbarHostState = remember { SnackbarHostState() }
     var displayed by remember { mutableStateOf(false) }
 
-    // moves the cards on so its more responsive (i guess)
+    // Card Animations
     var menuCardState by remember { mutableStateOf(false) }
     var settingsCardState by remember { mutableStateOf(false) }
-    val offset by animateIntOffsetAsState(
-        targetValue = if (menuCardState) {
-            // Temporary maybe? moves menu menu past settings menu if both are open
-            if (!settingsCardState) {
-                IntOffset(10, 50)
-            } else {
-                IntOffset(610, 50)
-            }
-        } else {
-            IntOffset(-700, 50)
-        },
-        label = "offset"
+    val menuOffset by animateDpAsState(
+        targetValue = (if (menuCardState) (if (!settingsCardState) 10 else 320) else (-310)).dp,
+        label = "menuOffset"
     )
-
-    // change this if u dare
-    val owoffset by animateIntOffsetAsState(
-        targetValue = if (settingsCardState) {
-            IntOffset(10, 50)
-        } else {
-            IntOffset(-700, 50)
-        },
-        label = "owoffset"
+    val menuSize by animateDpAsState(
+        targetValue = (menuLines*50).dp,
+        label = "menuSize"
+    )
+    val settingsOffset by animateDpAsState(
+        targetValue = (if (settingsCardState) 10 else (-310)).dp,
+        label = "settingsOffset"
+    )
+    val settingsSize by animateDpAsState(
+        targetValue = (settingsLines*50).dp,
+        label = "settingsSize"
     )
 
     Scaffold(
@@ -140,9 +139,11 @@ fun App() {
         }
         Card(
             modifier = Modifier
-                // how do i scale the size of this?!?!!??!
-                .size(300.dp, 600.dp)
-                .offset { offset },
+                // why does enabling .animateContentSize() BREAK EVERYTHING
+                .width(300.dp)
+                .height(menuSize)
+//                .offset((if(menuCardState) (if (!settingsCardState) 10 else 320) else (-310)).dp,50.dp),
+                .offset(menuOffset,50.dp),
             elevation = 20.dp
         ) {
             // TODO: make this actual stuff in the menu
@@ -154,6 +155,11 @@ fun App() {
                     onCheckedChange = {
                         compactExportToggle = it
                         compactExport = compactExportToggle
+                        if(!compactExport) {
+                            menuLines++
+                        } else {
+                            menuLines--
+                        }
                     }
                 )
                 Text(compactExport.toString())
@@ -170,13 +176,27 @@ fun App() {
                     Text("Export")
                 }
             }
+            if (!compactExportToggle) {
+                Row(
+                    modifier = Modifier
+                        .offset(0.dp, 50.dp)
+                ) {
+                    Text("Balls")
+                }
+            }
+            Row(
+                modifier = Modifier
+                    .offset(0.dp, (if(compactExportToggle) 50 else 100).dp)
+            ) {
+                Text("Import")
+            }
         }// End of the card
 
         Card(
             modifier = Modifier
                 // how do i scale the size of this?!?!!??!
-                .size(300.dp, 600.dp)
-                .offset { owoffset },
+                .size(300.dp, settingsSize)
+                .offset(settingsOffset, 50.dp),
             elevation = 20.dp
         ) {
             // TODO: WHAT THE FLUFF IS A SETTINGS
