@@ -17,6 +17,7 @@ import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
 import kotlinx.coroutines.launch
 import utils.*
+import java.awt.Dimension
 import java.io.File
 import java.io.FileInputStream
 
@@ -24,7 +25,7 @@ import java.io.FileInputStream
 @Preview
 fun App() {
     // Settings
-    var compactExport by remember { mutableStateOf(true) }
+    var compactExportToggle by remember { mutableStateOf(compactExport) }
     var genBtnState by remember { mutableStateOf(false) }
 
     // Testing Stuff
@@ -149,12 +150,13 @@ fun App() {
             Row() {
                 // TODO: make this switch animate the other menu stuff moving down and the option fading in (suffer)
                 Switch(
-                    checked = compactExport,
+                    checked = compactExportToggle,
                     onCheckedChange = {
-                        compactExport = it
+                        compactExportToggle = it
+                        compactExport = compactExportToggle
                     }
                 )
-                Text("Compact Settings Export")
+                Text(compactExport.toString())
                 Button(
                     onClick = {
                         if (compactExport) {
@@ -194,8 +196,6 @@ fun App() {
         }// End of the card 2.0
     }
 }
-
-var selectedImage: File? = null
 
 fun main() = application {
     val state = rememberWindowState(

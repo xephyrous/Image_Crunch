@@ -14,6 +14,7 @@ package utils
 
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.runtime.Composable
+import java.awt.Dimension
 
 //Represents an image as a byte mask
 typealias ImageMask = Array<Array<Byte>>
@@ -35,6 +36,7 @@ fun GenerateNodes(genType: NodeGeneratorType) {
         NodeGeneratorType.SQUARE -> squareNodeGenerator(
             ParameterList(
                 arrayListOf(
+                    KeyVal("imageSize", loadedImageSize),
                     KeyVal("nodeCount", 5)
                 )
             )
