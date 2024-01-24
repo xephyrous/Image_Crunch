@@ -23,6 +23,16 @@ val darkThemes = listOf(
     Color(0xFF2B2D30)
 )
 
+val lightThemes = listOf(
+    Color(0xFFFFFFFF),
+    Color(0xFFFFFFFF),
+    Color(0xFFFFFB00),
+    Color(0xFF00FF00),
+    Color(0xFFFFFFFF),
+    Color(0xFFFFFFFF)
+)
+
+// PLEASE MAKE THESE BETTER COLORS I CANT
 val celesteThemes = listOf(
     Color(0xFF42033D),
     Color(0xFF3c3147),
@@ -30,5 +40,14 @@ val celesteThemes = listOf(
     Color(0xFF7C238C),
     Color(0xFF7C72AD),
     Color(0xFF680E4B)
+)
+
+val aqueousThemes = listOf(
+    Color(0xFF2b2caa),
+    Color(0xFF89c4f4),
+    Color(0xFFcdd1e4),
+    Color(0xFFe4f1fe),
+    Color(0xFF038aff),
+    Color(0xFF4871f7)
 )
 //var

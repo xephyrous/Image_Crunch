@@ -198,6 +198,20 @@ fun App() {
                             Text("Export Settings", color = themeColor[2])
                         }
                     }
+                    Row() {
+                        Button(
+                            onClick = {
+                                mainMain = false
+                                themeSettings = true
+                                menuLines = 5
+                            },
+                            modifier = Modifier
+                                .offset(50.dp, 50.dp),
+                            colors = ButtonDefaults.buttonColors(backgroundColor = themeColor[4])
+                        ) {
+                            Text("Select Theme", color = themeColor[2])
+                        }
+                    }
                 }
 
                 // Export Settings
@@ -262,11 +276,96 @@ fun App() {
                         }
                     }
                 }
+
+                // Theme Selection
+                AnimatedVisibility(
+                    visible = themeSettings,
+                    enter = slideInHorizontally(
+                        animationSpec = tween(durationMillis = 369)
+                    ) {fullWidth -> fullWidth*2 },
+                    exit = slideOutHorizontally(
+                        tween(durationMillis = 369)
+                    ) {fullWidth -> fullWidth*2 }
+                ) {
+                    Row(
+                    ) {
+                        Button(
+                            onClick = {
+                                themeColor = darkThemes
+                            },
+                            modifier = Modifier
+                                .offset(50.dp, 0.dp),
+                            colors = ButtonDefaults.buttonColors(backgroundColor = themeColor[4])
+                        ) {
+                            Text("Theme: Dark", color = themeColor[2])
+                        }
+                    }
+                    Row(
+                        modifier = Modifier
+                            .offset(0.dp, 50.dp)
+                    ) {
+                        Button(
+                            onClick = {
+                                themeColor = lightThemes
+                            },
+                            modifier = Modifier
+                                .offset(50.dp, 0.dp),
+                            colors = ButtonDefaults.buttonColors(backgroundColor = themeColor[4])
+                        ) {
+                            Text("Theme: Light", color = themeColor[2])
+                        }
+                    }
+                    Row(
+                        modifier = Modifier
+                            .offset(0.dp, 100.dp)
+                    ) {
+                        Button(
+                            onClick = {
+                                themeColor = celesteThemes
+                            },
+                            modifier = Modifier
+                                .offset(50.dp, 0.dp),
+                            colors = ButtonDefaults.buttonColors(backgroundColor = themeColor[4])
+                        ) {
+                            Text("Theme: Celeste", color = themeColor[2])
+                        }
+                    }
+                    Row(
+                        modifier = Modifier
+                            .offset(0.dp, 150.dp)
+                    ) {
+                        Button(
+                            onClick = {
+                                themeColor = aqueousThemes
+                            },
+                            modifier = Modifier
+                                .offset(50.dp, 0.dp),
+                            colors = ButtonDefaults.buttonColors(backgroundColor = themeColor[4])
+                        ) {
+                            Text("Theme: Aqueous", color = themeColor[2])
+                        }
+                    }
+                    Row(
+                        modifier = Modifier
+                            .offset(0.dp, 200.dp)
+                    ) {
+                        Button(
+                            onClick = {
+                                themeSettings = false
+                                mainMain = true
+                                menuLines = 2
+                            },
+                            modifier = Modifier.offset(50.dp, 0.dp),
+                            colors = ButtonDefaults.buttonColors(backgroundColor = themeColor[4])
+                        ) {
+                            Text("Return to main", color = themeColor[2])
+                        }
+                    }
+                }
             }// End of the card
 
             Card(
                 modifier = Modifier
-                    // how do i scale the size of this?!?!!??!
                     .size(300.dp, settingsSize)
                     .offset(settingsOffset, 50.dp),
                 elevation = 20.dp,
