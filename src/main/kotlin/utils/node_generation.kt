@@ -12,16 +12,16 @@ import java.awt.Dimension
  * "rows"       : Int
  * "columns"    : Int
  */
-fun squareNodeGenerator(list: ParameterList) : ArrayList<PositionNode> {
+fun squareNodeGenerator(rows: Int, columns: Int) : ArrayList<PositionNode> {
     val nodeList: ArrayList<PositionNode> = ArrayList()
 
-    val imageSize = list.at("imageSize") as Dimension;
-    val xSpacing: Int  = imageSize.width / (list.at("columns") as Int);
-    val ySpacing: Int  = imageSize.height / (list.at("rows") as Int);
+    val xSpacing: Int  = loadedImageSize.width / columns
+    val ySpacing: Int  = loadedImageSize.height /rows
 
-    for(y in 0 until (list.at("rows") as Int)) {
-        for(x in 0 until (list.at("columns") as Int)) {
-            nodeList.add(PositionNode((x + 1) * xSpacing, (y + 1) * ySpacing));
+    for(y in 0 until rows) {
+        for(x in 0 until columns) {
+            nodeList.add(PositionNode((x + 1) * xSpacing, (y + 1) * ySpacing))
+            println("<${(x + 1) * xSpacing}, ${(y + 1) * ySpacing}>")
         }
     }
 

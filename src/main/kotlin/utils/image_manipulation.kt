@@ -33,14 +33,7 @@ enum class NodeGeneratorType {
 
 fun GenerateNodes(genType: NodeGeneratorType) {
     when (genType) {
-        NodeGeneratorType.SQUARE -> squareNodeGenerator(
-            ParameterList(
-                arrayListOf(
-                    KeyVal("imageSize", loadedImageSize),
-                    KeyVal("nodeCount", 5)
-                )
-            )
-        )
+        NodeGeneratorType.SQUARE -> squareNodeGenerator(5, 5)
         else -> {  }
     }
 }
