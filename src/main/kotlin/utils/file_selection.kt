@@ -1,8 +1,6 @@
 package utils
 
 import java.io.File
-import java.io.FileFilter
-import java.util.*
 import javax.swing.JFileChooser
 import javax.swing.filechooser.FileNameExtensionFilter
 
