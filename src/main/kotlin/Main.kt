@@ -44,6 +44,10 @@ fun App() {
     // Navigation Handler
     var settingsMain by remember { mutableStateOf(true) }
     var selectGenerator by remember { mutableStateOf(false) }
+    var selectOutput by remember { mutableStateOf(false) }
+
+    var mainMain by remember { mutableStateOf(true) }
+    var exportSettings by remember { mutableStateOf(false) }
 
     // Card Animations
     var menuCardState by remember { mutableStateOf(false) }
@@ -75,7 +79,7 @@ fun App() {
                     Text("Image Crunch α")
                 },
 
-                actions = { //TODO: Add image to main panel
+                actions = {
                     // holy spaghetti
                     IconButton(onClick = {
                         if (!displayed) {
@@ -142,59 +146,96 @@ fun App() {
         }
         Card(
             modifier = Modifier
-                // why does enabling .animateContentSize() BREAK EVERYTHING
                 .width(300.dp)
                 .height(menuSize)
                 .offset(menuOffset,50.dp),
             elevation = 20.dp
         ) {
             // TODO: make this actual stuff in the menu
-            // Basic Menu
-            Row() {
-                // TODO: make this switch animate the other menu stuff moving down and the option fading in (suffer)
-                Switch(
-                    checked = compactExportToggle,
-                    onCheckedChange = {
-                        compactExportToggle = it
-                        compactExport = compactExportToggle
-                        if(!compactExport) {
-                            menuLines++
-                        } else {
-                            menuLines--
-                        }
-                    }
-                )
-                Text(
-                    text = compactExport.toString(),
-                    modifier = Modifier
-                        .offset(5.dp, 10.dp)
-                )
-                Button(
-                    onClick = {
-                        if (compactExport) {
-                            settingsToString()
-                        } else {
-                            settingsToCSV()
-                        }
-                    },
-                    modifier = Modifier.offset(50.dp, 0.dp)
+            // Main Menu
+            AnimatedVisibility(
+                visible = mainMain,
+                enter = slideInHorizontally(
+                    animationSpec = tween(durationMillis = 369)
+                ) {fullWidth -> -fullWidth*2 },
+                exit = slideOutHorizontally(
+                    tween(durationMillis = 369)
+                ) {fullWidth -> -fullWidth*2 }
+            ) {
+                Row() {
+                    Button(
+                        onClick = {
+                            mainMain = false
+                            exportSettings = true
+                            menuLines = if(compactExportToggle) (2) else (3)
+                        },
+                        modifier = Modifier
+                            .offset(50.dp, 0.dp)
                     ) {
-                    Text("Export")
+                        Text("Export Settings")
+                    }
                 }
             }
-            if (!compactExportToggle) {
+
+            // Export Settings
+            AnimatedVisibility(
+                visible = exportSettings,
+                enter = slideInHorizontally(
+                    animationSpec = tween(durationMillis = 369)
+                ) {fullWidth -> fullWidth*2 },
+                exit = slideOutHorizontally(
+                    tween(durationMillis = 369)
+                ) {fullWidth -> fullWidth*2 }
+            ) {
+                Row() {
+                    Switch(
+                        checked = compactExportToggle,
+                        onCheckedChange = {
+                            compactExportToggle = it
+                            compactExport = compactExportToggle
+                            if(!compactExport) {
+                                menuLines = 3
+                            } else {
+                                menuLines = 2
+                            }
+                        }
+                    )
+                    Button(
+                        onClick = {
+                            if (compactExport) {
+                                settingsToString()
+                            } else {
+                                settingsToCSV()
+                            }
+                        },
+                        modifier = Modifier.offset(100.dp, 0.dp)
+                    ) {
+                        Text("Button?")
+                    }
+                }
+                if (!compactExportToggle) {
+                    Row(
+                        modifier = Modifier
+                            .offset(0.dp, 50.dp)
+                    ) {
+                        Text("Select Output Here")
+                    }
+                }
                 Row(
                     modifier = Modifier
-                        .offset(0.dp, 50.dp)
+                        .offset(0.dp, (if(compactExportToggle) 50 else 100).dp)
                 ) {
-                    Text("Balls")
+                    Button(
+                        onClick = {
+                            exportSettings = false
+                            mainMain = true
+                            menuLines = 2
+                        },
+                        modifier = Modifier.offset(100.dp, 0.dp)
+                    ) {
+                        Text("Return to main")
+                    }
                 }
-            }
-            Row(
-                modifier = Modifier
-                    .offset(0.dp, (if(compactExportToggle) 50 else 100).dp)
-            ) {
-                Text("Import")
             }
         }// End of the card
 
@@ -205,10 +246,8 @@ fun App() {
                 .offset(settingsOffset, 50.dp),
             elevation = 20.dp
         ) {
-            // TODO: WHAT THE FLUFF IS A SETTINGS
-            // This is a navigatable settings menu (kinda)
-            // TODO: add this functionality to menu menu
-            // This handles animations of objects and its GREAT
+
+            // settings main menu
             AnimatedVisibility(
                 visible = settingsMain,
                 enter = slideInHorizontally(
@@ -235,24 +274,26 @@ fun App() {
                     Button(
                         onClick = {
                             settingsMain = false
-                            selectGenerator = true
-                            settingsLines = 5
+                            selectOutput = true
+                            settingsLines = 2
                         },
                         modifier = Modifier
                             .offset(50.dp, 50.dp)
                     ) {
-                        Text("Filler Button")
+                        Text("Select Output")
                     }
                 }
             }
+
+            // Generator Type Selection
             AnimatedVisibility(
                 visible = selectGenerator,
                 enter = slideInHorizontally(
                     animationSpec = tween(durationMillis = 369)
-                ) {fullWidth -> -fullWidth*2 },
+                ) {fullWidth -> fullWidth*2 },
                 exit = slideOutHorizontally(
                     tween(durationMillis = 369)
-                ) {fullWidth -> -fullWidth*2 }
+                ) {fullWidth -> fullWidth*2 }
             ) {
                 Row() {
                     Button(
@@ -277,7 +318,7 @@ fun App() {
                         modifier = Modifier
                             .offset(50.dp, 50.dp)
                     ) {
-                        Text("Hectagon Generator")
+                        Text("Heptagon Generator")
                     }
                 }
                 Row() {
@@ -316,7 +357,32 @@ fun App() {
                         modifier = Modifier
                             .offset(50.dp, 200.dp)
                     ) {
-                        Text("Triangle Generator")
+                        Text("Return to Home")
+                    }
+                }
+            }
+
+            // Output location, needs to be finished
+            AnimatedVisibility(
+                visible = selectOutput,
+                enter = slideInHorizontally(
+                    animationSpec = tween(durationMillis = 369)
+                ) {fullWidth -> fullWidth*2 },
+                exit = slideOutHorizontally(
+                    tween(durationMillis = 369)
+                ) {fullWidth -> fullWidth*2 }
+            ) {
+                Row() {
+                    Button(
+                        onClick = {
+                            settingsMain = true
+                            selectOutput = false
+                            settingsLines = 2
+                        },
+                        modifier = Modifier
+                            .offset(25.dp, 0.dp)
+                    ) {
+                        Text("Select Output Location")
                     }
                 }
             }

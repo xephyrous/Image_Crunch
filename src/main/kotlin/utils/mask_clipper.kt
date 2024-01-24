@@ -20,14 +20,15 @@ import javax.imageio.ImageIO
 fun maskToImage(input: BufferedImage, mask: Array<Array<Int>>, startCoords: Array<Int>, name: String) {
     // Create Output
     val size = Dimension(mask[1].size, mask.size)
-    val img = BufferedImage(size.width, size.height, BufferedImage.TYPE_INT_RGB)
+    val img = BufferedImage(size.width, size.height, BufferedImage.TYPE_INT_ARGB)
 
-    // idk why it wants me to use `until` rather than `..<` but it yelled at me so
     for (x in 0 until size.width) {
         for (y in 0 until size.height) {
-            img.setRGB(x, y, input.getRGB(x+startCoords[0], y+startCoords[0]))
+            if (mask[y][x] == 1) {
+                img.setRGB(x, y, input.getRGB(x+startCoords[0], y+startCoords[0]))
+            }
         }
     }
 
-    ImageIO.write(img, "JPG", File("$name.jpg"))
+    ImageIO.write(img, "PNG", File("$name.png"))
 }
