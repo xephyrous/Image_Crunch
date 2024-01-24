@@ -1,35 +1,34 @@
-import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.*
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.animation.core.animateIntOffsetAsState
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.sharp.*
+import androidx.compose.material.icons.sharp.Add
+import androidx.compose.material.icons.sharp.Build
+import androidx.compose.material.icons.sharp.List
+import androidx.compose.material.icons.sharp.PlayArrow
 import androidx.compose.runtime.*
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.loadImageBitmap
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.loadImageBitmap
-import androidx.compose.ui.unit.DpOffset
-import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
 import kotlinx.coroutines.launch
 import utils.*
-import java.awt.Dimension
-import java.io.File
 import java.io.FileInputStream
 
 @Composable
 @Preview
 fun App() {
     // Settings
-    var settingsLines by remember { mutableStateOf(1) }
+    var settingsLines by remember { mutableStateOf(2) }
+    var genType by remember { mutableStateOf(generatorType) }
     var menuLines by remember { mutableStateOf(2) }
     var compactExportToggle by remember { mutableStateOf(compactExport) }
     var genBtnState by remember { mutableStateOf(false) }
@@ -41,6 +40,10 @@ fun App() {
     val scope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
     var displayed by remember { mutableStateOf(false) }
+
+    // Navigation Handler
+    var settingsMain by remember { mutableStateOf(true) }
+    var selectGenerator by remember { mutableStateOf(false) }
 
     // Card Animations
     var menuCardState by remember { mutableStateOf(false) }
@@ -142,7 +145,6 @@ fun App() {
                 // why does enabling .animateContentSize() BREAK EVERYTHING
                 .width(300.dp)
                 .height(menuSize)
-//                .offset((if(menuCardState) (if (!settingsCardState) 10 else 320) else (-310)).dp,50.dp),
                 .offset(menuOffset,50.dp),
             elevation = 20.dp
         ) {
@@ -162,7 +164,11 @@ fun App() {
                         }
                     }
                 )
-                Text(compactExport.toString())
+                Text(
+                    text = compactExport.toString(),
+                    modifier = Modifier
+                        .offset(5.dp, 10.dp)
+                )
                 Button(
                     onClick = {
                         if (compactExport) {
@@ -171,7 +177,7 @@ fun App() {
                             settingsToCSV()
                         }
                     },
-                    modifier = Modifier.offset { IntOffset(5, 0) }
+                    modifier = Modifier.offset(50.dp, 0.dp)
                     ) {
                     Text("Export")
                 }
@@ -200,17 +206,118 @@ fun App() {
             elevation = 20.dp
         ) {
             // TODO: WHAT THE FLUFF IS A SETTINGS
-            // settings menu????!?!!!
-            Row() {
-                Text(text = "this is supposed to be a settings menu :O")
-
-                IconButton(onClick = {
-                    // There is no settings
-                }) {
-                    Icon(
-                        imageVector = Icons.Sharp.AddCircle,
-                        contentDescription = "Test Text"
-                    )
+            // This is a navigatable settings menu (kinda)
+            // TODO: add this functionality to menu menu
+            // This handles animations of objects and its GREAT
+            AnimatedVisibility(
+                visible = settingsMain,
+                enter = slideInHorizontally(
+                    animationSpec = tween(durationMillis = 369)
+                ) {fullWidth -> -fullWidth*2 },
+                exit = slideOutHorizontally(
+                    tween(durationMillis = 369)
+                ) {fullWidth -> -fullWidth*2 }
+            ) {
+                Row() {
+                    Button(
+                        onClick = {
+                            settingsMain = false
+                            selectGenerator = true
+                            settingsLines = 5
+                        },
+                        modifier = Modifier
+                            .offset(50.dp, 0.dp)
+                    ) {
+                        Text("Select Generator")
+                    }
+                }
+                Row() {
+                    Button(
+                        onClick = {
+                            settingsMain = false
+                            selectGenerator = true
+                            settingsLines = 5
+                        },
+                        modifier = Modifier
+                            .offset(50.dp, 50.dp)
+                    ) {
+                        Text("Filler Button")
+                    }
+                }
+            }
+            AnimatedVisibility(
+                visible = selectGenerator,
+                enter = slideInHorizontally(
+                    animationSpec = tween(durationMillis = 369)
+                ) {fullWidth -> -fullWidth*2 },
+                exit = slideOutHorizontally(
+                    tween(durationMillis = 369)
+                ) {fullWidth -> -fullWidth*2 }
+            ) {
+                Row() {
+                    Button(
+                        onClick = {
+                            settingsMain = true
+                            selectGenerator = false
+                            settingsLines = 2
+                        },
+                        modifier = Modifier
+                            .offset(50.dp, 0.dp)
+                    ) {
+                        Text("Square Generator")
+                    }
+                }
+                Row() {
+                    Button(
+                        onClick = {
+                            settingsMain = true
+                            selectGenerator = false
+                            settingsLines = 2
+                        },
+                        modifier = Modifier
+                            .offset(50.dp, 50.dp)
+                    ) {
+                        Text("Hectagon Generator")
+                    }
+                }
+                Row() {
+                    Button(
+                        onClick = {
+                            settingsMain = true
+                            selectGenerator = false
+                            settingsLines = 2
+                        },
+                        modifier = Modifier
+                            .offset(50.dp, 100.dp)
+                    ) {
+                        Text("Pentagon Generator")
+                    }
+                }
+                Row() {
+                    Button(
+                        onClick = {
+                            settingsMain = true
+                            selectGenerator = false
+                            settingsLines = 2
+                        },
+                        modifier = Modifier
+                            .offset(50.dp, 150.dp)
+                    ) {
+                        Text("Octagon Generator")
+                    }
+                }
+                Row() {
+                    Button(
+                        onClick = {
+                            settingsMain = true
+                            selectGenerator = false
+                            settingsLines = 2
+                        },
+                        modifier = Modifier
+                            .offset(50.dp, 200.dp)
+                    ) {
+                        Text("Triangle Generator")
+                    }
                 }
             }
         }// End of the card 2.0
