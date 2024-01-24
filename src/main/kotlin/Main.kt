@@ -1,8 +1,11 @@
-import androidx.compose.animation.*
-import androidx.compose.animation.core.tween
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -48,6 +51,9 @@ fun App() {
 
     var mainMain by remember { mutableStateOf(true) }
     var exportSettings by remember { mutableStateOf(false) }
+    var themeSettings by remember { mutableStateOf(false) }
+
+    var themeColor by remember { mutableStateOf(darkThemes) }
 
     // Card Animations
     var menuCardState by remember { mutableStateOf(false) }
@@ -71,13 +77,16 @@ fun App() {
 
     Scaffold(
         snackbarHost = {
-                       SnackbarHost(hostState = snackbarHostState)
+            SnackbarHost(hostState = snackbarHostState)
         },
         topBar = {
             TopAppBar (
                 title = {
-                    Text("Image Crunch α")
+                    Text("Image Crunch α",
+                        color = themeColor[2]
+                    )
                 },
+                backgroundColor = themeColor[0],
 
                 actions = {
                     // holy spaghetti
@@ -101,7 +110,8 @@ fun App() {
                     }) {
                         Icon(
                             imageVector = Icons.Sharp.Add,
-                            contentDescription = "Select Image"
+                            contentDescription = "Select Image",
+                            tint = themeColor[3]
                         )
                     }
                     
@@ -110,7 +120,8 @@ fun App() {
                     }) {
                         Icon(
                             imageVector = Icons.Sharp.Build,
-                            contentDescription = "Settings"
+                            contentDescription = "Settings",
+                            tint = themeColor[3]
                         )
                     }
                     IconButton(onClick = {
@@ -118,7 +129,8 @@ fun App() {
                     }) {
                         Icon(
                             imageVector = Icons.Sharp.List,
-                            contentDescription = "Test Text"
+                            contentDescription = "Test Text",
+                            tint = themeColor[3]
                         )
                     }
                 }
@@ -127,266 +139,301 @@ fun App() {
         floatingActionButton = {
             ExtendedFloatingActionButton(
                 onClick = { scope.launch { snackbarHostState.showSnackbar("Clicked") } },
-                text = { Text("Run") },
-                icon = { Icon( Icons.Sharp.PlayArrow, "Run") }
+                text = { Text("Run", color = themeColor[2]) },
+                icon = {
+                    Icon( Icons.Sharp.PlayArrow, "Run",
+                        tint = themeColor[3])
+                       },
+                backgroundColor = themeColor[4]
             )
         },
     ) {innerPadding ->
-        Column(
-            modifier = Modifier.padding(innerPadding),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
-        ){
-            if(displayed) {
-                Image(
-                    loadImageBitmap(inputStream = FileInputStream(selectedImage!!)),
-                    "temp"
-                )
-            }
-            Text(caption)
-        }
-        Card(
+        Box(
             modifier = Modifier
-                .width(300.dp)
-                .height(menuSize)
-                .offset(menuOffset,50.dp),
-            elevation = 20.dp
+                .background(themeColor[1])
+                .fillMaxSize()
         ) {
-            // TODO: make this actual stuff in the menu
-            // Main Menu
-            AnimatedVisibility(
-                visible = mainMain,
-                enter = slideInHorizontally(
-                    animationSpec = tween(durationMillis = 369)
-                ) {fullWidth -> -fullWidth*2 },
-                exit = slideOutHorizontally(
-                    tween(durationMillis = 369)
-                ) {fullWidth -> -fullWidth*2 }
-            ) {
-                Row() {
-                    Button(
-                        onClick = {
-                            mainMain = false
-                            exportSettings = true
-                            menuLines = if(compactExportToggle) (2) else (3)
-                        },
-                        modifier = Modifier
-                            .offset(50.dp, 0.dp)
-                    ) {
-                        Text("Export Settings")
-                    }
-                }
-            }
-
-            // Export Settings
-            AnimatedVisibility(
-                visible = exportSettings,
-                enter = slideInHorizontally(
-                    animationSpec = tween(durationMillis = 369)
-                ) {fullWidth -> fullWidth*2 },
-                exit = slideOutHorizontally(
-                    tween(durationMillis = 369)
-                ) {fullWidth -> fullWidth*2 }
-            ) {
-                Row() {
-                    Switch(
-                        checked = compactExportToggle,
-                        onCheckedChange = {
-                            compactExportToggle = it
-                            compactExport = compactExportToggle
-                            if(!compactExport) {
-                                menuLines = 3
-                            } else {
-                                menuLines = 2
-                            }
-                        }
+            Column(
+                modifier = Modifier.padding(innerPadding),
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+            ){
+                if(displayed) {
+                    Image(
+                        loadImageBitmap(inputStream = FileInputStream(selectedImage!!)),
+                        "temp"
                     )
-                    Button(
-                        onClick = {
-                            if (compactExport) {
-                                settingsToString()
-                            } else {
-                                settingsToCSV()
-                            }
-                        },
-                        modifier = Modifier.offset(100.dp, 0.dp)
-                    ) {
-                        Text("Button?")
+                }
+                Text(caption, color = themeColor[2])
+            }
+            Card(
+                modifier = Modifier
+                    .width(300.dp)
+                    .height(menuSize)
+                    .offset(menuOffset,50.dp),
+                backgroundColor = themeColor[5],
+                elevation = 20.dp
+            ) {
+                // TODO: make this actual stuff in the menu
+                // Main Menu
+                AnimatedVisibility(
+                    visible = mainMain,
+                    enter = slideInHorizontally(
+                        animationSpec = tween(durationMillis = 369)
+                    ) {fullWidth -> -fullWidth*2 },
+                    exit = slideOutHorizontally(
+                        tween(durationMillis = 369)
+                    ) {fullWidth -> -fullWidth*2 }
+                ) {
+                    Row() {
+                        Button(
+                            onClick = {
+                                mainMain = false
+                                exportSettings = true
+                                menuLines = if(compactExportToggle) (2) else (3)
+                            },
+                            modifier = Modifier
+                                .offset(50.dp, 0.dp),
+                            colors = ButtonDefaults.buttonColors(backgroundColor = themeColor[4])
+                        ) {
+                            Text("Export Settings", color = themeColor[2])
+                        }
                     }
                 }
-                if (!compactExportToggle) {
+
+                // Export Settings
+                AnimatedVisibility(
+                    visible = exportSettings,
+                    enter = slideInHorizontally(
+                        animationSpec = tween(durationMillis = 369)
+                    ) {fullWidth -> fullWidth*2 },
+                    exit = slideOutHorizontally(
+                        tween(durationMillis = 369)
+                    ) {fullWidth -> fullWidth*2 }
+                ) {
+                    Row() {
+                        Switch(
+                            checked = compactExportToggle,
+                            onCheckedChange = {
+                                compactExportToggle = it
+                                compactExport = compactExportToggle
+                                if(!compactExport) {
+                                    menuLines = 3
+                                } else {
+                                    menuLines = 2
+                                }
+                            }
+                        )
+                        Button(
+                            onClick = {
+                                if (compactExport) {
+                                    settingsToString()
+                                } else {
+                                    settingsToCSV()
+                                }
+                            },
+                            modifier = Modifier.offset(100.dp, 0.dp),
+                            colors = ButtonDefaults.buttonColors(backgroundColor = themeColor[4])
+                        ) {
+                            Text("Button?", color = themeColor[2])
+                        }
+                    }
+                    if (!compactExportToggle) {
+                        Row(
+                            modifier = Modifier
+                                .offset(0.dp, 50.dp)
+                        ) {
+                            Text("Select Output Here", color = themeColor[2])
+                        }
+                    }
                     Row(
                         modifier = Modifier
-                            .offset(0.dp, 50.dp)
+                            .offset(0.dp, (if(compactExportToggle) 50 else 100).dp)
                     ) {
-                        Text("Select Output Here")
+                        Button(
+                            onClick = {
+                                exportSettings = false
+                                mainMain = true
+                                menuLines = 2
+                            },
+                            modifier = Modifier.offset(100.dp, 0.dp),
+                            colors = ButtonDefaults.buttonColors(backgroundColor = themeColor[4])
+                        ) {
+                            Text("Return to main", color = themeColor[2])
+                        }
                     }
                 }
-                Row(
-                    modifier = Modifier
-                        .offset(0.dp, (if(compactExportToggle) 50 else 100).dp)
+            }// End of the card
+
+            Card(
+                modifier = Modifier
+                    // how do i scale the size of this?!?!!??!
+                    .size(300.dp, settingsSize)
+                    .offset(settingsOffset, 50.dp),
+                elevation = 20.dp,
+                backgroundColor = themeColor[5]
+            ) {
+
+                // settings main menu
+                AnimatedVisibility(
+                    visible = settingsMain,
+                    enter = slideInHorizontally(
+                        animationSpec = tween(durationMillis = 369)
+                    ) {fullWidth -> -fullWidth*2 },
+                    exit = slideOutHorizontally(
+                        tween(durationMillis = 369)
+                    ) {fullWidth -> -fullWidth*2 }
                 ) {
-                    Button(
-                        onClick = {
-                            exportSettings = false
-                            mainMain = true
-                            menuLines = 2
-                        },
-                        modifier = Modifier.offset(100.dp, 0.dp)
-                    ) {
-                        Text("Return to main")
+                    Row() {
+                        Button(
+                            onClick = {
+                                settingsMain = false
+                                selectGenerator = true
+                                settingsLines = 5
+                            },
+                            modifier = Modifier
+                                .offset(50.dp, 0.dp),
+                            colors = ButtonDefaults.buttonColors(backgroundColor = themeColor[4])
+                        ) {
+                            Text("Select Generator", color = themeColor[2])
+                        }
+                    }
+                    Row() {
+                        Button(
+                            onClick = {
+                                settingsMain = false
+                                selectOutput = true
+                                settingsLines = 2
+                            },
+                            modifier = Modifier
+                                .offset(50.dp, 50.dp),
+                            colors = ButtonDefaults.buttonColors(backgroundColor = themeColor[4])
+                        ) {
+                            Text("Select Output", color = themeColor[2])
+                        }
                     }
                 }
-            }
-        }// End of the card
 
-        Card(
-            modifier = Modifier
-                // how do i scale the size of this?!?!!??!
-                .size(300.dp, settingsSize)
-                .offset(settingsOffset, 50.dp),
-            elevation = 20.dp
-        ) {
+                // Generator Type Selection
+                AnimatedVisibility(
+                    visible = selectGenerator,
+                    enter = slideInHorizontally(
+                        animationSpec = tween(durationMillis = 369)
+                    ) {fullWidth -> fullWidth*2 },
+                    exit = slideOutHorizontally(
+                        tween(durationMillis = 369)
+                    ) {fullWidth -> fullWidth*2 }
+                ) {
+                    Row() {
+                        Button(
+                            onClick = {
+                                settingsMain = true
+                                selectGenerator = false
+                                settingsLines = 2
+                            },
+                            modifier = Modifier
+                                .offset(50.dp, 0.dp),
+                            colors = ButtonDefaults.buttonColors(backgroundColor = themeColor[4])
+                        ) {
+                            Text("Square Generator", color = themeColor[2])
+                        }
+                    }
+                    Row() {
+                        Button(
+                            onClick = {
+                                settingsMain = true
+                                selectGenerator = false
+                                settingsLines = 2
+                            },
+                            modifier = Modifier
+                                .offset(50.dp, 50.dp),
+                            colors = ButtonDefaults.buttonColors(backgroundColor = themeColor[4])
+                        ) {
+                            Text("Heptagon Generator", color = themeColor[2])
+                        }
+                    }
+                    Row() {
+                        Button(
+                            onClick = {
+                                settingsMain = true
+                                selectGenerator = false
+                                settingsLines = 2
+                            },
+                            modifier = Modifier
+                                .offset(50.dp, 100.dp),
+                            colors = ButtonDefaults.buttonColors(backgroundColor = themeColor[4])
+                        ) {
+                            Text("Pentagon Generator", color = themeColor[2])
+                        }
+                    }
+                    Row() {
+                        Button(
+                            onClick = {
+                                settingsMain = true
+                                selectGenerator = false
+                                settingsLines = 2
+                            },
+                            modifier = Modifier
+                                .offset(50.dp, 150.dp),
+                            colors = ButtonDefaults.buttonColors(backgroundColor = themeColor[4])
+                        ) {
+                            Text("Octagon Generator", color = themeColor[2])
+                        }
+                    }
+                    Row() {
+                        Button(
+                            onClick = {
+                                settingsMain = true
+                                selectGenerator = false
+                                settingsLines = 2
+                            },
+                            modifier = Modifier
+                                .offset(50.dp, 200.dp),
+                            colors = ButtonDefaults.buttonColors(backgroundColor = themeColor[4])
+                        ) {
+                            Text("Return to Home", color = themeColor[2])
+                        }
+                    }
+                }
 
-            // settings main menu
-            AnimatedVisibility(
-                visible = settingsMain,
-                enter = slideInHorizontally(
-                    animationSpec = tween(durationMillis = 369)
-                ) {fullWidth -> -fullWidth*2 },
-                exit = slideOutHorizontally(
-                    tween(durationMillis = 369)
-                ) {fullWidth -> -fullWidth*2 }
-            ) {
-                Row() {
-                    Button(
-                        onClick = {
-                            settingsMain = false
-                            selectGenerator = true
-                            settingsLines = 5
-                        },
-                        modifier = Modifier
-                            .offset(50.dp, 0.dp)
-                    ) {
-                        Text("Select Generator")
+                // Output location, needs to be finished
+                AnimatedVisibility(
+                    visible = selectOutput,
+                    enter = slideInHorizontally(
+                        animationSpec = tween(durationMillis = 369)
+                    ) {fullWidth -> fullWidth*2 },
+                    exit = slideOutHorizontally(
+                        tween(durationMillis = 369)
+                    ) {fullWidth -> fullWidth*2 }
+                ) {
+                    Row() {
+                        Button(
+                            onClick = {
+                                // TODO: implement location picking cuz that doesnt exist yet
+                            },
+                            modifier = Modifier
+                                .offset(25.dp, 0.dp),
+                            colors = ButtonDefaults.buttonColors(backgroundColor = themeColor[4])
+                        ) {
+                            Text("Select Output Location", color = themeColor[2])
+                        }
+                    }
+                    Row() {
+                        Button(
+                            onClick = {
+                                settingsMain = true
+                                selectOutput = false
+                                settingsLines = 2
+                            },
+                            modifier = Modifier
+                                .offset(25.dp, 50.dp),
+                            colors = ButtonDefaults.buttonColors(backgroundColor = themeColor[4])
+                        ) {
+                            Text("Return to Home", color = themeColor[2])
+                        }
                     }
                 }
-                Row() {
-                    Button(
-                        onClick = {
-                            settingsMain = false
-                            selectOutput = true
-                            settingsLines = 2
-                        },
-                        modifier = Modifier
-                            .offset(50.dp, 50.dp)
-                    ) {
-                        Text("Select Output")
-                    }
-                }
-            }
-
-            // Generator Type Selection
-            AnimatedVisibility(
-                visible = selectGenerator,
-                enter = slideInHorizontally(
-                    animationSpec = tween(durationMillis = 369)
-                ) {fullWidth -> fullWidth*2 },
-                exit = slideOutHorizontally(
-                    tween(durationMillis = 369)
-                ) {fullWidth -> fullWidth*2 }
-            ) {
-                Row() {
-                    Button(
-                        onClick = {
-                            settingsMain = true
-                            selectGenerator = false
-                            settingsLines = 2
-                        },
-                        modifier = Modifier
-                            .offset(50.dp, 0.dp)
-                    ) {
-                        Text("Square Generator")
-                    }
-                }
-                Row() {
-                    Button(
-                        onClick = {
-                            settingsMain = true
-                            selectGenerator = false
-                            settingsLines = 2
-                        },
-                        modifier = Modifier
-                            .offset(50.dp, 50.dp)
-                    ) {
-                        Text("Heptagon Generator")
-                    }
-                }
-                Row() {
-                    Button(
-                        onClick = {
-                            settingsMain = true
-                            selectGenerator = false
-                            settingsLines = 2
-                        },
-                        modifier = Modifier
-                            .offset(50.dp, 100.dp)
-                    ) {
-                        Text("Pentagon Generator")
-                    }
-                }
-                Row() {
-                    Button(
-                        onClick = {
-                            settingsMain = true
-                            selectGenerator = false
-                            settingsLines = 2
-                        },
-                        modifier = Modifier
-                            .offset(50.dp, 150.dp)
-                    ) {
-                        Text("Octagon Generator")
-                    }
-                }
-                Row() {
-                    Button(
-                        onClick = {
-                            settingsMain = true
-                            selectGenerator = false
-                            settingsLines = 2
-                        },
-                        modifier = Modifier
-                            .offset(50.dp, 200.dp)
-                    ) {
-                        Text("Return to Home")
-                    }
-                }
-            }
-
-            // Output location, needs to be finished
-            AnimatedVisibility(
-                visible = selectOutput,
-                enter = slideInHorizontally(
-                    animationSpec = tween(durationMillis = 369)
-                ) {fullWidth -> fullWidth*2 },
-                exit = slideOutHorizontally(
-                    tween(durationMillis = 369)
-                ) {fullWidth -> fullWidth*2 }
-            ) {
-                Row() {
-                    Button(
-                        onClick = {
-                            settingsMain = true
-                            selectOutput = false
-                            settingsLines = 2
-                        },
-                        modifier = Modifier
-                            .offset(25.dp, 0.dp)
-                    ) {
-                        Text("Select Output Location")
-                    }
-                }
-            }
-        }// End of the card 2.0
+            }// End of the card 2.0
+        }
     }
 }
 
