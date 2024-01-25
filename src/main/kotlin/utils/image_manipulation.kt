@@ -31,7 +31,7 @@ enum class NodeGeneratorType {
 //TODO : Get function parameters from UI elements
 //TODO : Create UI menus for each generator type
 
-fun GenerateNodes(genType: NodeGeneratorType) {
+fun generateNodes(genType: NodeGeneratorType) {
     when (genType) {
         NodeGeneratorType.SQUARE -> squareNodeGenerator(5, 5)
         else -> {  }
