@@ -17,8 +17,8 @@ val themeTypeMap = mapOf("Dark" to 0, "Light" to 1, "Celeste" to 2, "Aqueous" to
 val darkThemes = listOf(
     Color(0xFF2B2D30),
     Color(0xFF26282E),
-    Color(0xFF7A7E85),
     Color(0xFFBFC1C7),
+    Color(0xFF7A7E85),
     Color(0xFF1E1F22),
     Color(0xFF2B2D30)
 )

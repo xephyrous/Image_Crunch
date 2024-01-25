@@ -191,22 +191,22 @@ fun App() {
                                 exportSettings = true
                                 menuLines = if(compactExportToggle) (2) else (3)
                             },
-                            modifier = Modifier
-                                .offset(50.dp, 0.dp),
+                            modifier = Modifier.offset(25.dp, 0.dp).width(250.dp),
                             colors = ButtonDefaults.buttonColors(backgroundColor = themeColor[4])
                         ) {
                             Text("Export Settings", color = themeColor[2])
                         }
                     }
-                    Row() {
+                    Row(
+                        modifier = Modifier.offset(0.dp, 50.dp)
+                    ) {
                         Button(
                             onClick = {
                                 mainMain = false
                                 themeSettings = true
                                 menuLines = 5
                             },
-                            modifier = Modifier
-                                .offset(50.dp, 50.dp),
+                            modifier = Modifier.offset(25.dp, 0.dp).width(250.dp),
                             colors = ButtonDefaults.buttonColors(backgroundColor = themeColor[4])
                         ) {
                             Text("Select Theme", color = themeColor[2])
@@ -235,7 +235,8 @@ fun App() {
                                 } else {
                                     menuLines = 2
                                 }
-                            }
+                            },
+                            modifier = Modifier.offset(50.dp, 0.dp).width(25.dp)
                         )
                         Button(
                             onClick = {
@@ -245,7 +246,7 @@ fun App() {
                                     settingsToCSV()
                                 }
                             },
-                            modifier = Modifier.offset(100.dp, 0.dp),
+                            modifier = Modifier.offset(75.dp, 0.dp).width(150.dp),
                             colors = ButtonDefaults.buttonColors(backgroundColor = themeColor[4])
                         ) {
                             Text("Button?", color = themeColor[2])
@@ -269,7 +270,7 @@ fun App() {
                                 mainMain = true
                                 menuLines = 2
                             },
-                            modifier = Modifier.offset(100.dp, 0.dp),
+                            modifier = Modifier.offset(25.dp, 0.dp).width(250.dp),
                             colors = ButtonDefaults.buttonColors(backgroundColor = themeColor[4])
                         ) {
                             Text("Return to main", color = themeColor[2])
@@ -293,8 +294,7 @@ fun App() {
                             onClick = {
                                 themeColor = darkThemes
                             },
-                            modifier = Modifier
-                                .offset(50.dp, 0.dp),
+                            modifier = Modifier.offset(25.dp, 0.dp).width(250.dp),
                             colors = ButtonDefaults.buttonColors(backgroundColor = themeColor[4])
                         ) {
                             Text("Theme: Dark", color = themeColor[2])
@@ -308,8 +308,7 @@ fun App() {
                             onClick = {
                                 themeColor = lightThemes
                             },
-                            modifier = Modifier
-                                .offset(50.dp, 0.dp),
+                            modifier = Modifier.offset(25.dp, 0.dp).width(250.dp),
                             colors = ButtonDefaults.buttonColors(backgroundColor = themeColor[4])
                         ) {
                             Text("Theme: Light", color = themeColor[2])
@@ -323,8 +322,7 @@ fun App() {
                             onClick = {
                                 themeColor = celesteThemes
                             },
-                            modifier = Modifier
-                                .offset(50.dp, 0.dp),
+                            modifier = Modifier.offset(25.dp, 0.dp).width(250.dp),
                             colors = ButtonDefaults.buttonColors(backgroundColor = themeColor[4])
                         ) {
                             Text("Theme: Celeste", color = themeColor[2])
@@ -338,8 +336,7 @@ fun App() {
                             onClick = {
                                 themeColor = aqueousThemes
                             },
-                            modifier = Modifier
-                                .offset(50.dp, 0.dp),
+                            modifier = Modifier.offset(25.dp, 0.dp).width(250.dp),
                             colors = ButtonDefaults.buttonColors(backgroundColor = themeColor[4])
                         ) {
                             Text("Theme: Aqueous", color = themeColor[2])
@@ -355,7 +352,7 @@ fun App() {
                                 mainMain = true
                                 menuLines = 2
                             },
-                            modifier = Modifier.offset(50.dp, 0.dp),
+                            modifier = Modifier.offset(25.dp, 0.dp).width(250.dp),
                             colors = ButtonDefaults.buttonColors(backgroundColor = themeColor[4])
                         ) {
                             Text("Return to main", color = themeColor[2])
@@ -389,22 +386,22 @@ fun App() {
                                 selectGenerator = true
                                 settingsLines = 5
                             },
-                            modifier = Modifier
-                                .offset(50.dp, 0.dp),
+                            modifier = Modifier.offset(25.dp, 0.dp).width(250.dp),
                             colors = ButtonDefaults.buttonColors(backgroundColor = themeColor[4])
                         ) {
                             Text("Select Generator", color = themeColor[2])
                         }
                     }
-                    Row() {
+                    Row(
+                        modifier = Modifier.offset(0.dp, 50.dp)
+                    ) {
                         Button(
                             onClick = {
                                 settingsMain = false
                                 selectOutput = true
                                 settingsLines = 2
                             },
-                            modifier = Modifier
-                                .offset(50.dp, 50.dp),
+                            modifier = Modifier.offset(25.dp, 0.dp).width(250.dp),
                             colors = ButtonDefaults.buttonColors(backgroundColor = themeColor[4])
                         ) {
                             Text("Select Output", color = themeColor[2])
@@ -429,64 +426,67 @@ fun App() {
                                 selectGenerator = false
                                 settingsLines = 2
                             },
-                            modifier = Modifier
-                                .offset(50.dp, 0.dp),
+                            modifier = Modifier.offset(25.dp, 0.dp).width(250.dp),
                             colors = ButtonDefaults.buttonColors(backgroundColor = themeColor[4])
                         ) {
                             Text("Square Generator", color = themeColor[2])
                         }
                     }
-                    Row() {
+                    Row(
+                        modifier = Modifier.offset(0.dp, 50.dp)
+                    ) {
                         Button(
                             onClick = {
                                 settingsMain = true
                                 selectGenerator = false
                                 settingsLines = 2
                             },
-                            modifier = Modifier
-                                .offset(50.dp, 50.dp),
+                            modifier = Modifier.offset(25.dp, 0.dp).width(250.dp),
                             colors = ButtonDefaults.buttonColors(backgroundColor = themeColor[4])
                         ) {
                             Text("Heptagon Generator", color = themeColor[2])
                         }
                     }
-                    Row() {
+                    Row(
+                        modifier = Modifier.offset(0.dp, 100.dp)
+                    ) {
                         Button(
                             onClick = {
                                 settingsMain = true
                                 selectGenerator = false
                                 settingsLines = 2
                             },
-                            modifier = Modifier
-                                .offset(50.dp, 100.dp),
+                            modifier = Modifier.offset(25.dp, 0.dp).width(250.dp),
                             colors = ButtonDefaults.buttonColors(backgroundColor = themeColor[4])
                         ) {
                             Text("Pentagon Generator", color = themeColor[2])
                         }
                     }
-                    Row() {
+                    Row(
+                        modifier = Modifier.offset(0.dp, 150.dp)
+                    ) {
                         Button(
                             onClick = {
                                 settingsMain = true
                                 selectGenerator = false
                                 settingsLines = 2
                             },
-                            modifier = Modifier
-                                .offset(50.dp, 150.dp),
+                            modifier = Modifier.offset(25.dp, 0.dp).width(250.dp),
                             colors = ButtonDefaults.buttonColors(backgroundColor = themeColor[4])
                         ) {
                             Text("Octagon Generator", color = themeColor[2])
                         }
                     }
-                    Row() {
+                    Row(
+                        modifier = Modifier.offset(0.dp, 200.dp)
+                    ) {
                         Button(
                             onClick = {
                                 settingsMain = true
                                 selectGenerator = false
                                 settingsLines = 2
                             },
-                            modifier = Modifier
-                                .offset(50.dp, 200.dp),
+                            modifier = Modifier.offset(25.dp, 0.dp).width(250.dp),
                             colors = ButtonDefaults.buttonColors(backgroundColor = themeColor[4])
                         ) {
                             Text("Return to Home", color = themeColor[2])
@@ -509,22 +509,22 @@ fun App() {
                             onClick = {
                                 // TODO: implement location picking cuz that doesnt exist yet
                             },
-                            modifier = Modifier
-                                .offset(25.dp, 0.dp),
+                            modifier = Modifier.offset(25.dp, 0.dp).width(250.dp),
                             colors = ButtonDefaults.buttonColors(backgroundColor = themeColor[4])
                         ) {
                             Text("Select Output Location", color = themeColor[2])
                         }
                     }
-                    Row() {
+                    Row(
+                        modifier = Modifier.offset(0.dp, 50.dp)
+                    ) {
                         Button(
                             onClick = {
                                 settingsMain = true
                                 selectOutput = false
                                 settingsLines = 2
                             },
-                            modifier = Modifier
-                                .offset(25.dp, 50.dp),
+                            modifier = Modifier.offset(25.dp, 0.dp).width(250.dp),
                             colors = ButtonDefaults.buttonColors(backgroundColor = themeColor[4])
                         ) {
                             Text("Return to Home", color = themeColor[2])
