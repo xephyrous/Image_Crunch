@@ -77,7 +77,7 @@ fun App() {
         label = "settingsSize"
     )
 
-    AppTheme {
+    SillyAppTheme {
         Scaffold(
             snackbarHost = {
                 SnackbarHost(hostState = snackbarHostState)
