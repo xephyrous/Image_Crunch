@@ -8,7 +8,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.platform.Font
-import utils.SillyFont.MoiraiOne
+import utils.SillyFont.SILLY
 
 object AppFont {
     val Metropolis = FontFamily(
@@ -34,13 +34,13 @@ object AppFont {
 }
 
 object SillyFont {
-    val MoiraiOne = FontFamily(
-        Font(resource = "MoiraiOne-Regular.ttf", weight = FontWeight.Normal)
+    val SILLY = FontFamily(
+        Font(resource = "freakshow.regular.otf", weight = FontWeight.Black)
     )
 }
 
 val appSillyTypography = Typography(
-    defaultFontFamily = MoiraiOne
+    defaultFontFamily = SILLY
 )
 
 val appTypography = Typography(
