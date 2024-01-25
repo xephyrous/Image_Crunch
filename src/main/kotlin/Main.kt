@@ -92,16 +92,16 @@ fun App() {
         label = "exitSettings"
     )
 
-    Scaffold(
-        topBar = {
-            TopAppBar (
-                title = {
-                    Text("Image Crunch α",
-                        color = themeColor[2]
-                    )
-                },
-                backgroundColor = themeColor[0],
-
+    AppTheme {
+        Scaffold(
+            topBar = {
+                TopAppBar (
+                    title = {
+                        Text("Image Crunch α",
+                            color = themeColor[2]
+                        )
+                    },
+                    backgroundColor = themeColor[0],
                 actions = {
                     // holy spaghetti
                     IconButton(onClick = {
