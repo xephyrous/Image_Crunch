@@ -11,8 +11,6 @@ var compactExport: Boolean = true
 val generatorTypeMap = mapOf("Square Generator" to 0)
 var generatorType: Int = 0 // Temporary storage for gen type, change to whatever idc.
 
-val themeTypeMap = mapOf("Dark" to 0, "Light" to 1, "Celeste" to 2, "Aqueous" to 3)
-
 // Header, Body, Text, Icons, Buttons, Menus
 val darkThemes = listOf(
     Color(0xFF2B2D30),
@@ -50,4 +48,6 @@ val aqueousThemes = listOf(
     Color(0xFF038aff),
     Color(0xFF4871f7)
 )
-//var
+
+// use for persistent data storage
+val themeTypeMap = mapOf(darkThemes to 0, lightThemes to 1, celesteThemes to 2, aqueousThemes to 3)

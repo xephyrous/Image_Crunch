@@ -1,8 +1,6 @@
-import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.*
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -16,16 +14,20 @@ import androidx.compose.material.icons.sharp.PlayArrow
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.loadImageBitmap
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
-import kotlinx.coroutines.launch
 import utils.*
 import java.io.FileInputStream
 
+@Suppress("DuplicatedCode")
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
 @Preview
 fun App() {
@@ -34,20 +36,16 @@ fun App() {
     var genType by remember { mutableStateOf(generatorType) }
     var menuLines by remember { mutableStateOf(2) }
     var compactExportToggle by remember { mutableStateOf(compactExport) }
-    var genBtnState by remember { mutableStateOf(false) }
 
     // Testing Stuff
     var caption by remember { mutableStateOf("theres NO PICTURE") }
 
-    // holy mess
-    val scope = rememberCoroutineScope()
-    val snackbarHostState = remember { SnackbarHostState() }
     var displayed by remember { mutableStateOf(false) }
 
-    // Navigation Handler
     var settingsMain by remember { mutableStateOf(true) }
     var selectGenerator by remember { mutableStateOf(false) }
     var selectOutput by remember { mutableStateOf(false) }
+    var configGenerator by remember { mutableStateOf(false) }
 
     var mainMain by remember { mutableStateOf(true) }
     var exportSettings by remember { mutableStateOf(false) }
@@ -66,6 +64,15 @@ fun App() {
         targetValue = (menuLines*50).dp,
         label = "menuSize"
     )
+    val menuTitle by animateDpAsState(
+        targetValue = if (menuCardState) 5.dp else 60.dp,
+        label = "menuTitle"
+    )
+    val menuExit by animateDpAsState(
+        targetValue = if (mainMain) (60+((menuLines-1)*50)).dp else (65+(menuLines*50)).dp,
+        label = "exitMain"
+    )
+
     val settingsOffset by animateDpAsState(
         targetValue = (if (settingsCardState) 10 else (-310)).dp,
         label = "settingsOffset"
@@ -74,11 +81,16 @@ fun App() {
         targetValue = (settingsLines*50).dp,
         label = "settingsSize"
     )
+    val settingsTitle by animateDpAsState(
+        targetValue = if (settingsCardState) 5.dp else 60.dp,
+        label = "settingsTitle"
+    )
+    val settingsExit by animateDpAsState(
+        targetValue = if (settingsMain) (60+((settingsLines-1)*50)).dp else (65+(settingsLines*50)).dp,
+        label = "exitSettings"
+    )
 
     Scaffold(
-        snackbarHost = {
-            SnackbarHost(hostState = snackbarHostState)
-        },
         topBar = {
             TopAppBar (
                 title = {
@@ -138,7 +150,7 @@ fun App() {
         },
         floatingActionButton = {
             ExtendedFloatingActionButton(
-                onClick = { scope.launch { snackbarHostState.showSnackbar("Clicked") } },
+                onClick = { /* Run the Generator */ },
                 text = { Text("Run", color = themeColor[2]) },
                 icon = {
                     Icon( Icons.Sharp.PlayArrow, "Run",
@@ -165,15 +177,54 @@ fun App() {
                 }
                 Text(caption, color = themeColor[2])
             }
+
+            // Title Card
+            Card(
+                modifier = Modifier
+                    .width(300.dp)
+                    .height(50.dp)
+                    .offset(menuOffset, menuTitle),
+                backgroundColor = themeColor[5],
+                elevation = 20.dp
+            ) {
+                Row {
+                    Text("Main Menu", color = themeColor[2],
+                        modifier = Modifier.fillMaxSize(),
+                        fontSize = 30.sp, textAlign = TextAlign.Center, fontFamily = FontFamily.Cursive)
+                }
+            }
+            Card(
+                modifier = Modifier
+                    .width(300.dp)
+                    .height(50.dp)
+                    .offset(menuOffset, menuExit),
+                backgroundColor = themeColor[5],
+                elevation = 20.dp
+            ){
+                Row() {
+                    Button(
+                        onClick = {
+                            exportSettings = false
+                            themeSettings = false
+                            mainMain = true
+                            menuLines = 2
+                        },
+                        modifier = Modifier.offset(25.dp, 0.dp).width(250.dp),
+                        colors = ButtonDefaults.buttonColors(backgroundColor = themeColor[4])
+                    ) {
+                        Text("Return to main", color = themeColor[2])
+                    }
+                }
+            }
+            // Main Menu Card
             Card(
                 modifier = Modifier
                     .width(300.dp)
                     .height(menuSize)
-                    .offset(menuOffset,50.dp),
+                    .offset(menuOffset,60.dp),
                 backgroundColor = themeColor[5],
                 elevation = 20.dp
             ) {
-                // TODO: make this actual stuff in the menu
                 // Main Menu
                 AnimatedVisibility(
                     visible = mainMain,
@@ -189,7 +240,7 @@ fun App() {
                             onClick = {
                                 mainMain = false
                                 exportSettings = true
-                                menuLines = if(compactExportToggle) (2) else (3)
+                                menuLines = if(compactExportToggle) (1) else (2)
                             },
                             modifier = Modifier.offset(25.dp, 0.dp).width(250.dp),
                             colors = ButtonDefaults.buttonColors(backgroundColor = themeColor[4])
@@ -204,7 +255,7 @@ fun App() {
                             onClick = {
                                 mainMain = false
                                 themeSettings = true
-                                menuLines = 5
+                                menuLines = 4
                             },
                             modifier = Modifier.offset(25.dp, 0.dp).width(250.dp),
                             colors = ButtonDefaults.buttonColors(backgroundColor = themeColor[4])
@@ -231,9 +282,9 @@ fun App() {
                                 compactExportToggle = it
                                 compactExport = compactExportToggle
                                 if(!compactExport) {
-                                    menuLines = 3
-                                } else {
                                     menuLines = 2
+                                } else {
+                                    menuLines = 1
                                 }
                             },
                             modifier = Modifier.offset(50.dp, 0.dp).width(25.dp)
@@ -258,22 +309,6 @@ fun App() {
                                 .offset(0.dp, 50.dp)
                         ) {
                             Text("Select Output Here", color = themeColor[2])
-                        }
-                    }
-                    Row(
-                        modifier = Modifier
-                            .offset(0.dp, (if(compactExportToggle) 50 else 100).dp)
-                    ) {
-                        Button(
-                            onClick = {
-                                exportSettings = false
-                                mainMain = true
-                                menuLines = 2
-                            },
-                            modifier = Modifier.offset(25.dp, 0.dp).width(250.dp),
-                            colors = ButtonDefaults.buttonColors(backgroundColor = themeColor[4])
-                        ) {
-                            Text("Return to main", color = themeColor[2])
                         }
                     }
                 }
@@ -342,29 +377,50 @@ fun App() {
                             Text("Theme: Aqueous", color = themeColor[2])
                         }
                     }
-                    Row(
-                        modifier = Modifier
-                            .offset(0.dp, 200.dp)
-                    ) {
-                        Button(
-                            onClick = {
-                                themeSettings = false
-                                mainMain = true
-                                menuLines = 2
-                            },
-                            modifier = Modifier.offset(25.dp, 0.dp).width(250.dp),
-                            colors = ButtonDefaults.buttonColors(backgroundColor = themeColor[4])
-                        ) {
-                            Text("Return to main", color = themeColor[2])
-                        }
-                    }
                 }
             }// End of the card
 
             Card(
                 modifier = Modifier
+                    .width(300.dp)
+                    .height(50.dp)
+                    .offset(settingsOffset, settingsTitle),
+                backgroundColor = themeColor[5],
+                elevation = 20.dp
+            ) {
+                Row {
+                    Text("Generation Settings", color = themeColor[2],
+                        modifier = Modifier.fillMaxSize(),
+                        fontSize = 30.sp, textAlign = TextAlign.Center, fontFamily = FontFamily.Cursive)
+                }
+            }
+            Card(
+                modifier = Modifier
+                    .width(300.dp)
+                    .height(50.dp)
+                    .offset(settingsOffset, settingsExit),
+                backgroundColor = themeColor[5],
+                elevation = 20.dp
+            ){
+                Row() {
+                    Button(
+                        onClick = {
+                            selectGenerator = false
+                            selectOutput = false
+                            settingsMain = true
+                            settingsLines = 2
+                        },
+                        modifier = Modifier.offset(25.dp, 0.dp).width(250.dp),
+                        colors = ButtonDefaults.buttonColors(backgroundColor = themeColor[4])
+                    ) {
+                        Text("Return to main", color = themeColor[2])
+                    }
+                }
+            }
+            Card(
+                modifier = Modifier
                     .size(300.dp, settingsSize)
-                    .offset(settingsOffset, 50.dp),
+                    .offset(settingsOffset, 60.dp),
                 elevation = 20.dp,
                 backgroundColor = themeColor[5]
             ) {
@@ -384,7 +440,7 @@ fun App() {
                             onClick = {
                                 settingsMain = false
                                 selectGenerator = true
-                                settingsLines = 5
+                                settingsLines = 4
                             },
                             modifier = Modifier.offset(25.dp, 0.dp).width(250.dp),
                             colors = ButtonDefaults.buttonColors(backgroundColor = themeColor[4])
@@ -399,7 +455,7 @@ fun App() {
                             onClick = {
                                 settingsMain = false
                                 selectOutput = true
-                                settingsLines = 2
+                                settingsLines = 1
                             },
                             modifier = Modifier.offset(25.dp, 0.dp).width(250.dp),
                             colors = ButtonDefaults.buttonColors(backgroundColor = themeColor[4])
@@ -422,9 +478,8 @@ fun App() {
                     Row() {
                         Button(
                             onClick = {
-                                settingsMain = true
-                                selectGenerator = false
-                                settingsLines = 2
+                                genType = 0
+                                generatorType = 0
                             },
                             modifier = Modifier.offset(25.dp, 0.dp).width(250.dp),
                             colors = ButtonDefaults.buttonColors(backgroundColor = themeColor[4])
@@ -437,9 +492,8 @@ fun App() {
                     ) {
                         Button(
                             onClick = {
-                                settingsMain = true
-                                selectGenerator = false
-                                settingsLines = 2
+                                genType = 1
+                                generatorType = 1
                             },
                             modifier = Modifier.offset(25.dp, 0.dp).width(250.dp),
                             colors = ButtonDefaults.buttonColors(backgroundColor = themeColor[4])
@@ -452,9 +506,8 @@ fun App() {
                     ) {
                         Button(
                             onClick = {
-                                settingsMain = true
-                                selectGenerator = false
-                                settingsLines = 2
+                                genType = 2
+                                generatorType = 2
                             },
                             modifier = Modifier.offset(25.dp, 0.dp).width(250.dp),
                             colors = ButtonDefaults.buttonColors(backgroundColor = themeColor[4])
@@ -467,9 +520,8 @@ fun App() {
                     ) {
                         Button(
                             onClick = {
-                                settingsMain = true
-                                selectGenerator = false
-                                settingsLines = 2
+                                genType = 3
+                                generatorType = 3
                             },
                             modifier = Modifier.offset(25.dp, 0.dp).width(250.dp),
                             colors = ButtonDefaults.buttonColors(backgroundColor = themeColor[4])
@@ -477,23 +529,7 @@ fun App() {
                             Text("Octagon Generator", color = themeColor[2])
                         }
                     }
-                    Row(
-                        modifier = Modifier.offset(0.dp, 200.dp)
-                    ) {
-                        Button(
-                            onClick = {
-                                settingsMain = true
-                                selectGenerator = false
-                                settingsLines = 2
-                            },
-                            modifier = Modifier.offset(25.dp, 0.dp).width(250.dp),
-                            colors = ButtonDefaults.buttonColors(backgroundColor = themeColor[4])
-                        ) {
-                            Text("Return to Home", color = themeColor[2])
-                        }
-                    }
                 }
-
                 // Output location, needs to be finished
                 AnimatedVisibility(
                     visible = selectOutput,
@@ -515,23 +551,21 @@ fun App() {
                             Text("Select Output Location", color = themeColor[2])
                         }
                     }
-                    Row(
-                        modifier = Modifier.offset(0.dp, 50.dp)
-                    ) {
-                        Button(
-                            onClick = {
-                                settingsMain = true
-                                selectOutput = false
-                                settingsLines = 2
-                            },
-                            modifier = Modifier.offset(25.dp, 0.dp).width(250.dp),
-                            colors = ButtonDefaults.buttonColors(backgroundColor = themeColor[4])
-                        ) {
-                            Text("Return to Home", color = themeColor[2])
-                        }
-                    }
                 }
-            }// End of the card 2.0
+            }
+            // Generator Settings
+            // TODO: finish this
+            AnimatedVisibility(
+                visible = settingsMain,
+                enter = scaleIn(),
+                exit = scaleOut()
+            ) {
+                Card(
+                    modifier = Modifier
+                ){
+
+                }
+            } // End of the card 2.0
         }
     }
 }
