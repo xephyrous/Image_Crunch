@@ -1,6 +1,8 @@
 package utils
 
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Typography
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
@@ -30,7 +32,7 @@ object AppFont {
     )
 }
 
-val typography = Typography(
+val appTypography = Typography(
     defaultFontFamily = AppFont.Metropolis,
     body1 = TextStyle(fontWeight = FontWeight.Normal),
     body2 = TextStyle(fontWeight = FontWeight.Medium),
@@ -46,3 +48,13 @@ val typography = Typography(
     subtitle1 = TextStyle(fontWeight = FontWeight.Normal),
     subtitle2 = TextStyle(fontWeight = FontWeight.Medium)
 )
+
+@Composable
+fun AppTheme(
+    content: @Composable () -> Unit
+) {
+    MaterialTheme(
+        typography = appTypography,
+        content = content
+    )
+}

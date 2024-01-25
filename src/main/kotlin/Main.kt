@@ -8,6 +8,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
+import androidx.compose.material.MaterialTheme.typography
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.sharp.Add
 import androidx.compose.material.icons.sharp.Build
@@ -76,463 +77,465 @@ fun App() {
         label = "settingsSize"
     )
 
-    Scaffold(
-        snackbarHost = {
-            SnackbarHost(hostState = snackbarHostState)
-        },
-        topBar = {
-            TopAppBar (
-                title = {
-                    Text("Image Crunch α",
-                        color = themeColor[2]
-                    )
-                },
-                backgroundColor = themeColor[0],
+    AppTheme {
+        Scaffold(
+            snackbarHost = {
+                SnackbarHost(hostState = snackbarHostState)
+            },
+            topBar = {
+                TopAppBar (
+                    title = {
+                        Text("Image Crunch α",
+                            color = themeColor[2]
+                        )
+                    },
+                    backgroundColor = themeColor[0],
 
-                actions = {
-                    // holy spaghetti
-                    IconButton(onClick = {
-                        if (!displayed) {
-                            selectedImage = ImageFileSelection()
-                        } else {
-                            val tempImage = ImageFileSelection()
-                            if (tempImage != null) {
-                                selectedImage = tempImage
+                    actions = {
+                        // holy spaghetti
+                        IconButton(onClick = {
+                            if (!displayed) {
+                                selectedImage = ImageFileSelection()
+                            } else {
+                                val tempImage = ImageFileSelection()
+                                if (tempImage != null) {
+                                    selectedImage = tempImage
+                                }
                             }
+
+                            if (selectedImage == null) {
+                                caption = "theres NO PICTURE"
+                                displayed = false
+                            } else {
+                                caption = "omg it worked"
+                                displayed = true
+                            }
+                        }) {
+                            Icon(
+                                imageVector = Icons.Sharp.Add,
+                                contentDescription = "Select Image",
+                                tint = themeColor[3]
+                            )
                         }
 
-                        if (selectedImage == null) {
-                            caption = "theres NO PICTURE"
-                            displayed = false
-                        } else {
-                            caption = "omg it worked"
-                            displayed = true
+                        IconButton(onClick = {
+                            settingsCardState = !settingsCardState
+                        }) {
+                            Icon(
+                                imageVector = Icons.Sharp.Build,
+                                contentDescription = "Settings",
+                                tint = themeColor[3]
+                            )
                         }
-                    }) {
-                        Icon(
-                            imageVector = Icons.Sharp.Add,
-                            contentDescription = "Select Image",
-                            tint = themeColor[3]
-                        )
+                        IconButton(onClick = {
+                            menuCardState = !menuCardState
+                        }) {
+                            Icon(
+                                imageVector = Icons.Sharp.List,
+                                contentDescription = "Test Text",
+                                tint = themeColor[3]
+                            )
+                        }
                     }
-                    
-                    IconButton(onClick = {
-                        settingsCardState = !settingsCardState
-                    }) {
-                        Icon(
-                            imageVector = Icons.Sharp.Build,
-                            contentDescription = "Settings",
-                            tint = themeColor[3]
-                        )
-                    }
-                    IconButton(onClick = {
-                        menuCardState = !menuCardState
-                    }) {
-                        Icon(
-                            imageVector = Icons.Sharp.List,
-                            contentDescription = "Test Text",
-                            tint = themeColor[3]
-                        )
-                    }
-                }
-            )
-        },
-        floatingActionButton = {
-            ExtendedFloatingActionButton(
-                onClick = { scope.launch { snackbarHostState.showSnackbar("Clicked") } },
-                text = { Text("Run", color = themeColor[2]) },
-                icon = {
-                    Icon( Icons.Sharp.PlayArrow, "Run",
-                        tint = themeColor[3])
-                       },
-                backgroundColor = themeColor[4]
-            )
-        },
-    ) {innerPadding ->
-        Box(
-            modifier = Modifier
-                .background(themeColor[1])
-                .fillMaxSize()
-        ) {
-            Column(
-                modifier = Modifier.padding(innerPadding),
-                verticalArrangement = Arrangement.spacedBy(16.dp),
-            ){
-                if(displayed) {
-                    Image(
-                        loadImageBitmap(inputStream = FileInputStream(selectedImage!!)),
-                        "temp"
-                    )
-                }
-                Text(caption, color = themeColor[2])
-            }
-            Card(
+                )
+            },
+            floatingActionButton = {
+                ExtendedFloatingActionButton(
+                    onClick = { scope.launch { snackbarHostState.showSnackbar("Clicked") } },
+                    text = { Text("Run", color = themeColor[2]) },
+                    icon = {
+                        Icon( Icons.Sharp.PlayArrow, "Run",
+                            tint = themeColor[3])
+                    },
+                    backgroundColor = themeColor[4]
+                )
+            },
+        ) {innerPadding ->
+            Box(
                 modifier = Modifier
-                    .width(300.dp)
-                    .height(menuSize)
-                    .offset(menuOffset,50.dp),
-                backgroundColor = themeColor[5],
-                elevation = 20.dp
+                    .background(themeColor[1])
+                    .fillMaxSize()
             ) {
-                // TODO: make this actual stuff in the menu
-                // Main Menu
-                AnimatedVisibility(
-                    visible = mainMain,
-                    enter = slideInHorizontally(
-                        animationSpec = tween(durationMillis = 369)
-                    ) {fullWidth -> -fullWidth*2 },
-                    exit = slideOutHorizontally(
-                        tween(durationMillis = 369)
-                    ) {fullWidth -> -fullWidth*2 }
-                ) {
-                    Row() {
-                        Button(
-                            onClick = {
-                                mainMain = false
-                                exportSettings = true
-                                menuLines = if(compactExportToggle) (2) else (3)
-                            },
-                            modifier = Modifier
-                                .offset(50.dp, 0.dp),
-                            colors = ButtonDefaults.buttonColors(backgroundColor = themeColor[4])
-                        ) {
-                            Text("Export Settings", color = themeColor[2])
-                        }
-                    }
-                    Row() {
-                        Button(
-                            onClick = {
-                                mainMain = false
-                                themeSettings = true
-                                menuLines = 5
-                            },
-                            modifier = Modifier
-                                .offset(50.dp, 50.dp),
-                            colors = ButtonDefaults.buttonColors(backgroundColor = themeColor[4])
-                        ) {
-                            Text("Select Theme", color = themeColor[2])
-                        }
-                    }
-                }
-
-                // Export Settings
-                AnimatedVisibility(
-                    visible = exportSettings,
-                    enter = slideInHorizontally(
-                        animationSpec = tween(durationMillis = 369)
-                    ) {fullWidth -> fullWidth*2 },
-                    exit = slideOutHorizontally(
-                        tween(durationMillis = 369)
-                    ) {fullWidth -> fullWidth*2 }
-                ) {
-                    Row() {
-                        Switch(
-                            checked = compactExportToggle,
-                            onCheckedChange = {
-                                compactExportToggle = it
-                                compactExport = compactExportToggle
-                                if(!compactExport) {
-                                    menuLines = 3
-                                } else {
-                                    menuLines = 2
-                                }
-                            }
+                Column(
+                    modifier = Modifier.padding(innerPadding),
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                ){
+                    if(displayed) {
+                        Image(
+                            loadImageBitmap(inputStream = FileInputStream(selectedImage!!)),
+                            "temp"
                         )
-                        Button(
-                            onClick = {
-                                if (compactExport) {
-                                    settingsToString()
-                                } else {
-                                    settingsToCSV()
-                                }
-                            },
-                            modifier = Modifier.offset(100.dp, 0.dp),
-                            colors = ButtonDefaults.buttonColors(backgroundColor = themeColor[4])
-                        ) {
-                            Text("Button?", color = themeColor[2])
+                    }
+                    Text(caption, color = themeColor[2])
+                }
+                Card(
+                    modifier = Modifier
+                        .width(300.dp)
+                        .height(menuSize)
+                        .offset(menuOffset,50.dp),
+                    backgroundColor = themeColor[5],
+                    elevation = 20.dp
+                ) {
+                    // TODO: make this actual stuff in the menu
+                    // Main Menu
+                    AnimatedVisibility(
+                        visible = mainMain,
+                        enter = slideInHorizontally(
+                            animationSpec = tween(durationMillis = 369)
+                        ) {fullWidth -> -fullWidth*2 },
+                        exit = slideOutHorizontally(
+                            tween(durationMillis = 369)
+                        ) {fullWidth -> -fullWidth*2 }
+                    ) {
+                        Row() {
+                            Button(
+                                onClick = {
+                                    mainMain = false
+                                    exportSettings = true
+                                    menuLines = if(compactExportToggle) (2) else (3)
+                                },
+                                modifier = Modifier
+                                    .offset(50.dp, 0.dp),
+                                colors = ButtonDefaults.buttonColors(backgroundColor = themeColor[4])
+                            ) {
+                                Text("Export Settings", color = themeColor[2])
+                            }
+                        }
+                        Row() {
+                            Button(
+                                onClick = {
+                                    mainMain = false
+                                    themeSettings = true
+                                    menuLines = 5
+                                },
+                                modifier = Modifier
+                                    .offset(50.dp, 50.dp),
+                                colors = ButtonDefaults.buttonColors(backgroundColor = themeColor[4])
+                            ) {
+                                Text("Select Theme", color = themeColor[2])
+                            }
                         }
                     }
-                    if (!compactExportToggle) {
+
+                    // Export Settings
+                    AnimatedVisibility(
+                        visible = exportSettings,
+                        enter = slideInHorizontally(
+                            animationSpec = tween(durationMillis = 369)
+                        ) {fullWidth -> fullWidth*2 },
+                        exit = slideOutHorizontally(
+                            tween(durationMillis = 369)
+                        ) {fullWidth -> fullWidth*2 }
+                    ) {
+                        Row() {
+                            Switch(
+                                checked = compactExportToggle,
+                                onCheckedChange = {
+                                    compactExportToggle = it
+                                    compactExport = compactExportToggle
+                                    if(!compactExport) {
+                                        menuLines = 3
+                                    } else {
+                                        menuLines = 2
+                                    }
+                                }
+                            )
+                            Button(
+                                onClick = {
+                                    if (compactExport) {
+                                        settingsToString()
+                                    } else {
+                                        settingsToCSV()
+                                    }
+                                },
+                                modifier = Modifier.offset(100.dp, 0.dp),
+                                colors = ButtonDefaults.buttonColors(backgroundColor = themeColor[4])
+                            ) {
+                                Text("Button?", color = themeColor[2])
+                            }
+                        }
+                        if (!compactExportToggle) {
+                            Row(
+                                modifier = Modifier
+                                    .offset(0.dp, 50.dp)
+                            ) {
+                                Text("Select Output Here", color = themeColor[2])
+                            }
+                        }
+                        Row(
+                            modifier = Modifier
+                                .offset(0.dp, (if(compactExportToggle) 50 else 100).dp)
+                        ) {
+                            Button(
+                                onClick = {
+                                    exportSettings = false
+                                    mainMain = true
+                                    menuLines = 2
+                                },
+                                modifier = Modifier.offset(100.dp, 0.dp),
+                                colors = ButtonDefaults.buttonColors(backgroundColor = themeColor[4])
+                            ) {
+                                Text("Return to main", color = themeColor[2])
+                            }
+                        }
+                    }
+
+                    // Theme Selection
+                    AnimatedVisibility(
+                        visible = themeSettings,
+                        enter = slideInHorizontally(
+                            animationSpec = tween(durationMillis = 369)
+                        ) {fullWidth -> fullWidth*2 },
+                        exit = slideOutHorizontally(
+                            tween(durationMillis = 369)
+                        ) {fullWidth -> fullWidth*2 }
+                    ) {
+                        Row(
+                        ) {
+                            Button(
+                                onClick = {
+                                    themeColor = darkThemes
+                                },
+                                modifier = Modifier
+                                    .offset(50.dp, 0.dp),
+                                colors = ButtonDefaults.buttonColors(backgroundColor = themeColor[4])
+                            ) {
+                                Text("Theme: Dark", color = themeColor[2])
+                            }
+                        }
                         Row(
                             modifier = Modifier
                                 .offset(0.dp, 50.dp)
                         ) {
-                            Text("Select Output Here", color = themeColor[2])
+                            Button(
+                                onClick = {
+                                    themeColor = lightThemes
+                                },
+                                modifier = Modifier
+                                    .offset(50.dp, 0.dp),
+                                colors = ButtonDefaults.buttonColors(backgroundColor = themeColor[4])
+                            ) {
+                                Text("Theme: Light", color = themeColor[2])
+                            }
                         }
-                    }
-                    Row(
-                        modifier = Modifier
-                            .offset(0.dp, (if(compactExportToggle) 50 else 100).dp)
-                    ) {
-                        Button(
-                            onClick = {
-                                exportSettings = false
-                                mainMain = true
-                                menuLines = 2
-                            },
-                            modifier = Modifier.offset(100.dp, 0.dp),
-                            colors = ButtonDefaults.buttonColors(backgroundColor = themeColor[4])
+                        Row(
+                            modifier = Modifier
+                                .offset(0.dp, 100.dp)
                         ) {
-                            Text("Return to main", color = themeColor[2])
+                            Button(
+                                onClick = {
+                                    themeColor = celesteThemes
+                                },
+                                modifier = Modifier
+                                    .offset(50.dp, 0.dp),
+                                colors = ButtonDefaults.buttonColors(backgroundColor = themeColor[4])
+                            ) {
+                                Text("Theme: Celeste", color = themeColor[2])
+                            }
+                        }
+                        Row(
+                            modifier = Modifier
+                                .offset(0.dp, 150.dp)
+                        ) {
+                            Button(
+                                onClick = {
+                                    themeColor = aqueousThemes
+                                },
+                                modifier = Modifier
+                                    .offset(50.dp, 0.dp),
+                                colors = ButtonDefaults.buttonColors(backgroundColor = themeColor[4])
+                            ) {
+                                Text("Theme: Aqueous", color = themeColor[2])
+                            }
+                        }
+                        Row(
+                            modifier = Modifier
+                                .offset(0.dp, 200.dp)
+                        ) {
+                            Button(
+                                onClick = {
+                                    themeSettings = false
+                                    mainMain = true
+                                    menuLines = 2
+                                },
+                                modifier = Modifier.offset(50.dp, 0.dp),
+                                colors = ButtonDefaults.buttonColors(backgroundColor = themeColor[4])
+                            ) {
+                                Text("Return to main", color = themeColor[2])
+                            }
                         }
                     }
-                }
+                }// End of the card
 
-                // Theme Selection
-                AnimatedVisibility(
-                    visible = themeSettings,
-                    enter = slideInHorizontally(
-                        animationSpec = tween(durationMillis = 369)
-                    ) {fullWidth -> fullWidth*2 },
-                    exit = slideOutHorizontally(
-                        tween(durationMillis = 369)
-                    ) {fullWidth -> fullWidth*2 }
+                Card(
+                    modifier = Modifier
+                        .size(300.dp, settingsSize)
+                        .offset(settingsOffset, 50.dp),
+                    elevation = 20.dp,
+                    backgroundColor = themeColor[5]
                 ) {
-                    Row(
-                    ) {
-                        Button(
-                            onClick = {
-                                themeColor = darkThemes
-                            },
-                            modifier = Modifier
-                                .offset(50.dp, 0.dp),
-                            colors = ButtonDefaults.buttonColors(backgroundColor = themeColor[4])
-                        ) {
-                            Text("Theme: Dark", color = themeColor[2])
-                        }
-                    }
-                    Row(
-                        modifier = Modifier
-                            .offset(0.dp, 50.dp)
-                    ) {
-                        Button(
-                            onClick = {
-                                themeColor = lightThemes
-                            },
-                            modifier = Modifier
-                                .offset(50.dp, 0.dp),
-                            colors = ButtonDefaults.buttonColors(backgroundColor = themeColor[4])
-                        ) {
-                            Text("Theme: Light", color = themeColor[2])
-                        }
-                    }
-                    Row(
-                        modifier = Modifier
-                            .offset(0.dp, 100.dp)
-                    ) {
-                        Button(
-                            onClick = {
-                                themeColor = celesteThemes
-                            },
-                            modifier = Modifier
-                                .offset(50.dp, 0.dp),
-                            colors = ButtonDefaults.buttonColors(backgroundColor = themeColor[4])
-                        ) {
-                            Text("Theme: Celeste", color = themeColor[2])
-                        }
-                    }
-                    Row(
-                        modifier = Modifier
-                            .offset(0.dp, 150.dp)
-                    ) {
-                        Button(
-                            onClick = {
-                                themeColor = aqueousThemes
-                            },
-                            modifier = Modifier
-                                .offset(50.dp, 0.dp),
-                            colors = ButtonDefaults.buttonColors(backgroundColor = themeColor[4])
-                        ) {
-                            Text("Theme: Aqueous", color = themeColor[2])
-                        }
-                    }
-                    Row(
-                        modifier = Modifier
-                            .offset(0.dp, 200.dp)
-                    ) {
-                        Button(
-                            onClick = {
-                                themeSettings = false
-                                mainMain = true
-                                menuLines = 2
-                            },
-                            modifier = Modifier.offset(50.dp, 0.dp),
-                            colors = ButtonDefaults.buttonColors(backgroundColor = themeColor[4])
-                        ) {
-                            Text("Return to main", color = themeColor[2])
-                        }
-                    }
-                }
-            }// End of the card
 
-            Card(
-                modifier = Modifier
-                    .size(300.dp, settingsSize)
-                    .offset(settingsOffset, 50.dp),
-                elevation = 20.dp,
-                backgroundColor = themeColor[5]
-            ) {
+                    // settings main menu
+                    AnimatedVisibility(
+                        visible = settingsMain,
+                        enter = slideInHorizontally(
+                            animationSpec = tween(durationMillis = 369)
+                        ) {fullWidth -> -fullWidth*2 },
+                        exit = slideOutHorizontally(
+                            tween(durationMillis = 369)
+                        ) {fullWidth -> -fullWidth*2 }
+                    ) {
+                        Row() {
+                            Button(
+                                onClick = {
+                                    settingsMain = false
+                                    selectGenerator = true
+                                    settingsLines = 5
+                                },
+                                modifier = Modifier
+                                    .offset(50.dp, 0.dp),
+                                colors = ButtonDefaults.buttonColors(backgroundColor = themeColor[4])
+                            ) {
+                                Text("Select Generator", color = themeColor[2])
+                            }
+                        }
+                        Row() {
+                            Button(
+                                onClick = {
+                                    settingsMain = false
+                                    selectOutput = true
+                                    settingsLines = 2
+                                },
+                                modifier = Modifier
+                                    .offset(50.dp, 50.dp),
+                                colors = ButtonDefaults.buttonColors(backgroundColor = themeColor[4])
+                            ) {
+                                Text("Select Output", color = themeColor[2])
+                            }
+                        }
+                    }
 
-                // settings main menu
-                AnimatedVisibility(
-                    visible = settingsMain,
-                    enter = slideInHorizontally(
-                        animationSpec = tween(durationMillis = 369)
-                    ) {fullWidth -> -fullWidth*2 },
-                    exit = slideOutHorizontally(
-                        tween(durationMillis = 369)
-                    ) {fullWidth -> -fullWidth*2 }
-                ) {
-                    Row() {
-                        Button(
-                            onClick = {
-                                settingsMain = false
-                                selectGenerator = true
-                                settingsLines = 5
-                            },
-                            modifier = Modifier
-                                .offset(50.dp, 0.dp),
-                            colors = ButtonDefaults.buttonColors(backgroundColor = themeColor[4])
-                        ) {
-                            Text("Select Generator", color = themeColor[2])
+                    // Generator Type Selection
+                    AnimatedVisibility(
+                        visible = selectGenerator,
+                        enter = slideInHorizontally(
+                            animationSpec = tween(durationMillis = 369)
+                        ) {fullWidth -> fullWidth*2 },
+                        exit = slideOutHorizontally(
+                            tween(durationMillis = 369)
+                        ) {fullWidth -> fullWidth*2 }
+                    ) {
+                        Row() {
+                            Button(
+                                onClick = {
+                                    settingsMain = true
+                                    selectGenerator = false
+                                    settingsLines = 2
+                                },
+                                modifier = Modifier
+                                    .offset(50.dp, 0.dp),
+                                colors = ButtonDefaults.buttonColors(backgroundColor = themeColor[4])
+                            ) {
+                                Text("Square Generator", color = themeColor[2])
+                            }
+                        }
+                        Row() {
+                            Button(
+                                onClick = {
+                                    settingsMain = true
+                                    selectGenerator = false
+                                    settingsLines = 2
+                                },
+                                modifier = Modifier
+                                    .offset(50.dp, 50.dp),
+                                colors = ButtonDefaults.buttonColors(backgroundColor = themeColor[4])
+                            ) {
+                                Text("Heptagon Generator", color = themeColor[2])
+                            }
+                        }
+                        Row() {
+                            Button(
+                                onClick = {
+                                    settingsMain = true
+                                    selectGenerator = false
+                                    settingsLines = 2
+                                },
+                                modifier = Modifier
+                                    .offset(50.dp, 100.dp),
+                                colors = ButtonDefaults.buttonColors(backgroundColor = themeColor[4])
+                            ) {
+                                Text("Pentagon Generator", color = themeColor[2])
+                            }
+                        }
+                        Row() {
+                            Button(
+                                onClick = {
+                                    settingsMain = true
+                                    selectGenerator = false
+                                    settingsLines = 2
+                                },
+                                modifier = Modifier
+                                    .offset(50.dp, 150.dp),
+                                colors = ButtonDefaults.buttonColors(backgroundColor = themeColor[4])
+                            ) {
+                                Text("Octagon Generator", color = themeColor[2])
+                            }
+                        }
+                        Row() {
+                            Button(
+                                onClick = {
+                                    settingsMain = true
+                                    selectGenerator = false
+                                    settingsLines = 2
+                                },
+                                modifier = Modifier
+                                    .offset(50.dp, 200.dp),
+                                colors = ButtonDefaults.buttonColors(backgroundColor = themeColor[4])
+                            ) {
+                                Text("Return to Home", color = themeColor[2])
+                            }
                         }
                     }
-                    Row() {
-                        Button(
-                            onClick = {
-                                settingsMain = false
-                                selectOutput = true
-                                settingsLines = 2
-                            },
-                            modifier = Modifier
-                                .offset(50.dp, 50.dp),
-                            colors = ButtonDefaults.buttonColors(backgroundColor = themeColor[4])
-                        ) {
-                            Text("Select Output", color = themeColor[2])
-                        }
-                    }
-                }
 
-                // Generator Type Selection
-                AnimatedVisibility(
-                    visible = selectGenerator,
-                    enter = slideInHorizontally(
-                        animationSpec = tween(durationMillis = 369)
-                    ) {fullWidth -> fullWidth*2 },
-                    exit = slideOutHorizontally(
-                        tween(durationMillis = 369)
-                    ) {fullWidth -> fullWidth*2 }
-                ) {
-                    Row() {
-                        Button(
-                            onClick = {
-                                settingsMain = true
-                                selectGenerator = false
-                                settingsLines = 2
-                            },
-                            modifier = Modifier
-                                .offset(50.dp, 0.dp),
-                            colors = ButtonDefaults.buttonColors(backgroundColor = themeColor[4])
-                        ) {
-                            Text("Square Generator", color = themeColor[2])
+                    // Output location, needs to be finished
+                    AnimatedVisibility(
+                        visible = selectOutput,
+                        enter = slideInHorizontally(
+                            animationSpec = tween(durationMillis = 369)
+                        ) {fullWidth -> fullWidth*2 },
+                        exit = slideOutHorizontally(
+                            tween(durationMillis = 369)
+                        ) {fullWidth -> fullWidth*2 }
+                    ) {
+                        Row() {
+                            Button(
+                                onClick = {
+                                    // TODO: implement location picking cuz that doesnt exist yet
+                                },
+                                modifier = Modifier
+                                    .offset(25.dp, 0.dp),
+                                colors = ButtonDefaults.buttonColors(backgroundColor = themeColor[4])
+                            ) {
+                                Text("Select Output Location", color = themeColor[2])
+                            }
+                        }
+                        Row() {
+                            Button(
+                                onClick = {
+                                    settingsMain = true
+                                    selectOutput = false
+                                    settingsLines = 2
+                                },
+                                modifier = Modifier
+                                    .offset(25.dp, 50.dp),
+                                colors = ButtonDefaults.buttonColors(backgroundColor = themeColor[4])
+                            ) {
+                                Text("Return to Home", color = themeColor[2])
+                            }
                         }
                     }
-                    Row() {
-                        Button(
-                            onClick = {
-                                settingsMain = true
-                                selectGenerator = false
-                                settingsLines = 2
-                            },
-                            modifier = Modifier
-                                .offset(50.dp, 50.dp),
-                            colors = ButtonDefaults.buttonColors(backgroundColor = themeColor[4])
-                        ) {
-                            Text("Heptagon Generator", color = themeColor[2])
-                        }
-                    }
-                    Row() {
-                        Button(
-                            onClick = {
-                                settingsMain = true
-                                selectGenerator = false
-                                settingsLines = 2
-                            },
-                            modifier = Modifier
-                                .offset(50.dp, 100.dp),
-                            colors = ButtonDefaults.buttonColors(backgroundColor = themeColor[4])
-                        ) {
-                            Text("Pentagon Generator", color = themeColor[2])
-                        }
-                    }
-                    Row() {
-                        Button(
-                            onClick = {
-                                settingsMain = true
-                                selectGenerator = false
-                                settingsLines = 2
-                            },
-                            modifier = Modifier
-                                .offset(50.dp, 150.dp),
-                            colors = ButtonDefaults.buttonColors(backgroundColor = themeColor[4])
-                        ) {
-                            Text("Octagon Generator", color = themeColor[2])
-                        }
-                    }
-                    Row() {
-                        Button(
-                            onClick = {
-                                settingsMain = true
-                                selectGenerator = false
-                                settingsLines = 2
-                            },
-                            modifier = Modifier
-                                .offset(50.dp, 200.dp),
-                            colors = ButtonDefaults.buttonColors(backgroundColor = themeColor[4])
-                        ) {
-                            Text("Return to Home", color = themeColor[2])
-                        }
-                    }
-                }
-
-                // Output location, needs to be finished
-                AnimatedVisibility(
-                    visible = selectOutput,
-                    enter = slideInHorizontally(
-                        animationSpec = tween(durationMillis = 369)
-                    ) {fullWidth -> fullWidth*2 },
-                    exit = slideOutHorizontally(
-                        tween(durationMillis = 369)
-                    ) {fullWidth -> fullWidth*2 }
-                ) {
-                    Row() {
-                        Button(
-                            onClick = {
-                                // TODO: implement location picking cuz that doesnt exist yet
-                            },
-                            modifier = Modifier
-                                .offset(25.dp, 0.dp),
-                            colors = ButtonDefaults.buttonColors(backgroundColor = themeColor[4])
-                        ) {
-                            Text("Select Output Location", color = themeColor[2])
-                        }
-                    }
-                    Row() {
-                        Button(
-                            onClick = {
-                                settingsMain = true
-                                selectOutput = false
-                                settingsLines = 2
-                            },
-                            modifier = Modifier
-                                .offset(25.dp, 50.dp),
-                            colors = ButtonDefaults.buttonColors(backgroundColor = themeColor[4])
-                        ) {
-                            Text("Return to Home", color = themeColor[2])
-                        }
-                    }
-                }
-            }// End of the card 2.0
+                }// End of the card 2.0
+            }
         }
     }
 }
