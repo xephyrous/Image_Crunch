@@ -47,6 +47,8 @@ fun App() {
     var selectOutput by remember { mutableStateOf(false) }
     var configGenerator by remember { mutableStateOf(false) }
 
+    var squareGenerator by remember { mutableStateOf(true) }
+
     var mainMain by remember { mutableStateOf(true) }
     var exportSettings by remember { mutableStateOf(false) }
     var themeSettings by remember { mutableStateOf(false) }
@@ -406,6 +408,7 @@ fun App() {
                     Button(
                         onClick = {
                             selectGenerator = false
+                            configGenerator = false
                             selectOutput = false
                             settingsMain = true
                             settingsLines = 2
@@ -480,6 +483,8 @@ fun App() {
                             onClick = {
                                 genType = 0
                                 generatorType = 0
+                                configGenerator = true
+                                squareGenerator = true
                             },
                             modifier = Modifier.offset(25.dp, 0.dp).width(250.dp),
                             colors = ButtonDefaults.buttonColors(backgroundColor = themeColor[4])
@@ -492,13 +497,12 @@ fun App() {
                     ) {
                         Button(
                             onClick = {
-                                genType = 1
-                                generatorType = 1
+
                             },
                             modifier = Modifier.offset(25.dp, 0.dp).width(250.dp),
                             colors = ButtonDefaults.buttonColors(backgroundColor = themeColor[4])
                         ) {
-                            Text("Heptagon Generator", color = themeColor[2])
+                            Text("Does Not Exist", color = themeColor[2])
                         }
                     }
                     Row(
@@ -506,13 +510,12 @@ fun App() {
                     ) {
                         Button(
                             onClick = {
-                                genType = 2
-                                generatorType = 2
+
                             },
                             modifier = Modifier.offset(25.dp, 0.dp).width(250.dp),
                             colors = ButtonDefaults.buttonColors(backgroundColor = themeColor[4])
                         ) {
-                            Text("Pentagon Generator", color = themeColor[2])
+                            Text("Does Not Exist", color = themeColor[2])
                         }
                     }
                     Row(
@@ -520,13 +523,12 @@ fun App() {
                     ) {
                         Button(
                             onClick = {
-                                genType = 3
-                                generatorType = 3
+
                             },
                             modifier = Modifier.offset(25.dp, 0.dp).width(250.dp),
                             colors = ButtonDefaults.buttonColors(backgroundColor = themeColor[4])
                         ) {
-                            Text("Octagon Generator", color = themeColor[2])
+                            Text("Does Not Exist", color = themeColor[2])
                         }
                     }
                 }
@@ -556,14 +558,36 @@ fun App() {
             // Generator Settings
             // TODO: finish this
             AnimatedVisibility(
-                visible = settingsMain,
+                visible = configGenerator,
                 enter = scaleIn(),
                 exit = scaleOut()
             ) {
                 Card(
-                    modifier = Modifier
+                    modifier = Modifier.offset(300.dp, 400.dp).size(300.dp, 100.dp),
+                    backgroundColor = themeColor[5],
+                    elevation = 20.dp
                 ){
-
+                    AnimatedVisibility(
+                        visible = squareGenerator,
+                        enter = slideInHorizontally(
+                            animationSpec = tween(durationMillis = 369)
+                        ) {fullWidth -> -fullWidth*2 },
+                        exit = slideOutHorizontally(
+                            tween(durationMillis = 369)
+                        ) {fullWidth -> fullWidth*2 }
+                    ) {
+                        Row() {
+                            Button(
+                                onClick = {
+                                    // :D
+                                },
+                                modifier = Modifier.offset(25.dp, 0.dp).width(250.dp),
+                                colors = ButtonDefaults.buttonColors(backgroundColor = themeColor[4])
+                            ) {
+                                Text("button?", color = themeColor[2])
+                            }
+                        }
+                    }
                 }
             } // End of the card 2.0
         }
