@@ -18,10 +18,10 @@ fun squareNodeGenerator(rows: Int, columns: Int) : ArrayList<PositionNode> {
     val xSpacing: Int  = loadedImageSize.width / columns
     val ySpacing: Int  = loadedImageSize.height /rows
 
-    for(y in 0 until rows) {
-        for(x in 0 until columns) {
-            nodeList.add(PositionNode((x + 1) * xSpacing, (y + 1) * ySpacing))
-            println("<${(x + 1) * xSpacing}, ${(y + 1) * ySpacing}>")
+    for(y in 0 .. rows) {
+        for(x in 0 .. columns) {
+            nodeList.add(PositionNode(x * xSpacing, y * ySpacing))
+            println("<${x * xSpacing}, ${y * ySpacing}>")
         }
     }
 

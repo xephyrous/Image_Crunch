@@ -24,6 +24,7 @@ import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
 import kotlinx.coroutines.launch
 import utils.*
+import java.awt.Dimension
 import java.io.FileInputStream
 
 @Composable
@@ -537,6 +538,8 @@ fun App() {
 }
 
 fun main() = application {
+    loadedImageSize = Dimension(100, 100);
+    generateNodes(NodeGeneratorType.SQUARE);
     val state = rememberWindowState(
         size = DpSize(1200.dp, 800.dp),
         position = WindowPosition(150.dp, 150.dp)
