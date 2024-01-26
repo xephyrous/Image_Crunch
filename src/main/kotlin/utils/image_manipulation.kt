@@ -16,12 +16,6 @@ import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.runtime.Composable
 import java.awt.Dimension
 
-//Represents an image as a byte mask
-typealias ImageMask = Array<Array<Byte>>
-
-//Represents a single position on an image
-typealias PositionNode = Pair<Int, Int>
-
 //List of node generation functions
 enum class NodeGeneratorType {
     SQUARE,
