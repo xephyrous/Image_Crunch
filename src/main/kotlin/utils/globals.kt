@@ -9,7 +9,11 @@ var selectedImage: File? = null
 var compactExport: Boolean = true
 
 val generatorTypeMap = mapOf("Square Generator" to 0)
-var generatorType: Int = 0 // Temporary storage for gen type, change to whatever idc.
+var generatorType: Int = 0
+
+// Square Gen Settings
+var squareRows: Int = 15
+var squareColumns: Int = 15
 
 // Header, Body, Text, Icons, Buttons, Menus
 val darkThemes = listOf(

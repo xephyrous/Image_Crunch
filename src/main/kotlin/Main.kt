@@ -1,4 +1,5 @@
 import androidx.compose.animation.*
+import androidx.compose.animation.core.animate
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.desktop.ui.tooling.preview.Preview
@@ -13,8 +14,9 @@ import androidx.compose.material.icons.sharp.List
 import androidx.compose.material.icons.sharp.PlayArrow
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.loadImageBitmap
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.DpSize
@@ -28,7 +30,6 @@ import utils.*
 import java.io.FileInputStream
 
 @Suppress("DuplicatedCode")
-@OptIn(ExperimentalAnimationApi::class)
 @Composable
 @Preview
 fun App() {
@@ -41,12 +42,16 @@ fun App() {
     // Testing Stuff
     var caption by remember { mutableStateOf("theres NO PICTURE") }
 
+    // The good shi
     var displayed by remember { mutableStateOf(false) }
 
     var settingsMain by remember { mutableStateOf(true) }
     var selectGenerator by remember { mutableStateOf(false) }
     var selectOutput by remember { mutableStateOf(false) }
-    var configGenerator by remember { mutableStateOf(false) }
+
+    var configGenerator by remember { mutableStateOf(true) }
+    var configMasks by remember { mutableStateOf(true) }
+    var configSlices by remember { mutableStateOf(true) }
 
     var squareGenerator by remember { mutableStateOf(true) }
 
@@ -55,6 +60,10 @@ fun App() {
     var themeSettings by remember { mutableStateOf(false) }
 
     var themeColor by remember { mutableStateOf(darkThemes) }
+
+    var screenWidth by remember { mutableStateOf(1200.dp) }
+    var screenHeight by remember { mutableStateOf(800.dp) }
+    val density = LocalDensity.current
 
     // Card Animations
     var menuCardState by remember { mutableStateOf(false) }
@@ -91,6 +100,15 @@ fun App() {
     val settingsExit by animateDpAsState(
         targetValue = if (settingsMain) (60 + ((settingsLines - 1) * 50)).dp else (65 + (settingsLines * 50)).dp,
         label = "exitSettings"
+    )
+
+    val bottomCardsY by animateDpAsState(
+        targetValue = screenHeight,
+        label = "bottomCardsY"
+    )
+    val bottomCardsX by animateDpAsState(
+        targetValue = screenWidth,
+        label = "bottomCardsX"
     )
 
     AppTheme {
@@ -156,7 +174,16 @@ fun App() {
             },
             floatingActionButton = {
                 ExtendedFloatingActionButton(
-                    onClick = { /* Run the Generator */ },
+                    onClick = {
+                              when (generatorType) {
+                                  0 -> {
+                                      squareNodeGenerator(squareRows, squareColumns)
+                                  }
+                                  else -> {
+                                      println("how...")
+                                  }
+                              }
+                    },
                     text = { Text("Run", color = themeColor[2]) },
                     icon = {
                         Icon(
@@ -164,7 +191,8 @@ fun App() {
                             tint = themeColor[3]
                         )
                     },
-                    backgroundColor = themeColor[4]
+                    backgroundColor = themeColor[4],
+                    modifier = Modifier.offset(0.dp, (-100).dp)
                 )
             },
         ) { innerPadding ->
@@ -172,9 +200,85 @@ fun App() {
                 modifier = Modifier
                     .background(themeColor[1])
                     .fillMaxSize()
+                    .onGloballyPositioned {
+                        screenWidth = with(density) {it.size.width.toDp()}
+                        screenHeight = with(density) {it.size.height.toDp()}
+                    }
             ) {
+                AnimatedVisibility(
+                    visible = configGenerator,
+                    enter = slideInVertically(
+                        animationSpec = tween(durationMillis = 369)
+                    ) { fullHeight -> fullHeight * 2 },
+                    exit = slideOutVertically(
+                        tween(durationMillis = 369)
+                    ) { fullHeight -> fullHeight * 2 }
+                ) {
+                    Card(
+                        modifier = Modifier.offset(0.dp, bottomCardsY-100.dp).size(bottomCardsX/3, 400.dp),
+                        backgroundColor = themeColor[5],
+                        elevation = 5.dp
+                    ) {
+                        AnimatedVisibility(
+                            visible = squareGenerator,
+                            enter = slideInVertically(
+                                animationSpec = tween(durationMillis = 369)
+                            ) { fullHeight -> fullHeight * 2 },
+                            exit = slideOutVertically(
+                                tween(durationMillis = 369)
+                            ) { fullHeight -> fullHeight * 2 }
+                        ) {
+                            Row() {
+                                Button(
+                                    onClick = {
+                                        // :D
+                                    },
+                                    modifier = Modifier.offset(25.dp, 0.dp).width(250.dp),
+                                    colors = ButtonDefaults.buttonColors(backgroundColor = themeColor[4])
+                                ) {
+                                    Text("button?", color = themeColor[2])
+                                }
+                            }
+                        }
+                    }
+                }
+                AnimatedVisibility(
+                    visible = configMasks,
+                    enter = slideInVertically(
+                        animationSpec = tween(durationMillis = 369)
+                    ) { fullHeight -> fullHeight * 2 },
+                    exit = slideOutVertically(
+                        tween(durationMillis = 369)
+                    ) { fullHeight -> fullHeight * 2 }
+                ) {
+                    Card(
+                        modifier = Modifier.offset(bottomCardsX/3, bottomCardsY-100.dp).size(bottomCardsX/3, 400.dp),
+                        backgroundColor = themeColor[5],
+                        elevation = 5.dp
+                    ) {
+
+                    }
+                }
+                AnimatedVisibility(
+                    visible = configSlices,
+                    enter = slideInVertically(
+                        animationSpec = tween(durationMillis = 369)
+                    ) { fullHeight -> fullHeight * 2 },
+                    exit = slideOutVertically(
+                        tween(durationMillis = 369)
+                    ) { fullHeight -> fullHeight * 2 }
+                ) {
+                    Card(
+                        modifier = Modifier.offset((bottomCardsX/3)*2, bottomCardsY-100.dp).size(bottomCardsX/3, 400.dp),
+                        backgroundColor = themeColor[5],
+                        elevation = 5.dp
+                    ) {
+
+                    }
+                }
+
                 Column(
-                    modifier = Modifier.padding(innerPadding),
+                    modifier = Modifier.padding(innerPadding).fillMaxHeight(),
                     verticalArrangement = Arrangement.spacedBy(16.dp),
                 ) {
                     if (displayed) {
@@ -291,11 +395,7 @@ fun App() {
                                 onCheckedChange = {
                                     compactExportToggle = it
                                     compactExport = compactExportToggle
-                                    if (!compactExport) {
-                                        menuLines = 2
-                                    } else {
-                                        menuLines = 1
-                                    }
+                                    menuLines = if (!compactExport) { 2 } else { 1 }
                                 },
                                 modifier = Modifier.offset(50.dp, 0.dp).width(25.dp)
                             )
@@ -561,41 +661,6 @@ fun App() {
                                 colors = ButtonDefaults.buttonColors(backgroundColor = themeColor[4])
                             ) {
                                 Text("Select Output Location", color = themeColor[2])
-                            }
-                        }
-                    }
-                }
-                // Generator Settings
-                // TODO: finish this
-                AnimatedVisibility(
-                    visible = configGenerator,
-                    enter = scaleIn(),
-                    exit = scaleOut()
-                ) {
-                    Card(
-                        modifier = Modifier.offset(300.dp, 400.dp).size(300.dp, 100.dp),
-                        backgroundColor = themeColor[5],
-                        elevation = 20.dp
-                    ) {
-                        AnimatedVisibility(
-                            visible = squareGenerator,
-                            enter = slideInHorizontally(
-                                animationSpec = tween(durationMillis = 369)
-                            ) { fullWidth -> -fullWidth * 2 },
-                            exit = slideOutHorizontally(
-                                tween(durationMillis = 369)
-                            ) { fullWidth -> fullWidth * 2 }
-                        ) {
-                            Row() {
-                                Button(
-                                    onClick = {
-                                        // :D
-                                    },
-                                    modifier = Modifier.offset(25.dp, 0.dp).width(250.dp),
-                                    colors = ButtonDefaults.buttonColors(backgroundColor = themeColor[4])
-                                ) {
-                                    Text("button?", color = themeColor[2])
-                                }
                             }
                         }
                     }
