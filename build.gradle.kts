@@ -3,6 +3,7 @@ import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 plugins {
     kotlin("jvm")
     id("org.jetbrains.compose")
+    id("org.jetbrains.dokka") version "1.4.30"
 }
 
 group = "com.tirana"
@@ -11,6 +12,8 @@ version = "1.0-SNAPSHOT"
 repositories {
     mavenCentral()
     maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
+    maven("https://dl.bintray.com/kotlin/dokka")
+    maven("https://maven.pkg.jetbrains.space/public/p/kotlinx-html/maven")
     google()
 }
 
