@@ -49,9 +49,9 @@ fun App() {
     var selectGenerator by remember { mutableStateOf(false) }
     var selectOutput by remember { mutableStateOf(false) }
 
-    var configGenerator by remember { mutableStateOf(true) }
-    var configMasks by remember { mutableStateOf(true) }
-    var configSlices by remember { mutableStateOf(true) }
+    var configGenerator by remember { mutableStateOf(false) }
+    var configMasks by remember { mutableStateOf(false) }
+    var configSlices by remember { mutableStateOf(false) }
 
     var squareGenerator by remember { mutableStateOf(true) }
 
@@ -205,6 +205,48 @@ fun App() {
                         screenHeight = with(density) {it.size.height.toDp()}
                     }
             ) {
+                // Bottom Bar
+                Card(
+                    modifier = Modifier.offset(0.dp, bottomCardsY-100.dp).size(bottomCardsX/3, 400.dp),
+                    backgroundColor = themeColor[5],
+                    elevation = 5.dp
+                ) {
+                    Row() {
+                        Text(
+                            "Node Generator\nSettings", color = themeColor[2],
+                            modifier = Modifier.fillMaxSize().offset(y = 15.dp),
+                            fontSize = 30.sp, textAlign = TextAlign.Center, fontWeight = FontWeight.SemiBold
+                        )
+                    }
+                }
+                Card(
+                    modifier = Modifier.offset(bottomCardsX/3, bottomCardsY-100.dp).size(bottomCardsX/3, 400.dp),
+                    backgroundColor = themeColor[5],
+                    elevation = 5.dp
+                ) {
+                    Row() {
+                        Text(
+                            "Mask Generator\nSettings", color = themeColor[2],
+                            modifier = Modifier.fillMaxSize().offset(y = 15.dp),
+                            fontSize = 30.sp, textAlign = TextAlign.Center, fontWeight = FontWeight.SemiBold
+                        )
+                    }
+                }
+                Card(
+                    modifier = Modifier.offset((bottomCardsX/3)*2, bottomCardsY-100.dp).size(bottomCardsX/3, 400.dp),
+                    backgroundColor = themeColor[5],
+                    elevation = 5.dp
+                ) {
+                    Row() {
+                        Text(
+                            "Slice Generator\nSettings", color = themeColor[2],
+                            modifier = Modifier.fillMaxSize().offset(y = 15.dp),
+                            fontSize = 30.sp, textAlign = TextAlign.Center, fontWeight = FontWeight.SemiBold
+                        )
+                    }
+                }
+
+                // Bottom Bar Settings
                 AnimatedVisibility(
                     visible = configGenerator,
                     enter = slideInVertically(
@@ -215,7 +257,7 @@ fun App() {
                     ) { fullHeight -> fullHeight * 2 }
                 ) {
                     Card(
-                        modifier = Modifier.offset(0.dp, bottomCardsY-100.dp).size(bottomCardsX/3, 400.dp),
+                        modifier = Modifier.offset(0.dp, bottomCardsY-150.dp).size(bottomCardsX/3, 400.dp),
                         backgroundColor = themeColor[5],
                         elevation = 5.dp
                     ) {
@@ -233,7 +275,7 @@ fun App() {
                                     onClick = {
                                         // :D
                                     },
-                                    modifier = Modifier.offset(25.dp, 0.dp).width(250.dp),
+                                    modifier = Modifier.offset(10.dp, 0.dp).width((bottomCardsX/3)-20.dp),
                                     colors = ButtonDefaults.buttonColors(backgroundColor = themeColor[4])
                                 ) {
                                     Text("button?", color = themeColor[2])
