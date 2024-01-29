@@ -1,6 +1,5 @@
 package utils
 
-import PositionNode
 import androidx.compose.material.*
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.runtime.Composable
@@ -19,9 +18,9 @@ fun squareNodeGenerator(
     val nodeList: ArrayList<PositionNode> = ArrayList()
 
     val xSpacing: Int  = loadedImageSize.width / columns
-    val ySpacing: Int  = loadedImageSize.height /rows
+    val ySpacing: Int  = loadedImageSize.height / rows
 
-    for(y in 0 .. rows) {
+    for(y in 0 until rows) {
         for(x in 0 .. columns) {
             nodeList.add(PositionNode(x * xSpacing, y * ySpacing))
         }
