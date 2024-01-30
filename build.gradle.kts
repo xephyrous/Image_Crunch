@@ -1,8 +1,8 @@
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
-
+// there is no god
 plugins {
-    kotlin("jvm")
-    id("org.jetbrains.compose")
+    kotlin("jvm") version "1.9.20"
+    id("org.jetbrains.compose") version "1.5.11"
     id("org.jetbrains.dokka") version "1.4.30"
 }
 
@@ -10,19 +10,18 @@ group = "com.tirana"
 version = "1.0-SNAPSHOT"
 
 repositories {
+    google()
     mavenCentral()
     maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
     maven("https://dl.bintray.com/kotlin/dokka")
     maven("https://maven.pkg.jetbrains.space/public/p/kotlinx-html/maven")
-    google()
 }
 
 dependencies {
-    // Note, if you develop a library, you should use compose.desktop.common.
-    // compose.desktop.currentOs should be used in launcher-sourceSet
-    // (in a separate module for demo project and in testMain).
-    // With compose.desktop.common you will also lose @Preview functionality
     implementation(compose.desktop.currentOs)
+    implementation(compose.ui)
+    implementation(compose.material)
+    implementation(compose.material3)
 }
 
 compose.desktop {
