@@ -27,6 +27,7 @@ import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
 import utils.*
+import java.awt.Dimension
 import java.io.FileInputStream
 
 @Suppress("DuplicatedCode")
@@ -713,6 +714,10 @@ fun App() {
 }
 
 fun main() = application {
+    loadedImageSize = Dimension(42, 42)
+    val nodes = squareNodeGenerator(6, 5)
+    val cutMask = squareCutGenerator(nodes, 6, 5)
+
     val state = rememberWindowState(
         size = DpSize(1200.dp, 800.dp),
         position = WindowPosition(150.dp, 150.dp)

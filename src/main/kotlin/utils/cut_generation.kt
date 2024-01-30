@@ -1,5 +1,7 @@
 package utils
 
+import kotlin.math.ceil
+
 /**
  *
  */
@@ -9,23 +11,32 @@ fun squareCutGenerator(
     columns: Int
 ) : Mask {
     val cutMask: Mask = Mask(loadedImageSize)
-    val hSpace = (loadedImageSize.width / rows)
-    val vSpace = (loadedImageSize.height / columns)
+    var backStep: Int
 
     for(pos in 0 until nodes.size) {
+        //Step from node to edge/prev. node horizontally
         if(nodes[pos].first != 0) {
-            //Step from node to edge/prev. node
-            for(xPos in nodes[pos].first - hSpace .. nodes[pos].first) {
-                println("[${xPos},${nodes[pos].second}]")
+            backStep =  if (nodes[pos].first == ceil(loadedImageSize.width / columns.toDouble()).toInt())
+                            nodes[pos].first else nodes[pos - 1].first
+
+            for(xPos in (nodes[pos].first - backStep)
+                        .coerceAtLeast(0) .. nodes[pos].first) {
                 cutMask.bits[nodes[pos].second][xPos] = 1
             }
         }
 
+        //Step from node to edge/prev. node vertically
         if(nodes[pos].second != 0) {
-            //Up
+            backStep =  if (nodes[pos].second == ceil(loadedImageSize.height / rows.toDouble()).toInt())
+                nodes[pos].second else nodes[pos - 1].second
+
+            for(yPos in (nodes[pos].second - backStep).coerceAtLeast(0) .. nodes[pos].second) {
+                cutMask.bits[yPos][nodes[pos].first] = 1
+            }
         }
     }
 
+    //DEBUG PRINTING
     var nodePos = 0;
     for(x in 0 until cutMask.bits.size) {
         for(y in 0 until cutMask.bits[0].size) {
