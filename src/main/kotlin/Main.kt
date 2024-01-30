@@ -1,5 +1,4 @@
 import androidx.compose.animation.*
-import androidx.compose.animation.core.animate
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.desktop.ui.tooling.preview.Preview
@@ -35,7 +34,7 @@ import java.io.FileInputStream
 @Preview
 fun App() {
     // Settings
-    var settingsLines by remember { mutableStateOf(2) }
+    var settingsLines by remember { mutableStateOf(3) }
     var genType by remember { mutableStateOf(generatorType) }
     var menuLines by remember { mutableStateOf(2) }
     var compactExportToggle by remember { mutableStateOf(compactExport) }
@@ -54,7 +53,7 @@ fun App() {
     var configMasks by remember { mutableStateOf(false) }
     var configSlices by remember { mutableStateOf(false) }
 
-    var squareGenerator by remember { mutableStateOf(true) }
+    var squareGenerator by remember { mutableStateOf(false) }
 
     var mainMain by remember { mutableStateOf(true) }
     var exportSettings by remember { mutableStateOf(false) }
@@ -180,9 +179,6 @@ fun App() {
                                   0 -> {
                                       squareNodeGenerator(squareRows, squareColumns)
                                   }
-                                  else -> {
-                                      println("how...")
-                                  }
                               }
                     },
                     text = { Text("Run", color = themeColor[2]) },
@@ -272,15 +268,11 @@ fun App() {
                             ) { fullHeight -> fullHeight * 2 }
                         ) {
                             Row() {
-                                Button(
-                                    onClick = {
-                                        // :D
-                                    },
-                                    modifier = Modifier.offset(10.dp, 0.dp).width((bottomCardsX/3)-20.dp),
-                                    colors = ButtonDefaults.buttonColors(backgroundColor = themeColor[4])
-                                ) {
-                                    Text("button?", color = themeColor[2])
-                                }
+                                Text(
+                                    "Number of Rows:", color = themeColor[2],
+                                    modifier = Modifier.fillMaxSize().offset(y= 5.dp),
+                                    fontSize = 40.sp, textAlign = TextAlign.Center, fontWeight = FontWeight.Normal
+                                )
                             }
                         }
                     }
@@ -295,7 +287,7 @@ fun App() {
                     ) { fullHeight -> fullHeight * 2 }
                 ) {
                     Card(
-                        modifier = Modifier.offset(bottomCardsX/3, bottomCardsY-100.dp).size(bottomCardsX/3, 400.dp),
+                        modifier = Modifier.offset(bottomCardsX/3, bottomCardsY-150.dp).size(bottomCardsX/3, 400.dp),
                         backgroundColor = themeColor[5],
                         elevation = 5.dp
                     ) {
@@ -312,11 +304,17 @@ fun App() {
                     ) { fullHeight -> fullHeight * 2 }
                 ) {
                     Card(
-                        modifier = Modifier.offset((bottomCardsX/3)*2, bottomCardsY-100.dp).size(bottomCardsX/3, 400.dp),
+                        modifier = Modifier.offset((bottomCardsX/3)*2, bottomCardsY-150.dp).size(bottomCardsX/3, 400.dp),
                         backgroundColor = themeColor[5],
                         elevation = 5.dp
                     ) {
-
+                        Row() {
+                            Text(
+                                "filla text", color = themeColor[2],
+                                modifier = Modifier.fillMaxSize().offset(y= 5.dp),
+                                fontSize = 40.sp, textAlign = TextAlign.Center, fontWeight = FontWeight.Normal
+                            )
+                        }
                     }
                 }
 
@@ -561,10 +559,9 @@ fun App() {
                         Button(
                             onClick = {
                                 selectGenerator = false
-                                configGenerator = false
                                 selectOutput = false
                                 settingsMain = true
-                                settingsLines = 2
+                                settingsLines = 3
                             },
                             modifier = Modifier.offset(25.dp, 0.dp).width(250.dp),
                             colors = ButtonDefaults.buttonColors(backgroundColor = themeColor[4])
@@ -595,6 +592,7 @@ fun App() {
                             Button(
                                 onClick = {
                                     settingsMain = false
+                                    configGenerator = true
                                     selectGenerator = true
                                     settingsLines = 4
                                 },
@@ -606,6 +604,19 @@ fun App() {
                         }
                         Row(
                             modifier = Modifier.offset(0.dp, 50.dp)
+                        ) {
+                            Button(
+                                onClick = {
+                                    configSlices = true
+                                },
+                                modifier = Modifier.offset(25.dp, 0.dp).width(250.dp),
+                                colors = ButtonDefaults.buttonColors(backgroundColor = themeColor[4])
+                            ) {
+                                Text("Select Cut Type", color = themeColor[2])
+                            }
+                        }
+                        Row(
+                            modifier = Modifier.offset(0.dp, 100.dp)
                         ) {
                             Button(
                                 onClick = {
@@ -636,7 +647,6 @@ fun App() {
                                 onClick = {
                                     genType = 0
                                     generatorType = 0
-                                    configGenerator = true
                                     squareGenerator = true
                                 },
                                 modifier = Modifier.offset(25.dp, 0.dp).width(250.dp),
