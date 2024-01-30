@@ -5,6 +5,7 @@ import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.sharp.Add
@@ -17,6 +18,7 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.loadImageBitmap
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
@@ -40,7 +42,7 @@ fun App() {
     var compactExportToggle by remember { mutableStateOf(compactExport) }
 
     // Testing Stuff
-    var caption by remember { mutableStateOf("theres NO PICTURE") }
+    var caption by remember { mutableStateOf(squareRows.toString()) }
 
     // The good shi
     var displayed by remember { mutableStateOf(false) }
@@ -64,6 +66,12 @@ fun App() {
     var screenWidth by remember { mutableStateOf(1200.dp) }
     var screenHeight by remember { mutableStateOf(800.dp) }
     val density = LocalDensity.current
+
+    // Configuration Settings
+    val numbersOnly = remember { Regex("^\\d+\$") }
+
+    var genTypeA by remember { mutableStateOf("") }
+    var genTypeB by remember { mutableStateOf("") }
 
     // Card Animations
     var menuCardState by remember { mutableStateOf(false) }
@@ -254,7 +262,7 @@ fun App() {
                     ) { fullHeight -> fullHeight * 2 }
                 ) {
                     Card(
-                        modifier = Modifier.offset(0.dp, bottomCardsY-150.dp).size(bottomCardsX/3, 400.dp),
+                        modifier = Modifier.offset(0.dp, bottomCardsY-220.dp).size(bottomCardsX/3, 500.dp),
                         backgroundColor = themeColor[5],
                         elevation = 5.dp
                     ) {
@@ -272,6 +280,47 @@ fun App() {
                                     "Number of Rows:", color = themeColor[2],
                                     modifier = Modifier.fillMaxSize().offset(y= 5.dp),
                                     fontSize = 40.sp, textAlign = TextAlign.Center, fontWeight = FontWeight.Normal
+                                )
+                            }
+                            Row(
+                                modifier = Modifier.offset(y = 50.dp)
+                            ) {
+                                TextField(
+                                    value = genTypeA,
+                                    onValueChange = {
+                                        if(it.matches(numbersOnly) || it.isEmpty()) {
+                                            genTypeA = it
+                                            if(genTypeA.isNotEmpty()) squareRows = genTypeA.toInt()
+                                        }
+                                    },
+                                    modifier = Modifier.size((screenWidth/3)-10.dp, 50.dp).offset(5.dp, 5.dp),
+                                    readOnly = false,
+                                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                                )
+                            }
+                            Row(
+                                modifier = Modifier.offset(y = 110.dp)
+                            ) {
+                                Text(
+                                    "Number of Columns:", color = themeColor[2],
+                                    modifier = Modifier.fillMaxSize().offset(y= 5.dp),
+                                    fontSize = 40.sp, textAlign = TextAlign.Center, fontWeight = FontWeight.Normal
+                                )
+                            }
+                            Row(
+                                modifier = Modifier.offset(y = 160.dp)
+                            ) {
+                                TextField(
+                                    value = genTypeB,
+                                    onValueChange = {
+                                        if(it.matches(numbersOnly) || it.isEmpty()) {
+                                            genTypeB = it
+                                            if(genTypeB.isNotEmpty()) squareColumns = genTypeA.toInt()
+                                        }
+                                    },
+                                    modifier = Modifier.size((screenWidth/3)-10.dp, 50.dp).offset(5.dp, 5.dp),
+                                    readOnly = false,
+                                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                                 )
                             }
                         }
@@ -647,6 +696,8 @@ fun App() {
                                 onClick = {
                                     genType = 0
                                     generatorType = 0
+                                    genTypeA = "15"
+                                    genTypeB = "15"
                                     squareGenerator = true
                                 },
                                 modifier = Modifier.offset(25.dp, 0.dp).width(250.dp),
