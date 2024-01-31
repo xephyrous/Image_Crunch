@@ -11,7 +11,13 @@ fun squareMaskGenerator(
     val masks: ArrayList<Mask> = ArrayList();
 
     for(pos in 0 until nodes.size) {
-        if(nodes[pos])
+        //Iterate through node positions
+        for(y in 0..nodes[pos].second) {
+            for(x in 0..nodes[pos].first) {
+
+            }
+        }
+
     }
 
     return masks;
