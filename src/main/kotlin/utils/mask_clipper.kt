@@ -14,18 +14,17 @@ import javax.imageio.ImageIO
  *
  * @param [input] The given image to be cut.
  * @param [mask] The mask to be applied to the given image.
- * @param [startCoords] The Coordinates to place the mask at | Given as y, x
  * @param [name] Output file name.
  */
-fun maskToImage(input: BufferedImage, mask: Array<Array<Int>>, startCoords: Array<Int>, name: String) {
+fun maskToImage(input: BufferedImage, mask: Mask, name: String) {
     // Create Output
-    val size = Dimension(mask[1].size, mask.size)
+    val size = Dimension(mask.bits[1].size, mask.bits.size)
     val img = BufferedImage(size.width, size.height, BufferedImage.TYPE_INT_ARGB)
 
     for (x in 0 until size.width) {
         for (y in 0 until size.height) {
-            if (mask[y][x] == 1) {
-                img.setRGB(x, y, input.getRGB(x+startCoords[0], y+startCoords[0]))
+            if (mask.bits[y][x] == 1.toByte()) {
+                img.setRGB(x, y, input.getRGB(x+mask.position.first, y+mask.position.second))
             }
         }
     }
