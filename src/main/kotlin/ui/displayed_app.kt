@@ -73,48 +73,16 @@ fun App() {
     // Card Animations
     var menuCardState by remember { mutableStateOf(false) }
     var settingsCardState by remember { mutableStateOf(false) }
-    val menuOffset by animateDpAsState(
-        targetValue = (if (menuCardState) (if (!settingsCardState) 10 else 320) else (-310)).dp,
-        label = "menuOffset"
-    )
-    val menuSize by animateDpAsState(
-        targetValue = (menuLines * 50).dp,
-        label = "menuSize"
-    )
-    val menuTitle by animateDpAsState(
-        targetValue = if (menuCardState) 5.dp else 60.dp,
-        label = "menuTitle"
-    )
-    val menuExit by animateDpAsState(
-        targetValue = if (mainMain) (60 + ((menuLines - 1) * 50)).dp else (65 + (menuLines * 50)).dp,
-        label = "exitMain"
-    )
-
-    val settingsOffset by animateDpAsState(
-        targetValue = (if (settingsCardState) 10 else (-310)).dp,
-        label = "settingsOffset"
-    )
-    val settingsSize by animateDpAsState(
-        targetValue = (settingsLines * 50).dp,
-        label = "settingsSize"
-    )
-    val settingsTitle by animateDpAsState(
-        targetValue = if (settingsCardState) 5.dp else 60.dp,
-        label = "settingsTitle"
-    )
-    val settingsExit by animateDpAsState(
-        targetValue = if (settingsMain) (60 + ((settingsLines - 1) * 50)).dp else (65 + (settingsLines * 50)).dp,
-        label = "exitSettings"
-    )
-
-    val bottomCardsY by animateDpAsState(
-        targetValue = screenHeight,
-        label = "bottomCardsY"
-    )
-    val bottomCardsX by animateDpAsState(
-        targetValue = screenWidth,
-        label = "bottomCardsX"
-    )
+    val menuOffset by animateDpAsState(targetValue = (if (menuCardState) (if (!settingsCardState) 10 else 320) else (-310)).dp)
+    val menuSize by animateDpAsState(targetValue = (menuLines * 50).dp)
+    val menuTitle by animateDpAsState(targetValue = if (menuCardState) 5.dp else 60.dp)
+    val menuExit by animateDpAsState(targetValue = if (mainMain) (60 + ((menuLines - 1) * 50)).dp else (65 + (menuLines * 50)).dp)
+    val settingsOffset by animateDpAsState(targetValue = (if (settingsCardState) 10 else (-310)).dp)
+    val settingsSize by animateDpAsState(targetValue = (settingsLines * 50).dp)
+    val settingsTitle by animateDpAsState(targetValue = if (settingsCardState) 5.dp else 60.dp)
+    val settingsExit by animateDpAsState(targetValue = if (settingsMain) (60 + ((settingsLines - 1) * 50)).dp else (65 + (settingsLines * 50)).dp)
+    val bottomCardsY by animateDpAsState(targetValue = screenHeight)
+    val bottomCardsX by animateDpAsState(targetValue = screenWidth)
 
     AppTheme {
         Scaffold(
@@ -208,130 +176,135 @@ fun App() {
                     }
             ) {
                 // Bottom Bar
-                Card(
-                    modifier = Modifier.offset(0.dp, bottomCardsY-100.dp).size(bottomCardsX/3, 400.dp),
-                    backgroundColor = themeColor[5],
-                    elevation = 5.dp
-                ) {
-                    textRow(
-                        rowOffset = 0.dp, displayedText = "Node Generator\nSettings", textOffset = 15.dp,
-                        fontSize = 30.sp, font = FontWeight.SemiBold, themeColor = themeColor, textColor = 2
-                    )
-                }
-                Card(
-                    modifier = Modifier.offset(bottomCardsX/3, bottomCardsY-100.dp).size(bottomCardsX/3, 400.dp),
-                    backgroundColor = themeColor[5],
-                    elevation = 5.dp
-                ) {
-                    textRow(
-                        rowOffset = 0.dp, displayedText = "Mask Generator\nSettings", textOffset = 15.dp,
-                        fontSize = 30.sp, font = FontWeight.SemiBold, themeColor = themeColor, textColor = 2
-                    )
-                }
-                Card(
-                    modifier = Modifier.offset((bottomCardsX/3)*2, bottomCardsY-100.dp).size(bottomCardsX/3, 400.dp),
-                    backgroundColor = themeColor[5],
-                    elevation = 5.dp
-                ) {
-                    textRow(
-                        rowOffset = 0.dp, displayedText = "Slice Generator\nSettings", textOffset = 15.dp,
-                        fontSize = 30.sp, font = FontWeight.SemiBold, themeColor = themeColor, textColor = 2
-                    )
-                }
+                createCard(
+                    xOffset = 0.dp, yOffset = bottomCardsY-100.dp,
+                    width = bottomCardsX/3, height = 400.dp, elevation = 5.dp,
+                    themeColor = themeColor, cardColor = 5,
+                    cardContent = {
+                        textRow(
+                            rowOffset = 0.dp, displayedText = "Node Generator\nSettings", textOffset = 15.dp,
+                            fontSize = 30.sp, font = FontWeight.SemiBold, themeColor = themeColor, textColor = 2
+                        )
+                    }
+                )
+
+                createCard(
+                    xOffset = bottomCardsX/3, yOffset = bottomCardsY-100.dp,
+                    width = bottomCardsX/3, height = 400.dp, elevation = 5.dp,
+                    themeColor = themeColor, cardColor = 5,
+                    cardContent = {
+                        textRow(
+                            rowOffset = 0.dp, displayedText = "Mask Generator\nSettings", textOffset = 15.dp,
+                            fontSize = 30.sp, font = FontWeight.SemiBold, themeColor = themeColor, textColor = 2
+                        )
+                    }
+                )
+
+                createCard(
+                    xOffset = (bottomCardsX/3)*2, yOffset = bottomCardsY-100.dp,
+                    width = bottomCardsX/3, height = 400.dp, elevation = 5.dp,
+                    themeColor = themeColor, cardColor = 5,
+                    cardContent = {
+                        textRow(
+                            rowOffset = 0.dp, displayedText = "Slice Generator\nSettings", textOffset = 15.dp,
+                            fontSize = 30.sp, font = FontWeight.SemiBold, themeColor = themeColor, textColor = 2
+                        )
+                    }
+                )
 
                 // Bottom Bar Settings
                 verticalVisibilityPane(
                     visibility = configGenerator, animationHeight = 2, duration = 369, paneContent = {
-                        Card(
-                            modifier = Modifier.offset(0.dp, bottomCardsY-220.dp).size(bottomCardsX/3, 500.dp),
-                            backgroundColor = themeColor[5],
-                            elevation = 5.dp
-                        ) {
-                            AnimatedVisibility(
-                                visible = squareGenerator,
-                                enter = slideInVertically(
-                                    animationSpec = tween(durationMillis = 369)
-                                ) { fullHeight -> fullHeight * 2 },
-                                exit = slideOutVertically(
-                                    tween(durationMillis = 369)
-                                ) { fullHeight -> fullHeight * 2 }
-                            ) {
-                                Row() {
-                                    Text(
-                                        "Number of Rows:", color = themeColor[2],
-                                        modifier = Modifier.fillMaxSize().offset(y= 5.dp),
-                                        fontSize = 40.sp, textAlign = TextAlign.Center, fontWeight = FontWeight.Normal
-                                    )
-                                }
-                                Row(
-                                    modifier = Modifier.offset(y = 50.dp)
+                        createCard(
+                            xOffset = 0.dp, yOffset = bottomCardsY-220.dp,
+                            width = bottomCardsX/3, height = 500.dp, elevation = 5.dp,
+                            themeColor = themeColor, cardColor = 5,
+                            cardContent = {
+                                AnimatedVisibility(
+                                    visible = squareGenerator,
+                                    enter = slideInVertically(
+                                        animationSpec = tween(durationMillis = 369)
+                                    ) { fullHeight -> fullHeight * 2 },
+                                    exit = slideOutVertically(
+                                        tween(durationMillis = 369)
+                                    ) { fullHeight -> fullHeight * 2 }
                                 ) {
-                                    TextField(
-                                        value = genTypeA,
-                                        onValueChange = {
-                                            if(it.length < 10 && (it.matches(numbersOnly) || it.isEmpty())) {
-                                                genTypeA = it
-                                                if(genTypeA.isNotEmpty()) squareRows = genTypeA.toInt()
-                                            }
-                                        },
-                                        modifier = Modifier.size((screenWidth/3)-10.dp, 50.dp).offset(5.dp, 5.dp),
-                                        readOnly = false,
-                                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                                    )
-                                }
-                                Row(
-                                    modifier = Modifier.offset(y = 110.dp)
-                                ) {
-                                    Text(
-                                        "Number of Columns:", color = themeColor[2],
-                                        modifier = Modifier.fillMaxSize().offset(y= 5.dp),
-                                        fontSize = 40.sp, textAlign = TextAlign.Center, fontWeight = FontWeight.Normal
-                                    )
-                                }
-                                Row(
-                                    modifier = Modifier.offset(y = 160.dp)
-                                ) {
-                                    TextField(
-                                        value = genTypeB,
-                                        onValueChange = {
-                                            if(it.length < 10 && (it.matches(numbersOnly) || it.isEmpty())) {
-                                                genTypeB = it
-                                                if(genTypeB.isNotEmpty()) squareColumns = genTypeA.toInt()
-                                            }
-                                        },
-                                        modifier = Modifier.size((screenWidth/3)-10.dp, 50.dp).offset(5.dp, 5.dp),
-                                        readOnly = false,
-                                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                                    )
+                                    Row() {
+                                        Text(
+                                            "Number of Rows:", color = themeColor[2],
+                                            modifier = Modifier.fillMaxSize().offset(y= 5.dp),
+                                            fontSize = 40.sp, textAlign = TextAlign.Center, fontWeight = FontWeight.Normal
+                                        )
+                                    }
+                                    Row(
+                                        modifier = Modifier.offset(y = 50.dp)
+                                    ) {
+                                        TextField(
+                                            value = genTypeA,
+                                            onValueChange = {
+                                                if(it.length < 10 && (it.matches(numbersOnly) || it.isEmpty())) {
+                                                    genTypeA = it
+                                                    if(genTypeA.isNotEmpty()) squareRows = genTypeA.toInt()
+                                                }
+                                            },
+                                            modifier = Modifier.size((screenWidth/3)-10.dp, 50.dp).offset(5.dp, 5.dp),
+                                            readOnly = false,
+                                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                                        )
+                                    }
+                                    Row(
+                                        modifier = Modifier.offset(y = 110.dp)
+                                    ) {
+                                        Text(
+                                            "Number of Columns:", color = themeColor[2],
+                                            modifier = Modifier.fillMaxSize().offset(y= 5.dp),
+                                            fontSize = 40.sp, textAlign = TextAlign.Center, fontWeight = FontWeight.Normal
+                                        )
+                                    }
+                                    Row(
+                                        modifier = Modifier.offset(y = 160.dp)
+                                    ) {
+                                        TextField(
+                                            value = genTypeB,
+                                            onValueChange = {
+                                                if(it.length < 10 && (it.matches(numbersOnly) || it.isEmpty())) {
+                                                    genTypeB = it
+                                                    if(genTypeB.isNotEmpty()) squareColumns = genTypeA.toInt()
+                                                }
+                                            },
+                                            modifier = Modifier.size((screenWidth/3)-10.dp, 50.dp).offset(5.dp, 5.dp),
+                                            readOnly = false,
+                                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                                        )
+                                    }
                                 }
                             }
-                        }
+                        )
                     }
                 )
                 verticalVisibilityPane(
                     visibility = configMasks, animationHeight = 2, duration = 369, paneContent = {
-                        Card(
-                            modifier = Modifier.offset(bottomCardsX/3, bottomCardsY-150.dp).size(bottomCardsX/3, 400.dp),
-                            backgroundColor = themeColor[5],
-                            elevation = 5.dp
-                        ) {
-
-                        }
+                        createCard(
+                            xOffset = bottomCardsX/3, yOffset = bottomCardsY-150.dp,
+                            width = bottomCardsX/3, height = 400.dp, elevation = 5.dp,
+                            themeColor = themeColor, cardColor = 5,
+                            cardContent = {}
+                        )
                     }
                 )
-
                 verticalVisibilityPane(
                     visibility = configSlices, animationHeight = 2, duration = 369, paneContent = {
-                        Card(
-                            modifier = Modifier.offset((bottomCardsX/3)*2, bottomCardsY-150.dp).size(bottomCardsX/3, 400.dp),
-                            backgroundColor = themeColor[5],
-                            elevation = 5.dp
-                        ) {
-                            textRow(
-                                rowOffset = 0.dp, displayedText = "Filla Text", textOffset = 5.dp,
-                                fontSize = 40.sp, font = FontWeight.Normal, themeColor = themeColor, textColor = 2
-                            )
-                        }
+                        createCard(
+                            xOffset = (bottomCardsX/3)*2, yOffset = bottomCardsY-150.dp,
+                            width = bottomCardsX/3, height = 400.dp, elevation = 5.dp,
+                            themeColor = themeColor, cardColor = 5,
+                            cardContent = {
+                                textRow(
+                                    rowOffset = 0.dp, displayedText = "Filla Text", textOffset = 5.dp,
+                                    fontSize = 40.sp, font = FontWeight.Normal, themeColor = themeColor, textColor = 2
+                                )
+                            }
+                        )
                     }
                 )
 
@@ -348,270 +321,227 @@ fun App() {
                     Text(caption, color = themeColor[2])
                 }
 
-                // Title Card
-                Card(
-                    modifier = Modifier
-                        .width(300.dp)
-                        .height(50.dp)
-                        .offset(menuOffset, menuTitle),
-                    backgroundColor = themeColor[5],
-                    elevation = 20.dp
-                ) {
-                    textRow(
-                        rowOffset = 0.dp, displayedText = "Main Menu", textOffset = 10.dp,
-                        fontSize = 30.sp, font = FontWeight.Normal,
-                        themeColor = themeColor, textColor = 2
-                    )
-                }
-                Card(
-                    modifier = Modifier
-                        .width(300.dp)
-                        .height(50.dp)
-                        .offset(menuOffset, menuExit),
-                    backgroundColor = themeColor[5],
-                    elevation = 20.dp
-                ) {
-                    buttonRow(
-                        rowOffset = 0.dp, buttonOffset = 25.dp, width = 250.dp,
-                        buttonEvent = {
-                            exportSettings = false
-                            themeSettings = false
-                            mainMain = true
-                            menuLines = 2
-                        },
-                        buttonText = "Return to main", themeColor = themeColor
-                    )
-                }
-                // Main Menu Card
-                Card(
-                    modifier = Modifier
-                        .width(300.dp)
-                        .height(menuSize)
-                        .offset(menuOffset, 60.dp),
-                    backgroundColor = themeColor[5],
-                    elevation = 20.dp
-                ) {
-                    // Main Menu
-                    horizontalVisibilityPane(
-                        visibility = mainMain, animationWidth = -2, duration = 369, paneContent = {
-                            buttonRow(
-                                rowOffset = 0.dp, buttonOffset = 25.dp, width = 250.dp,
-                                buttonEvent = {
-                                    mainMain = false
-                                    exportSettings = true
-                                    menuLines = if (compactExportToggle) (1) else (2)
-                                },
-                                buttonText = "Export Settings", themeColor = themeColor
-                            )
-                            buttonRow(
-                                rowOffset = 50.dp, buttonOffset = 25.dp, width = 250.dp,
-                                buttonEvent = {
-                                    mainMain = false
-                                    themeSettings = true
-                                    menuLines = 4
-                                },
-                                buttonText = "Select Theme", themeColor = themeColor
-                            )
-                        }
-                    )
-
-                    // Export Settings
-                    horizontalVisibilityPane(
-                        visibility = exportSettings, animationWidth = 2, duration = 369, paneContent = {
-                            Row() {
-                                Switch(
-                                    checked = compactExportToggle,
-                                    onCheckedChange = {
-                                        compactExportToggle = it
-                                        compactExport = compactExportToggle
-                                        menuLines = if (!compactExport) { 2 } else { 1 }
+                // Main Menu
+                createMenu(
+                    menuOffset = menuOffset, titleOffset = menuTitle, mainOffset = 60.dp, returnOffset = menuExit,
+                    menuWidth = 300.dp, mainHeight = menuSize, elevation = 20.dp,
+                    menuTitle = "Main Menu", returnTitle = "Return to main",
+                    themeColor = themeColor, cardColor = 5, buttonColor = 4, titleColor = 2, textColor = 2,
+                    exitOperation = {
+                        exportSettings = false
+                        themeSettings = false
+                        mainMain = true
+                        menuLines = 2
+                    },
+                    menuPages = {
+                        // Main Menu
+                        horizontalVisibilityPane(
+                            visibility = mainMain, animationWidth = -2, duration = 369, paneContent = {
+                                buttonRow(
+                                    rowOffset = 0.dp, buttonOffset = 25.dp, width = 250.dp,
+                                    buttonEvent = {
+                                        mainMain = false
+                                        exportSettings = true
+                                        menuLines = if (compactExportToggle) (1) else (2)
                                     },
-                                    modifier = Modifier.offset(50.dp, 0.dp).width(25.dp)
+                                    buttonText = "Export Settings", themeColor = themeColor,
+                                    buttonColor = 4, textColor = 2
                                 )
-                                Button(
-                                    onClick = {
-                                        if (compactExport) {
-                                            settingsToString()
-                                        } else {
-                                            settingsToCSV()
-                                        }
+                                buttonRow(
+                                    rowOffset = 50.dp, buttonOffset = 25.dp, width = 250.dp,
+                                    buttonEvent = {
+                                        mainMain = false
+                                        themeSettings = true
+                                        menuLines = 4
                                     },
-                                    modifier = Modifier.offset(75.dp, 0.dp).width(150.dp),
-                                    colors = ButtonDefaults.buttonColors(backgroundColor = themeColor[4])
-                                ) {
-                                    Text("Button?", color = themeColor[2])
+                                    buttonText = "Select Theme", themeColor = themeColor,
+                                    buttonColor = 4, textColor = 2
+                                )
+                            }
+                        )
+
+                        // Export Settings
+                        horizontalVisibilityPane(
+                            visibility = exportSettings, animationWidth = 2, duration = 369, paneContent = {
+                                Row() {
+                                    Switch(
+                                        checked = compactExportToggle,
+                                        onCheckedChange = {
+                                            compactExportToggle = it
+                                            compactExport = compactExportToggle
+                                            menuLines = if (!compactExport) { 2 } else { 1 }
+                                        },
+                                        modifier = Modifier.offset(50.dp, 0.dp).width(25.dp)
+                                    )
+                                    Button(
+                                        onClick = {
+                                            if (compactExport) {
+                                                settingsToString()
+                                            } else {
+                                                settingsToCSV()
+                                            }
+                                        },
+                                        modifier = Modifier.offset(75.dp, 0.dp).width(150.dp),
+                                        colors = ButtonDefaults.buttonColors(backgroundColor = themeColor[4])
+                                    ) {
+                                        Text("Button?", color = themeColor[2])
+                                    }
+                                }
+                                if (!compactExportToggle) {
+                                    Row(
+                                        modifier = Modifier
+                                            .offset(0.dp, 50.dp)
+                                    ) {
+                                        Text("Select Output Here", color = themeColor[2])
+                                    }
                                 }
                             }
-                            if (!compactExportToggle) {
-                                Row(
-                                    modifier = Modifier
-                                        .offset(0.dp, 50.dp)
-                                ) {
-                                    Text("Select Output Here", color = themeColor[2])
-                                }
+                        )
+
+                        // Theme Selection
+                        horizontalVisibilityPane(
+                            visibility = themeSettings, animationWidth = 2, duration = 369, paneContent = {
+                                buttonRow(
+                                    rowOffset = 0.dp, buttonOffset = 25.dp, width = 250.dp,
+                                    buttonEvent = {
+                                        themeColor = darkThemes
+                                    },
+                                    buttonText = "Theme: Dark", themeColor = themeColor,
+                                    buttonColor = 4, textColor = 2
+                                )
+                                buttonRow(
+                                    rowOffset = 50.dp, buttonOffset = 25.dp, width = 250.dp,
+                                    buttonEvent = {
+                                        themeColor = lightThemes
+                                    },
+                                    buttonText = "Theme: Light", themeColor = themeColor,
+                                    buttonColor = 4, textColor = 2
+                                )
+                                buttonRow(
+                                    rowOffset = 100.dp, buttonOffset = 25.dp, width = 250.dp,
+                                    buttonEvent = {
+                                        themeColor = celesteThemes
+                                    },
+                                    buttonText = "Theme: Celeste", themeColor = themeColor,
+                                    buttonColor = 4, textColor = 2
+                                )
+                                buttonRow(
+                                    rowOffset = 150.dp, buttonOffset = 25.dp, width = 250.dp,
+                                    buttonEvent = {
+                                        themeColor = aqueousThemes
+                                    },
+                                    buttonText = "Theme: Aqueous", themeColor = themeColor,
+                                    buttonColor = 4, textColor = 2
+                                )
                             }
-                        }
-                    )
+                        )
+                    }
+                )
 
-                    // Theme Selection
-                    horizontalVisibilityPane(
-                        visibility = themeSettings, animationWidth = 2, duration = 369, paneContent = {
-                            buttonRow(
-                                rowOffset = 0.dp, buttonOffset = 25.dp, width = 250.dp,
-                                buttonEvent = {
-                                    themeColor = darkThemes
-                                },
-                                buttonText = "Theme: Dark", themeColor = themeColor
-                            )
-                            buttonRow(
-                                rowOffset = 50.dp, buttonOffset = 25.dp, width = 250.dp,
-                                buttonEvent = {
-                                    themeColor = lightThemes
-                                },
-                                buttonText = "Theme: Light", themeColor = themeColor
-                            )
-                            buttonRow(
-                                rowOffset = 100.dp, buttonOffset = 25.dp, width = 250.dp,
-                                buttonEvent = {
-                                    themeColor = celesteThemes
-                                },
-                                buttonText = "Theme: Celeste", themeColor = themeColor
-                            )
-                            buttonRow(
-                                rowOffset = 150.dp, buttonOffset = 25.dp, width = 250.dp,
-                                buttonEvent = {
-                                    themeColor = aqueousThemes
-                                },
-                                buttonText = "Theme: Aqueous", themeColor = themeColor
-                            )
-                        }
-                    )
-                }// End of the card
+                // Settings Menu
+                createMenu(
+                    menuOffset = settingsOffset, titleOffset = settingsTitle, mainOffset = 60.dp, returnOffset = settingsExit,
+                    menuWidth = 300.dp, mainHeight = settingsSize, elevation = 20.dp,
+                    menuTitle = "Generation Settings", returnTitle = "Return to main",
+                    themeColor = themeColor, cardColor = 5, buttonColor = 4, titleColor = 2, textColor = 2,
+                    exitOperation = {
+                        selectGenerator = false
+                        selectOutput = false
+                        settingsMain = true
+                        settingsLines = 3
+                    },
+                    menuPages = {
+                        horizontalVisibilityPane(
+                            visibility = settingsMain, animationWidth = -2, duration = 369, paneContent = {
+                                buttonRow(
+                                    rowOffset = 0.dp, buttonOffset = 25.dp, width = 250.dp,
+                                    buttonEvent = {
+                                        settingsMain = false
+                                        configGenerator = true
+                                        selectGenerator = true
+                                        settingsLines = 4
+                                    },
+                                    buttonText = "Select Generator", themeColor = themeColor,
+                                    buttonColor = 4, textColor = 2
+                                )
+                                buttonRow(
+                                    rowOffset = 50.dp, buttonOffset = 25.dp, width = 250.dp,
+                                    buttonEvent = {
+                                        configSlices = true
+                                    },
+                                    buttonText = "Select Cut Type", themeColor = themeColor,
+                                    buttonColor = 4, textColor = 2
+                                )
+                                buttonRow(
+                                    rowOffset = 100.dp, buttonOffset = 25.dp, width = 250.dp,
+                                    buttonEvent = {
+                                        settingsMain = false
+                                        selectOutput = true
+                                        settingsLines = 1
+                                    },
+                                    buttonText = "Select Output", themeColor = themeColor,
+                                    buttonColor = 4, textColor = 2
+                                )
+                            }
+                        )
 
-                Card(
-                    modifier = Modifier
-                        .width(300.dp)
-                        .height(50.dp)
-                        .offset(settingsOffset, settingsTitle),
-                    backgroundColor = themeColor[5],
-                    elevation = 20.dp
-                ) {
-                    textRow(
-                        rowOffset = 0.dp, displayedText = "Generation Settings", textOffset = 10.dp,
-                        fontSize = 30.sp, font = FontWeight.Normal,
-                        themeColor = themeColor, textColor = 2
-                    )
-                }
-                Card(
-                    modifier = Modifier
-                        .width(300.dp)
-                        .height(50.dp)
-                        .offset(settingsOffset, settingsExit),
-                    backgroundColor = themeColor[5],
-                    elevation = 20.dp
-                ) {
-                    buttonRow(
-                        rowOffset = 0.dp, buttonOffset = 25.dp, width = 250.dp,
-                        buttonEvent = {
-                            selectGenerator = false
-                            selectOutput = false
-                            settingsMain = true
-                            settingsLines = 3
-                        },
-                        buttonText = "Return to main", themeColor = themeColor
-                    )
-                }
-                Card(
-                    modifier = Modifier
-                        .size(300.dp, settingsSize)
-                        .offset(settingsOffset, 60.dp),
-                    elevation = 20.dp,
-                    backgroundColor = themeColor[5]
-                ) {
+                        // Generator Type Selection
+                        horizontalVisibilityPane(
+                            visibility = selectGenerator, animationWidth = 2, duration = 369, paneContent = {
+                                buttonRow(
+                                    rowOffset = 0.dp, buttonOffset = 25.dp, width = 250.dp,
+                                    buttonEvent = {
+                                        genType = 0
+                                        generatorType = 0
+                                        genTypeA = "15"
+                                        genTypeB = "15"
+                                        squareGenerator = true
+                                    },
+                                    buttonText = "Square Generator", themeColor = themeColor,
+                                    buttonColor = 4, textColor = 2
+                                )
+                                buttonRow(
+                                    rowOffset = 50.dp, buttonOffset = 25.dp, width = 250.dp,
+                                    buttonEvent = {
 
-                    // settings main menu
-                    horizontalVisibilityPane(
-                        visibility = settingsMain, animationWidth = -2, duration = 369, paneContent = {
-                            buttonRow(
-                                rowOffset = 0.dp, buttonOffset = 25.dp, width = 250.dp,
-                                buttonEvent = {
-                                    settingsMain = false
-                                    configGenerator = true
-                                    selectGenerator = true
-                                    settingsLines = 4
-                                },
-                                buttonText = "Select Generator", themeColor = themeColor
-                            )
-                            buttonRow(
-                                rowOffset = 50.dp, buttonOffset = 25.dp, width = 250.dp,
-                                buttonEvent = {
-                                    configSlices = true
-                                },
-                                buttonText = "Select Cut Type", themeColor = themeColor
-                            )
-                            buttonRow(
-                                rowOffset = 100.dp, buttonOffset = 25.dp, width = 250.dp,
-                                buttonEvent = {
-                                    settingsMain = false
-                                    selectOutput = true
-                                    settingsLines = 1
-                                },
-                                buttonText = "Select Output", themeColor = themeColor
-                            )
-                        }
-                    )
+                                    },
+                                    buttonText = "Does Not Exist", themeColor = themeColor,
+                                    buttonColor = 4, textColor = 2
+                                )
+                                buttonRow(
+                                    rowOffset = 100.dp, buttonOffset = 25.dp, width = 250.dp,
+                                    buttonEvent = {
 
-                    // Generator Type Selection
-                    horizontalVisibilityPane(
-                        visibility = selectGenerator, animationWidth = 2, duration = 369, paneContent = {
-                            buttonRow(
-                                rowOffset = 0.dp, buttonOffset = 25.dp, width = 250.dp,
-                                buttonEvent = {
-                                    genType = 0
-                                    generatorType = 0
-                                    genTypeA = "15"
-                                    genTypeB = "15"
-                                    squareGenerator = true
-                                },
-                                buttonText = "Square Generator", themeColor = themeColor
-                            )
-                            buttonRow(
-                                rowOffset = 50.dp, buttonOffset = 25.dp, width = 250.dp,
-                                buttonEvent = {
+                                    },
+                                    buttonText = "Does Not Exist", themeColor = themeColor,
+                                    buttonColor = 4, textColor = 2
+                                )
+                                buttonRow(
+                                    rowOffset = 150.dp, buttonOffset = 25.dp, width = 250.dp,
+                                    buttonEvent = {
 
-                                },
-                                buttonText = "Does Not Exist", themeColor = themeColor
-                            )
-                            buttonRow(
-                                rowOffset = 100.dp, buttonOffset = 25.dp, width = 250.dp,
-                                buttonEvent = {
+                                    },
+                                    buttonText = "Does Not Exist", themeColor = themeColor,
+                                    buttonColor = 4, textColor = 2
+                                )
+                            }
+                        )
 
-                                },
-                                buttonText = "Does Not Exist", themeColor = themeColor
-                            )
-                            buttonRow(
-                                rowOffset = 150.dp, buttonOffset = 25.dp, width = 250.dp,
-                                buttonEvent = {
-
-                                },
-                                buttonText = "Does Not Exist", themeColor = themeColor
-                            )
-                        }
-                    )
-
-                    // Output location, needs to be finished
-                    horizontalVisibilityPane(
-                        visibility = selectOutput, animationWidth = 2, duration = 369, paneContent = {
-                            buttonRow(
-                                rowOffset = 0.dp, buttonOffset = 25.dp, width = 250.dp,
-                                buttonEvent = {
-                                    // TODO: implement location picking cuz that doesnt exist yet
-                                },
-                                buttonText = "Select Output Location", themeColor = themeColor
-                            )
-                        }
-                    )
-                } // End of the card 2.0
+                        // Output location, needs to be finished
+                        horizontalVisibilityPane(
+                            visibility = selectOutput, animationWidth = 2, duration = 369, paneContent = {
+                                buttonRow(
+                                    rowOffset = 0.dp, buttonOffset = 25.dp, width = 250.dp,
+                                    buttonEvent = {
+                                        // TODO: implement location picking cuz that doesnt exist yet
+                                    },
+                                    buttonText = "Select Output Location", themeColor = themeColor,
+                                    buttonColor = 4, textColor = 2
+                                )
+                            }
+                        )
+                    }
+                )
             }
         }
     }
