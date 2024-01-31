@@ -36,15 +36,5 @@ fun squareCutGenerator(
         }
     }
 
-    //DEBUG PRINTING
-    var nodePos = 0;
-    for(x in 0 until cutMask.bits.size) {
-        for(y in 0 until cutMask.bits[0].size) {
-            if(cutMask.bits[x][y] == 1.toByte()) { print("1"); continue }
-            print("0")
-        }
-        println()
-    }
-
     return cutMask
 }
