@@ -120,7 +120,6 @@ fun App() {
                                 displayed = false
                             } else {
                                 displayedNodes = displayNodeMask(
-                                    selectedImage!!,
                                     generateNodes(NodeGeneratorType.SQUARE)
                                 )
                                 overlayImage = displayedNodes
@@ -158,11 +157,7 @@ fun App() {
             floatingActionButton = {
                 ExtendedFloatingActionButton(
                     onClick = {
-                        when (generatorType) {
-                            0 -> {
-                                squareNodeGenerator(squareRows, squareColumns)
-                            }
-                        }
+                        // run the code :thumb:
                     },
                     text = { Text("Run", color = themeColor[2]) },
                     icon = {
@@ -258,7 +253,6 @@ fun App() {
                                                         squareRows = genTypeA.toInt()
                                                         if((nodeDisplay && (squareColumns>0)) && selectedImage!=null) {
                                                             displayedNodes = displayNodeMask(
-                                                                selectedImage!!,
                                                                 generateNodes(NodeGeneratorType.SQUARE)
                                                             )
                                                             overlayImage = displayedNodes
