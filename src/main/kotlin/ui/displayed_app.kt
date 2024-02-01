@@ -17,6 +17,8 @@ import androidx.compose.material.icons.sharp.List
 import androidx.compose.material.icons.sharp.PlayArrow
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.input.key.*
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.loadImageBitmap
@@ -26,14 +28,15 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import utils.*
+import java.awt.image.BufferedImage
 
 
 @Suppress("DuplicatedCode")
 @Composable
 fun App() {
     // Image Displays
-    var displayedImage by remember { mutableStateOf(selectedImage) }
-    var displayedNodes by remember { mutableStateOf(overlayImage) }
+    var displayedImage by remember { mutableStateOf<BufferedImage?>(null) }
+    var displayedNodes by remember { mutableStateOf<BufferedImage?>(null) }
 
     // Settings
     var settingsLines by remember { mutableStateOf(3) }
@@ -103,26 +106,17 @@ fun App() {
                     actions = {
                         // holy spaghetti
                         IconButton(onClick = {
-                            if (!displayed) {
-                                displayedImage = fileToBufferedImage(ImageFileSelection())
-                                selectedImage = displayedImage
-                                loadedImageSize = getDim(selectedImage!!)
-                            } else {
-                                val tempImage = ImageFileSelection()
-                                if (tempImage != null) {
-                                    displayedImage = fileToBufferedImage(tempImage)
-                                    selectedImage = displayedImage
-                                    loadedImageSize = getDim(selectedImage!!)
-                                }
+                            displayed = false
+                            val tempImage = ImageFileSelection()
+                            if (tempImage != null) {
+                                displayedImage = fileToBufferedImage(tempImage)
+                                loadedImageSize = getDim(displayedImage!!)
                             }
-
-                            if (selectedImage == null) {
-                                displayed = false
-                            } else {
-                                displayedNodes = displayNodeMask(
+                            if (displayedImage != null) {
+                                println(loadedImageSize.width)
+                                displayedNodes = createNodeMask(
                                     generateNodes(NodeGeneratorType.SQUARE)
                                 )
-                                overlayImage = displayedNodes
                                 displayed = true
                             }
                         }) {
@@ -251,16 +245,32 @@ fun App() {
                                                     genTypeA = it
                                                     if(genTypeA.isNotEmpty()) {
                                                         squareRows = genTypeA.toInt()
-                                                        if((nodeDisplay && (squareColumns>0)) && selectedImage!=null) {
-                                                            displayedNodes = displayNodeMask(
-                                                                generateNodes(NodeGeneratorType.SQUARE)
-                                                            )
-                                                            overlayImage = displayedNodes
-                                                        }
                                                     }
                                                 }
                                             },
-                                            modifier = Modifier.size((screenWidth/3)-10.dp, 50.dp).offset(5.dp, 5.dp),
+                                            modifier = Modifier.size((screenWidth/3)-10.dp, 50.dp).offset(5.dp, 5.dp)
+                                                .onKeyEvent { event: KeyEvent ->
+                                                    if ((event.type == KeyEventType.KeyDown) &&
+                                                        (event.key == Key.Enter) &&
+                                                        (genTypeA.isNotEmpty())) {
+                                                        if(squareRows>0 && displayedImage!=null) {
+                                                            displayedNodes = createNodeMask(
+                                                                generateNodes(NodeGeneratorType.SQUARE)
+                                                            )
+                                                        }
+                                                        true
+                                                    }
+                                                    false
+                                                }
+                                                .onFocusChanged {
+                                                    if (!it.isFocused) {
+                                                        if(squareRows>0 && displayedImage!=null) {
+                                                            displayedNodes = createNodeMask(
+                                                                generateNodes(NodeGeneratorType.SQUARE)
+                                                            )
+                                                        }
+                                                    }
+                                                },
                                             readOnly = false,
                                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                                         )
@@ -282,10 +292,32 @@ fun App() {
                                             onValueChange = {
                                                 if(it.length < 10 && (it.matches(numbersOnly) || it.isEmpty())) {
                                                     genTypeB = it
-                                                    if(genTypeB.isNotEmpty()) squareColumns = genTypeA.toInt()
+                                                    if(genTypeB.isNotEmpty()) squareColumns = genTypeB.toInt()
                                                 }
                                             },
-                                            modifier = Modifier.size((screenWidth/3)-10.dp, 50.dp).offset(5.dp, 5.dp),
+                                            modifier = Modifier.size((screenWidth/3)-10.dp, 50.dp).offset(5.dp, 5.dp)
+                                                .onKeyEvent { event: KeyEvent ->
+                                                    if ((event.type == KeyEventType.KeyDown) &&
+                                                        (event.key == Key.Enter) &&
+                                                        (genTypeB.isNotEmpty()))
+                                                    {
+                                                        if(squareColumns>0 && displayedImage!=null) {
+                                                            displayedNodes = createNodeMask(
+                                                                generateNodes(NodeGeneratorType.SQUARE)
+                                                            )
+                                                        }
+                                                    }
+                                                true
+                                            }
+                                                .onFocusChanged {
+                                                    if (!it.isFocused) {
+                                                        if(squareColumns>0 && displayedImage!=null) {
+                                                            displayedNodes = createNodeMask(
+                                                                generateNodes(NodeGeneratorType.SQUARE)
+                                                            )
+                                                        }
+                                                    }
+                                                },
                                             readOnly = false,
                                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                                         )
@@ -323,13 +355,13 @@ fun App() {
 
                 if (displayed) {
                     Image(
-                        loadImageBitmap(inputStream = bufferedImageToOutputStream(selectedImage!!)),
+                        loadImageBitmap(inputStream = bufferedImageToOutputStream(displayedImage!!)),
                         "temp",
                         modifier = Modifier.offset(0.dp, 0.dp)
                     )
                     if (nodeDisplay) {
                         Image(
-                            loadImageBitmap(inputStream = bufferedImageToOutputStream(overlayImage!!)),
+                            loadImageBitmap(inputStream = bufferedImageToOutputStream(displayedNodes!!)),
                             "temp",
                             modifier = Modifier.offset(0.dp, 0.dp)
                         )
@@ -518,9 +550,9 @@ fun App() {
                                 buttonRow(
                                     rowOffset = 50.dp, buttonOffset = 25.dp, width = 250.dp,
                                     buttonEvent = {
-
+                                                  displayed = false
                                     },
-                                    buttonText = "Does Not Exist", themeColor = themeColor,
+                                    buttonText = "nuke the bitch", themeColor = themeColor,
                                     buttonColor = 4, textColor = 2
                                 )
                                 buttonRow(

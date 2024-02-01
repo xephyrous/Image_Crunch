@@ -5,7 +5,7 @@ import java.awt.Color
 import java.awt.Graphics2D
 import java.awt.image.BufferedImage
 
-// Copies image and displays a mask, shoutout to O(nxm)
+// Copies image and displays a mask
 fun createNodeMask(
     nodes: ArrayList<PositionNode>,
     nodeColor: Color = Color.BLACK,
@@ -21,6 +21,9 @@ fun createNodeMask(
     for(node in nodes) {
         gpx.fillOval(node.first, node.second, nodeSize, nodeSize)
     }
-
     return img
 }
+
+//fun createCutMask(
+//
+//)
