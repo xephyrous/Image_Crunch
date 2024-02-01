@@ -327,22 +327,18 @@ fun App() {
                     }
                 )
 
-                Column() {
-                    // IMAGES DO NOT OVERLAY ON TOP OF EACH-OTHER NORMALLY AND IDT I CAN CHANGE IT
-                    if (displayed) {
-                        if (nodeDisplay) {
-                            Image(
-                                loadImageBitmap(inputStream = bufferedImageToOutputStream(overlayImage!!)),
-                                "temp",
-                                modifier = Modifier.offset(0.dp, 0.dp)
-                            )
-                        } else {
-                            Image(
-                                loadImageBitmap(inputStream = bufferedImageToOutputStream(selectedImage!!)),
-                                "temp",
-                                modifier = Modifier.offset(0.dp, 0.dp)
-                            )
-                        }
+                if (displayed) {
+                    Image(
+                        loadImageBitmap(inputStream = bufferedImageToOutputStream(selectedImage!!)),
+                        "temp",
+                        modifier = Modifier.offset(0.dp, 0.dp)
+                    )
+                    if (nodeDisplay) {
+                        Image(
+                            loadImageBitmap(inputStream = bufferedImageToOutputStream(overlayImage!!)),
+                            "temp",
+                            modifier = Modifier.offset(0.dp, 0.dp)
+                        )
                     }
                 }
 

@@ -1,20 +1,12 @@
 package utils
 
 import java.awt.Color
-import java.awt.Dimension
 import java.awt.image.BufferedImage
 
 // Copies image and displays a mask, shoutout to O(nxm)
 fun displayNodeMask(input: BufferedImage, nodes: ArrayList<PositionNode>): BufferedImage {
     // Create Output
-    val size = Dimension(input.width, input.height)
-    val img = BufferedImage(size.width, size.height, BufferedImage.TYPE_INT_ARGB)
-
-    for (x in 0 until input.width) {
-        for (y in 0 until input.height) {
-            img.setRGB(x, y, input.getRGB(x, y))
-        }
-    }
+    val img = BufferedImage(loadedImageSize.width, loadedImageSize.height, BufferedImage.TYPE_INT_ARGB)
 
     try {
         for (node in nodes) {
