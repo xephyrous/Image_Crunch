@@ -1,30 +1,42 @@
 $dokka.format:html-v1
 $dokka.linkExtension:html
 $dokka.location:////PointingToDeclaration/-image_-crunch/[root]/index.html
-$dokka.location://App/#/PointingToDeclaration/-image_-crunch/[root]/-app.html
 $dokka.location://main/#/PointingToDeclaration/-image_-crunch/[root]/main.html
+$dokka.location:ui////PointingToDeclaration/-image_-crunch/ui/index.html
+$dokka.location:ui//App/#/PointingToDeclaration/-image_-crunch/ui/-app.html
+$dokka.location:ui//buttonRow/#androidx.compose.ui.unit.Dp#androidx.compose.ui.unit.Dp#androidx.compose.ui.unit.Dp#kotlin.Function0[kotlin.Unit]#kotlin.String#kotlin.collections.List[androidx.compose.ui.graphics.Color]#kotlin.Int#kotlin.Int/PointingToDeclaration/-image_-crunch/ui/button-row.html
+$dokka.location:ui//createCard/#androidx.compose.ui.unit.Dp#androidx.compose.ui.unit.Dp#androidx.compose.ui.unit.Dp#androidx.compose.ui.unit.Dp#androidx.compose.ui.unit.Dp#kotlin.collections.List[androidx.compose.ui.graphics.Color]#kotlin.Int#kotlin.Function0[kotlin.Unit]/PointingToDeclaration/-image_-crunch/ui/create-card.html
+$dokka.location:ui//createMenu/#androidx.compose.ui.unit.Dp#androidx.compose.ui.unit.Dp#androidx.compose.ui.unit.Dp#androidx.compose.ui.unit.Dp#androidx.compose.ui.unit.Dp#androidx.compose.ui.unit.Dp#androidx.compose.ui.unit.Dp#kotlin.String#kotlin.String#kotlin.collections.List[androidx.compose.ui.graphics.Color]#kotlin.Int#kotlin.Int#kotlin.Int#kotlin.Int#kotlin.Function0[kotlin.Unit]#kotlin.Function0[kotlin.Unit]/PointingToDeclaration/-image_-crunch/ui/create-menu.html
+$dokka.location:ui//horizontalVisibilityPane/#kotlin.Boolean#kotlin.Int#kotlin.Int#kotlin.Function1[androidx.compose.animation.AnimatedVisibilityScope,kotlin.Unit]/PointingToDeclaration/-image_-crunch/ui/horizontal-visibility-pane.html
+$dokka.location:ui//textRow/#androidx.compose.ui.unit.Dp#kotlin.String#androidx.compose.ui.unit.Dp#androidx.compose.ui.unit.TextUnit#androidx.compose.ui.text.font.FontWeight#kotlin.collections.List[androidx.compose.ui.graphics.Color]#kotlin.Int/PointingToDeclaration/-image_-crunch/ui/text-row.html
+$dokka.location:ui//verticalVisibilityPane/#kotlin.Boolean#kotlin.Int#kotlin.Int#kotlin.Function1[androidx.compose.animation.AnimatedVisibilityScope,kotlin.Unit]/PointingToDeclaration/-image_-crunch/ui/vertical-visibility-pane.html
 $dokka.location:utils////PointingToDeclaration/-image_-crunch/utils/index.html
 $dokka.location:utils//AppTheme/#kotlin.Function0[kotlin.Unit]/PointingToDeclaration/-image_-crunch/utils/-app-theme.html
 $dokka.location:utils//CSVtoSettings/#/PointingToDeclaration/-image_-crunch/utils/-c-s-vto-settings.html
 $dokka.location:utils//ImageFileSelection/#/PointingToDeclaration/-image_-crunch/utils/-image-file-selection.html
 $dokka.location:utils//appTypography/#/PointingToDeclaration/-image_-crunch/utils/app-typography.html
 $dokka.location:utils//aqueousThemes/#/PointingToDeclaration/-image_-crunch/utils/aqueous-themes.html
+$dokka.location:utils//bufferedImageToOutputStream/#java.awt.image.BufferedImage/PointingToDeclaration/-image_-crunch/utils/buffered-image-to-output-stream.html
 $dokka.location:utils//celesteThemes/#/PointingToDeclaration/-image_-crunch/utils/celeste-themes.html
 $dokka.location:utils//compactExport/#/PointingToDeclaration/-image_-crunch/utils/compact-export.html
+$dokka.location:utils//createNodeMask/#java.awt.image.BufferedImage#java.util.ArrayList[kotlin.Pair[kotlin.Int,kotlin.Int]]#java.awt.Color#kotlin.Int/PointingToDeclaration/-image_-crunch/utils/create-node-mask.html
 $dokka.location:utils//darkThemes/#/PointingToDeclaration/-image_-crunch/utils/dark-themes.html
+$dokka.location:utils//fileToBufferedImage/#java.io.File?/PointingToDeclaration/-image_-crunch/utils/file-to-buffered-image.html
 $dokka.location:utils//generateNodes/#utils.NodeGeneratorType/PointingToDeclaration/-image_-crunch/utils/generate-nodes.html
 $dokka.location:utils//generatorType/#/PointingToDeclaration/-image_-crunch/utils/generator-type.html
 $dokka.location:utils//generatorTypeMap/#/PointingToDeclaration/-image_-crunch/utils/generator-type-map.html
+$dokka.location:utils//getDim/#java.awt.image.BufferedImage/PointingToDeclaration/-image_-crunch/utils/get-dim.html
 $dokka.location:utils//lightThemes/#/PointingToDeclaration/-image_-crunch/utils/light-themes.html
 $dokka.location:utils//loadedImageSize/#/PointingToDeclaration/-image_-crunch/utils/loaded-image-size.html
 $dokka.location:utils//maskToImage/#java.awt.image.BufferedImage#utils.Mask#kotlin.String/PointingToDeclaration/-image_-crunch/utils/mask-to-image.html
+$dokka.location:utils//overlayImage/#/PointingToDeclaration/-image_-crunch/utils/overlay-image.html
 $dokka.location:utils//selectedImage/#/PointingToDeclaration/-image_-crunch/utils/selected-image.html
 $dokka.location:utils//settingsToCSV/#/PointingToDeclaration/-image_-crunch/utils/settings-to-c-s-v.html
 $dokka.location:utils//settingsToString/#/PointingToDeclaration/-image_-crunch/utils/settings-to-string.html
 $dokka.location:utils//squareColumns/#/PointingToDeclaration/-image_-crunch/utils/square-columns.html
 $dokka.location:utils//squareCutGenerator/#java.util.ArrayList[kotlin.Pair[kotlin.Int,kotlin.Int]]#kotlin.Int#kotlin.Int/PointingToDeclaration/-image_-crunch/utils/square-cut-generator.html
 $dokka.location:utils//squareMaskGenerator/#kotlin.Array[kotlin.Array[kotlin.Byte]]#java.util.ArrayList[kotlin.Pair[kotlin.Int,kotlin.Int]]/PointingToDeclaration/-image_-crunch/utils/square-mask-generator.html
-$dokka.location:utils//squareNodeGenerator/#kotlin.Int#kotlin.Int/PointingToDeclaration/-image_-crunch/utils/square-node-generator.html
+$dokka.location:utils//squareNodeGenerator/#kotlin.Int#kotlin.Int#java.awt.Dimension/PointingToDeclaration/-image_-crunch/utils/square-node-generator.html
 $dokka.location:utils//squareRows/#/PointingToDeclaration/-image_-crunch/utils/square-rows.html
 $dokka.location:utils//stringToSettings/#/PointingToDeclaration/-image_-crunch/utils/string-to-settings.html
 $dokka.location:utils//themeTypeMap/#/PointingToDeclaration/-image_-crunch/utils/theme-type-map.html
@@ -42,5 +54,6 @@ $dokka.location:utils/NodeGeneratorType/entries/#/PointingToDeclaration/-image_
 $dokka.location:utils/NodeGeneratorType/valueOf/#kotlin.String/PointingToDeclaration/-image_-crunch/utils/-node-generator-type/value-of.html
 $dokka.location:utils/NodeGeneratorType/values/#/PointingToDeclaration/-image_-crunch/utils/-node-generator-type/values.html
 $dokka.location:utils/PositionNode///PointingToDeclaration/-image_-crunch/utils/-position-node/index.html
+ui
 utils
 
