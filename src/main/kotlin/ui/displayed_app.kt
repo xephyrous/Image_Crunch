@@ -26,20 +26,20 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import utils.*
-import java.io.FileInputStream
 
 
 @Suppress("DuplicatedCode")
 @Composable
 fun App() {
+    // Image Displays
+    var displayedImage by remember { mutableStateOf(selectedImage) }
+    var displayedNodes by remember { mutableStateOf(overlayImage) }
+
     // Settings
     var settingsLines by remember { mutableStateOf(3) }
     var genType by remember { mutableStateOf(generatorType) }
     var menuLines by remember { mutableStateOf(2) }
     var compactExportToggle by remember { mutableStateOf(compactExport) }
-
-    // Testing Stuff
-    var caption by remember { mutableStateOf(squareRows.toString()) }
 
     // The good shi
     var displayed by remember { mutableStateOf(false) }
@@ -69,6 +69,9 @@ fun App() {
 
     var genTypeA by remember { mutableStateOf("") }
     var genTypeB by remember { mutableStateOf("") }
+
+    // Display Settings
+    var nodeDisplay by remember { mutableStateOf(true) }
 
     // Card Animations
     var menuCardState by remember { mutableStateOf(false) }
@@ -101,19 +104,26 @@ fun App() {
                         // holy spaghetti
                         IconButton(onClick = {
                             if (!displayed) {
-                                selectedImage = ImageFileSelection()
+                                displayedImage = fileToBufferedImage(ImageFileSelection())
+                                selectedImage = displayedImage
+                                loadedImageSize = getDim(selectedImage!!)
                             } else {
                                 val tempImage = ImageFileSelection()
                                 if (tempImage != null) {
-                                    selectedImage = tempImage
+                                    displayedImage = fileToBufferedImage(tempImage)
+                                    selectedImage = displayedImage
+                                    loadedImageSize = getDim(selectedImage!!)
                                 }
                             }
 
                             if (selectedImage == null) {
-                                caption = "theres NO PICTURE"
                                 displayed = false
                             } else {
-                                caption = "omg it worked"
+                                displayedNodes = displayNodeMask(
+                                    selectedImage!!,
+                                    generateNodes(NodeGeneratorType.SQUARE)
+                                )
+                                overlayImage = displayedNodes
                                 displayed = true
                             }
                         }) {
@@ -165,7 +175,7 @@ fun App() {
                     modifier = Modifier.offset(0.dp, (-100).dp)
                 )
             },
-        ) { innerPadding ->
+        ) {
             Box(
                 modifier = Modifier
                     .background(themeColor[1])
@@ -244,7 +254,16 @@ fun App() {
                                             onValueChange = {
                                                 if(it.length < 10 && (it.matches(numbersOnly) || it.isEmpty())) {
                                                     genTypeA = it
-                                                    if(genTypeA.isNotEmpty()) squareRows = genTypeA.toInt()
+                                                    if(genTypeA.isNotEmpty()) {
+                                                        squareRows = genTypeA.toInt()
+                                                        if((nodeDisplay && (squareColumns>0)) && selectedImage!=null) {
+                                                            displayedNodes = displayNodeMask(
+                                                                selectedImage!!,
+                                                                generateNodes(NodeGeneratorType.SQUARE)
+                                                            )
+                                                            overlayImage = displayedNodes
+                                                        }
+                                                    }
                                                 }
                                             },
                                             modifier = Modifier.size((screenWidth/3)-10.dp, 50.dp).offset(5.dp, 5.dp),
@@ -308,17 +327,23 @@ fun App() {
                     }
                 )
 
-                Column(
-                    modifier = Modifier.padding(innerPadding).fillMaxHeight(),
-                    verticalArrangement = Arrangement.spacedBy(16.dp),
-                ) {
+                Column() {
+                    // IMAGES DO NOT OVERLAY ON TOP OF EACH-OTHER NORMALLY AND IDT I CAN CHANGE IT
                     if (displayed) {
-                        Image(
-                            loadImageBitmap(inputStream = FileInputStream(selectedImage!!)),
-                            "temp"
-                        )
+                        if (nodeDisplay) {
+                            Image(
+                                loadImageBitmap(inputStream = bufferedImageToOutputStream(overlayImage!!)),
+                                "temp",
+                                modifier = Modifier.offset(0.dp, 0.dp)
+                            )
+                        } else {
+                            Image(
+                                loadImageBitmap(inputStream = bufferedImageToOutputStream(selectedImage!!)),
+                                "temp",
+                                modifier = Modifier.offset(0.dp, 0.dp)
+                            )
+                        }
                     }
-                    Text(caption, color = themeColor[2])
                 }
 
                 // Main Menu

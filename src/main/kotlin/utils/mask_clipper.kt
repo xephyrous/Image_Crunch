@@ -2,10 +2,34 @@ package utils
 
 import java.awt.Dimension
 import java.awt.image.BufferedImage
+import java.io.ByteArrayInputStream
+import java.io.ByteArrayOutputStream
 import java.io.File
 import javax.imageio.ImageIO
 
-// TODO: Figure out better input method (needs to return as one or smth)
+fun getDim(bufferedImage: BufferedImage): Dimension {
+    return Dimension(bufferedImage.width, bufferedImage.height)
+}
+
+fun fileToBufferedImage(input: File?): BufferedImage {
+    val inp = ImageIO.read(input)
+
+    val output = BufferedImage(inp.width, inp.height, BufferedImage.TYPE_INT_ARGB)
+
+    for (x in 0 until inp.width) {
+        for (y in 0 until inp.height) {
+            output.setRGB(x, y, inp.getRGB(x, y))
+        }
+    }
+
+    return output
+}
+
+fun bufferedImageToOutputStream(input: BufferedImage): ByteArrayInputStream {
+    val outputStream = ByteArrayOutputStream()
+    ImageIO.write(input, "PNG", outputStream)
+    return ByteArrayInputStream(outputStream.toByteArray())
+}
 
 /**
  * maskToImage

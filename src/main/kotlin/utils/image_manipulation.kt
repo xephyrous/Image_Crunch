@@ -12,10 +12,6 @@
 
 package utils
 
-import androidx.compose.desktop.ui.tooling.preview.Preview
-import androidx.compose.runtime.Composable
-import java.awt.Dimension
-
 //List of node generation functions
 enum class NodeGeneratorType {
     SQUARE,
@@ -25,9 +21,11 @@ enum class NodeGeneratorType {
 //TODO : Get function parameters from UI elements
 //TODO : Create UI menus for each generator type
 
-fun generateNodes(genType: NodeGeneratorType) {
-    when (genType) {
-        NodeGeneratorType.SQUARE -> squareNodeGenerator(5, 5)
-        else -> {  }
+fun generateNodes(genType: NodeGeneratorType) : ArrayList<PositionNode> {
+    return when (genType) {
+        NodeGeneratorType.SQUARE -> squareNodeGenerator(squareRows, squareColumns)
+        else -> {
+            squareNodeGenerator(1, 1)
+        }
     }
 }
