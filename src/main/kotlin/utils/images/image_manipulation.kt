@@ -10,7 +10,11 @@
  * Project direction by Dr. Chen
  */
 
-package utils
+package utils.images
+
+import utils.storage.PositionNode
+import utils.storage.squareColumns
+import utils.storage.squareRows
 
 //List of node generation functions
 enum class NodeGeneratorType {

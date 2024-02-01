@@ -28,6 +28,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import utils.*
+import utils.app.ImageFileSelection
+import utils.app.settingsToCSV
+import utils.app.settingsToString
+import utils.images.*
+import utils.storage.*
 import java.awt.image.BufferedImage
 
 
@@ -253,7 +258,7 @@ fun App() {
                                                     if ((event.type == KeyEventType.KeyDown) &&
                                                         (event.key == Key.Enter) &&
                                                         (genTypeA.isNotEmpty())) {
-                                                        if(squareRows>0 && displayedImage!=null) {
+                                                        if(squareRows >0 && displayedImage!=null) {
                                                             displayedNodes = createNodeMask(
                                                                 generateNodes(NodeGeneratorType.SQUARE)
                                                             )
@@ -264,7 +269,7 @@ fun App() {
                                                 }
                                                 .onFocusChanged {
                                                     if (!it.isFocused) {
-                                                        if(squareRows>0 && displayedImage!=null) {
+                                                        if(squareRows >0 && displayedImage!=null) {
                                                             displayedNodes = createNodeMask(
                                                                 generateNodes(NodeGeneratorType.SQUARE)
                                                             )
@@ -301,7 +306,7 @@ fun App() {
                                                         (event.key == Key.Enter) &&
                                                         (genTypeB.isNotEmpty()))
                                                     {
-                                                        if(squareColumns>0 && displayedImage!=null) {
+                                                        if(squareColumns >0 && displayedImage!=null) {
                                                             displayedNodes = createNodeMask(
                                                                 generateNodes(NodeGeneratorType.SQUARE)
                                                             )
@@ -311,7 +316,7 @@ fun App() {
                                             }
                                                 .onFocusChanged {
                                                     if (!it.isFocused) {
-                                                        if(squareColumns>0 && displayedImage!=null) {
+                                                        if(squareColumns >0 && displayedImage!=null) {
                                                             displayedNodes = createNodeMask(
                                                                 generateNodes(NodeGeneratorType.SQUARE)
                                                             )

@@ -1,4 +1,4 @@
-package utils
+package utils.app
 
 // empty until there are actual settings to export
 
