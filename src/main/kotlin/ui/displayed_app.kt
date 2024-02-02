@@ -18,7 +18,10 @@ import androidx.compose.material.icons.sharp.PlayArrow
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
-import androidx.compose.ui.input.key.*
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.loadImageBitmap
@@ -27,10 +30,8 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import utils.app.ImageFileSelection
-import utils.app.settingsToCSV
-import utils.app.settingsToString
 import utils.images.*
+import utils.app.*
 import utils.storage.*
 import java.awt.image.BufferedImage
 
@@ -65,11 +66,18 @@ fun App() {
     var exportSettings by remember { mutableStateOf(false) }
     var themeSettings by remember { mutableStateOf(false) }
 
-    var themeColor by remember { mutableStateOf(darkThemes) }
-
     var screenWidth by remember { mutableStateOf(1200.dp) }
     var screenHeight by remember { mutableStateOf(800.dp) }
     val density = LocalDensity.current
+
+    // Colors
+    var themeColor by remember { mutableStateOf(darkThemes) }
+
+    val horizontalGradient by remember { mutableStateOf(Brush.horizontalGradient(listOf(themeColor[1], themeColor[5]))) }
+    val linearGradient by remember { mutableStateOf(Brush.linearGradient(listOf(themeColor[1], themeColor[5]))) }
+    val verticalGradient by remember { mutableStateOf(Brush.verticalGradient(listOf(themeColor[1], themeColor[5]))) }
+    val sweepGradient by remember { mutableStateOf(Brush.sweepGradient(listOf(themeColor[1], themeColor[5], themeColor[1], themeColor[5], themeColor[1]))) }
+    val radialGradient by remember { mutableStateOf(Brush.radialGradient(listOf(themeColor[1], themeColor[5]))) }
 
     // Configuration Settings
     val numbersOnly = remember { Regex("^\\d+\$") }
@@ -170,7 +178,16 @@ fun App() {
         ) {
             Box(
                 modifier = Modifier
-                    .background(themeColor[1])
+//                    .background(themeColor[1])
+                    .background(
+//                        Brush.sweepGradient(listOf(themeColor[1], themeColor[5], themeColor[1], themeColor[5], themeColor[1]))
+                        Brush.linearGradient(
+                            colors = listOf(themeColor[1], themeColor[5]),
+                            start = Offset(0f, 0f),
+                            end = Offset(Float.POSITIVE_INFINITY, 0f),
+                            tileMode = TileMode.Clamp
+                        )
+                    )
                     .fillMaxSize()
                     .onGloballyPositioned {
                         screenWidth = with(density) {it.size.width.toDp()}
@@ -244,7 +261,7 @@ fun App() {
                                         TextField(
                                             value = genTypeA,
                                             onValueChange = {
-                                                if(it.length < 10 && (it.matches(numbersOnly) || it.isEmpty())) {
+                                                if(it.length < 5 && (it.matches(numbersOnly) || it.isEmpty())) {
                                                     genTypeA = it
                                                     if(genTypeA.isNotEmpty()) {
                                                         squareRows = genTypeA.toInt()
@@ -252,18 +269,15 @@ fun App() {
                                                 }
                                             },
                                             modifier = Modifier.size((screenWidth/3)-10.dp, 50.dp).offset(5.dp, 5.dp)
-                                                .onKeyEvent { event: KeyEvent ->
-                                                    if ((event.type == KeyEventType.KeyDown) &&
-                                                        (event.key == Key.Enter) &&
-                                                        (genTypeA.isNotEmpty())) {
-                                                        if(squareRows >0 && displayedImage!=null) {
+                                                .onKeyEvent {
+                                                    if (it.key == Key.Enter) {
+                                                        if(squareRows>0 && displayedImage!=null) {
                                                             displayedNodes = createNodeMask(
                                                                 generateNodes(NodeGeneratorType.SQUARE)
                                                             )
                                                         }
-                                                        true
                                                     }
-                                                    false
+                                                    true
                                                 }
                                                 .onFocusChanged {
                                                     if (!it.isFocused) {
@@ -293,25 +307,22 @@ fun App() {
                                         TextField(
                                             value = genTypeB,
                                             onValueChange = {
-                                                if(it.length < 10 && (it.matches(numbersOnly) || it.isEmpty())) {
+                                                if(it.length < 5 && (it.matches(numbersOnly) || it.isEmpty())) {
                                                     genTypeB = it
                                                     if(genTypeB.isNotEmpty()) squareColumns = genTypeB.toInt()
                                                 }
                                             },
                                             modifier = Modifier.size((screenWidth/3)-10.dp, 50.dp).offset(5.dp, 5.dp)
-                                                .onKeyEvent { event: KeyEvent ->
-                                                    if ((event.type == KeyEventType.KeyDown) &&
-                                                        (event.key == Key.Enter) &&
-                                                        (genTypeB.isNotEmpty()))
-                                                    {
-                                                        if(squareColumns >0 && displayedImage!=null) {
+                                                .onKeyEvent {
+                                                    if (it.key == Key.Enter) {
+                                                        if(squareColumns>0 && displayedImage!=null) {
                                                             displayedNodes = createNodeMask(
                                                                 generateNodes(NodeGeneratorType.SQUARE)
                                                             )
                                                         }
                                                     }
-                                                true
-                                            }
+                                                    true
+                                                }
                                                 .onFocusChanged {
                                                     if (!it.isFocused) {
                                                         if(squareColumns >0 && displayedImage!=null) {
