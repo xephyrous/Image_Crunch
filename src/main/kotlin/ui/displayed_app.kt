@@ -66,11 +66,18 @@ fun App() {
     var exportSettings by remember { mutableStateOf(false) }
     var themeSettings by remember { mutableStateOf(false) }
 
-    var themeColor by remember { mutableStateOf(darkThemes) }
-
     var screenWidth by remember { mutableStateOf(1200.dp) }
     var screenHeight by remember { mutableStateOf(800.dp) }
     val density = LocalDensity.current
+
+    // Colors
+    var themeColor by remember { mutableStateOf(darkThemes) }
+
+    val horizontalGradient by remember { mutableStateOf(Brush.horizontalGradient(listOf(themeColor[1], themeColor[5]))) }
+    val linearGradient by remember { mutableStateOf(Brush.linearGradient(listOf(themeColor[1], themeColor[5]))) }
+    val verticalGradient by remember { mutableStateOf(Brush.verticalGradient(listOf(themeColor[1], themeColor[5]))) }
+    val sweepGradient by remember { mutableStateOf(Brush.sweepGradient(listOf(themeColor[1], themeColor[5], themeColor[1], themeColor[5], themeColor[1]))) }
+    val radialGradient by remember { mutableStateOf(Brush.radialGradient(listOf(themeColor[1], themeColor[5]))) }
 
     // Configuration Settings
     val numbersOnly = remember { Regex("^\\d+\$") }
@@ -173,7 +180,13 @@ fun App() {
                 modifier = Modifier
 //                    .background(themeColor[1])
                     .background(
-                        Brush.horizontalGradient(listOf(themeColor[1], themeColor[5]))
+//                        Brush.sweepGradient(listOf(themeColor[1], themeColor[5], themeColor[1], themeColor[5], themeColor[1]))
+                        Brush.linearGradient(
+                            colors = listOf(themeColor[1], themeColor[5]),
+                            start = Offset(0f, 0f),
+                            end = Offset(Float.POSITIVE_INFINITY, 0f),
+                            tileMode = TileMode.Clamp
+                        )
                     )
                     .fillMaxSize()
                     .onGloballyPositioned {
