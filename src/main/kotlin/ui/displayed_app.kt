@@ -18,7 +18,10 @@ import androidx.compose.material.icons.sharp.PlayArrow
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
-import androidx.compose.ui.input.key.*
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.loadImageBitmap
@@ -167,7 +170,10 @@ fun App() {
         ) {
             Box(
                 modifier = Modifier
-                    .background(themeColor[1])
+//                    .background(themeColor[1])
+                    .background(
+                        Brush.horizontalGradient(listOf(themeColor[1], themeColor[5]))
+                    )
                     .fillMaxSize()
                     .onGloballyPositioned {
                         screenWidth = with(density) {it.size.width.toDp()}
@@ -241,7 +247,7 @@ fun App() {
                                         TextField(
                                             value = genTypeA,
                                             onValueChange = {
-                                                if(it.length < 10 && (it.matches(numbersOnly) || it.isEmpty())) {
+                                                if(it.length < 5 && (it.matches(numbersOnly) || it.isEmpty())) {
                                                     genTypeA = it
                                                     if(genTypeA.isNotEmpty()) {
                                                         squareRows = genTypeA.toInt()
@@ -249,18 +255,15 @@ fun App() {
                                                 }
                                             },
                                             modifier = Modifier.size((screenWidth/3)-10.dp, 50.dp).offset(5.dp, 5.dp)
-                                                .onKeyEvent { event: KeyEvent ->
-                                                    if ((event.type == KeyEventType.KeyDown) &&
-                                                        (event.key == Key.Enter) &&
-                                                        (genTypeA.isNotEmpty())) {
+                                                .onKeyEvent {
+                                                    if (it.key == Key.Enter) {
                                                         if(squareRows>0 && displayedImage!=null) {
                                                             displayedNodes = createNodeMask(
                                                                 generateNodes(NodeGeneratorType.SQUARE)
                                                             )
                                                         }
-                                                        true
                                                     }
-                                                    false
+                                                    true
                                                 }
                                                 .onFocusChanged {
                                                     if (!it.isFocused) {
@@ -290,25 +293,22 @@ fun App() {
                                         TextField(
                                             value = genTypeB,
                                             onValueChange = {
-                                                if(it.length < 10 && (it.matches(numbersOnly) || it.isEmpty())) {
+                                                if(it.length < 5 && (it.matches(numbersOnly) || it.isEmpty())) {
                                                     genTypeB = it
                                                     if(genTypeB.isNotEmpty()) squareColumns = genTypeB.toInt()
                                                 }
                                             },
                                             modifier = Modifier.size((screenWidth/3)-10.dp, 50.dp).offset(5.dp, 5.dp)
-                                                .onKeyEvent { event: KeyEvent ->
-                                                    if ((event.type == KeyEventType.KeyDown) &&
-                                                        (event.key == Key.Enter) &&
-                                                        (genTypeB.isNotEmpty()))
-                                                    {
+                                                .onKeyEvent {
+                                                    if (it.key == Key.Enter) {
                                                         if(squareColumns>0 && displayedImage!=null) {
                                                             displayedNodes = createNodeMask(
                                                                 generateNodes(NodeGeneratorType.SQUARE)
                                                             )
                                                         }
                                                     }
-                                                true
-                                            }
+                                                    true
+                                                }
                                                 .onFocusChanged {
                                                     if (!it.isFocused) {
                                                         if(squareColumns>0 && displayedImage!=null) {
