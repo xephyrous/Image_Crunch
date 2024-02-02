@@ -1,3 +1,15 @@
+/*
+ * Project Start : 1/17/2024
+ * Project End   : TBD
+ *
+ * This software is under the MIT License
+ *
+ * Written by Alexander Yauchler and Aidan Mao
+ * Freshmen in Computer Science at Purdue University Fort Wayne
+ *
+ * Project direction by Dr. Chen
+ */
+
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window

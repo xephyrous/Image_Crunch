@@ -5,7 +5,6 @@ import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
@@ -18,7 +17,10 @@ import androidx.compose.material.icons.sharp.PlayArrow
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.TileMode
+import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onKeyEvent
@@ -30,8 +32,10 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import utils.app.ImageFileSelection
+import utils.app.settingsToCSV
+import utils.app.settingsToString
 import utils.images.*
-import utils.app.*
 import utils.storage.*
 import java.awt.image.BufferedImage
 
@@ -50,8 +54,6 @@ fun App() {
     var compactExportToggle by remember { mutableStateOf(compactExport) }
 
     // The good shi
-    var displayed by remember { mutableStateOf(false) }
-
     var settingsMain by remember { mutableStateOf(true) }
     var selectGenerator by remember { mutableStateOf(false) }
     var selectOutput by remember { mutableStateOf(false) }
@@ -86,6 +88,7 @@ fun App() {
     var genTypeB by remember { mutableStateOf("") }
 
     // Display Settings
+    var displayed by remember { mutableStateOf(false) }
     var nodeDisplay by remember { mutableStateOf(true) }
 
     // Card Animations
@@ -194,6 +197,21 @@ fun App() {
                         screenHeight = with(density) {it.size.height.toDp()}
                     }
             ) {
+                if (displayed) {
+                    AsyncImage(
+                        load = { loadImageBitmap(inputStream = bufferedImageToOutputStream(displayedImage!!)) },
+                        contentDescription = "The Passed Image",
+                        painterFor = { remember { BitmapPainter(it) } }
+                    )
+                    if (nodeDisplay) {
+                        AsyncImage(
+                            load = { loadImageBitmap(inputStream = bufferedImageToOutputStream(displayedNodes!!)) },
+                            contentDescription = "The Image Mask",
+                            painterFor = { remember { BitmapPainter(it) } }
+                        )
+                    }
+                }
+
                 // Bottom Bar
                 createCard(
                     xOffset = 0.dp, yOffset = bottomCardsY-100.dp,
@@ -271,20 +289,24 @@ fun App() {
                                             modifier = Modifier.size((screenWidth/3)-10.dp, 50.dp).offset(5.dp, 5.dp)
                                                 .onKeyEvent {
                                                     if (it.key == Key.Enter) {
-                                                        if(squareRows>0 && displayedImage!=null) {
+                                                        if(squareRows > 0 && displayedImage != null) {
+                                                            nodeDisplay = false
                                                             displayedNodes = createNodeMask(
                                                                 generateNodes(NodeGeneratorType.SQUARE)
                                                             )
+                                                            nodeDisplay = true
                                                         }
                                                     }
                                                     true
                                                 }
                                                 .onFocusChanged {
                                                     if (!it.isFocused) {
-                                                        if(squareRows >0 && displayedImage!=null) {
+                                                        if(squareRows > 0 && displayedImage != null) {
+                                                            nodeDisplay = false
                                                             displayedNodes = createNodeMask(
                                                                 generateNodes(NodeGeneratorType.SQUARE)
                                                             )
+                                                            nodeDisplay = true
                                                         }
                                                     }
                                                 },
@@ -315,20 +337,24 @@ fun App() {
                                             modifier = Modifier.size((screenWidth/3)-10.dp, 50.dp).offset(5.dp, 5.dp)
                                                 .onKeyEvent {
                                                     if (it.key == Key.Enter) {
-                                                        if(squareColumns>0 && displayedImage!=null) {
+                                                        if(squareColumns > 0 && displayedImage != null) {
+                                                            nodeDisplay = false
                                                             displayedNodes = createNodeMask(
                                                                 generateNodes(NodeGeneratorType.SQUARE)
                                                             )
+                                                            nodeDisplay = true
                                                         }
                                                     }
                                                     true
                                                 }
                                                 .onFocusChanged {
                                                     if (!it.isFocused) {
-                                                        if(squareColumns >0 && displayedImage!=null) {
+                                                        if(squareColumns > 0 && displayedImage != null) {
+                                                            nodeDisplay = false
                                                             displayedNodes = createNodeMask(
                                                                 generateNodes(NodeGeneratorType.SQUARE)
                                                             )
+                                                            nodeDisplay = true
                                                         }
                                                     }
                                                 },
@@ -366,21 +392,6 @@ fun App() {
                         )
                     }
                 )
-
-                if (displayed) {
-                    Image(
-                        loadImageBitmap(inputStream = bufferedImageToOutputStream(displayedImage!!)),
-                        "temp",
-                        modifier = Modifier.offset(0.dp, 0.dp)
-                    )
-                    if (nodeDisplay) {
-                        Image(
-                            loadImageBitmap(inputStream = bufferedImageToOutputStream(displayedNodes!!)),
-                            "temp",
-                            modifier = Modifier.offset(0.dp, 0.dp)
-                        )
-                    }
-                }
 
                 // Main Menu
                 createMenu(

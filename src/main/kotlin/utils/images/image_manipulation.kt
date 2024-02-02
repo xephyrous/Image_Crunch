@@ -1,15 +1,3 @@
-/*
- * Project Start : 1/17/2024
- * Project End   : TBD
- *
- * This software is under the MIT License
- *
- * Written by Alexander Yauchler and Aidan Mao
- * Freshmen in Computer Science at Purdue University Fort Wayne
- *
- * Project direction by Dr. Chen
- */
-
 package utils.images
 
 import utils.storage.PositionNode
