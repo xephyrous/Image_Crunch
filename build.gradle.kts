@@ -22,6 +22,7 @@ dependencies {
     implementation(compose.ui)
     implementation(compose.material)
     implementation(compose.material3)
+    implementation("io.github.succlz123:compose-imageloader-desktop:0.0.2")
 }
 
 compose.desktop {
