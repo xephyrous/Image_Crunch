@@ -17,6 +17,10 @@ import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
 import ui.App
+import utils.images.squareCutGenerator
+import utils.images.squareNodeGenerator
+import utils.storage.*
+import java.awt.Dimension
 
 fun main() = application {
     val state = rememberWindowState(

@@ -2,15 +2,19 @@ package utils.storage
 
 import java.awt.Dimension
 
-var loadedImageSize: Dimension = Dimension()
-var compactExport: Boolean = true
+/**
+ * All global variables are stored as LockType<T> to prevent possible race conditions
+ * with a user changing settings during generation
+ */
 
 /**
- * Export value of Generator Type mapping
+ * Loaded image details
  */
-val generatorTypeMap = mapOf("Square Generator" to 0)
-var generatorType: Int = 0
+var loadedImageSize: LockType<Dimension> = LockType(Dimension())
+var compactExport: Boolean = true
+
+var generatorType: LockType<GeneratorType> = LockType(GeneratorType.NONE)
 
 // Square Gen Settings
-var squareRows: Int = 15
-var squareColumns: Int = 15
+var squareRows: LockType<Int> = LockType(15)
+var squareColumns: LockType<Int> = LockType(15)

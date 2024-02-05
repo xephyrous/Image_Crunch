@@ -132,11 +132,11 @@ fun App() {
                             val tempImage = ImageFileSelection()
                             if (tempImage != null) {
                                 displayedImage = fileToBufferedImage(tempImage)
-                                loadedImageSize = getDim(displayedImage!!)
+                                loadedImageSize.set(getDim(displayedImage!!))
                             }
                             if (displayedImage != null) {
                                 displayedNodes = createNodeMask(
-                                    generateNodes(NodeGeneratorType.SQUARE)
+                                    generateNodes(GeneratorType.SQUARE)
                                 )
                                 displayed = true
                             }
@@ -348,17 +348,17 @@ fun App() {
                                                 if(it.length < 5 && (it.matches(numbersOnly) || it.isEmpty())) {
                                                     genTypeA = it
                                                     if(genTypeA.isNotEmpty()) {
-                                                        squareRows = genTypeA.toInt()
+                                                        squareRows.set(genTypeA.toInt())
                                                     }
                                                 }
                                             },
                                             modifier = Modifier.size((screenWidth/3)-10.dp, 50.dp).offset(5.dp, 5.dp)
                                                 .onKeyEvent {
                                                     if (it.key == Key.Enter) {
-                                                        if(squareRows > 0 && displayedImage != null) {
+                                                        if(squareRows.value() > 0 && displayedImage != null) {
                                                             nodeDisplay = false
                                                             displayedNodes = createNodeMask(
-                                                                generateNodes(NodeGeneratorType.SQUARE)
+                                                                generateNodes(GeneratorType.SQUARE)
                                                             )
                                                             nodeDisplay = true
                                                         }
@@ -367,10 +367,10 @@ fun App() {
                                                 }
                                                 .onFocusChanged {
                                                     if (!it.isFocused) {
-                                                        if(squareRows > 0 && displayedImage != null) {
+                                                        if(squareRows.value() > 0 && displayedImage != null) {
                                                             nodeDisplay = false
                                                             displayedNodes = createNodeMask(
-                                                                generateNodes(NodeGeneratorType.SQUARE)
+                                                                generateNodes(GeneratorType.SQUARE)
                                                             )
                                                             nodeDisplay = true
                                                         }
@@ -397,16 +397,16 @@ fun App() {
                                             onValueChange = {
                                                 if(it.length < 5 && (it.matches(numbersOnly) || it.isEmpty())) {
                                                     genTypeB = it
-                                                    if(genTypeB.isNotEmpty()) squareColumns = genTypeB.toInt()
+                                                    if(genTypeB.isNotEmpty()) squareColumns.set(genTypeB.toInt())
                                                 }
                                             },
                                             modifier = Modifier.size((screenWidth/3)-10.dp, 50.dp).offset(5.dp, 5.dp)
                                                 .onKeyEvent {
                                                     if (it.key == Key.Enter) {
-                                                        if(squareColumns > 0 && displayedImage != null) {
+                                                        if(squareColumns.value() > 0 && displayedImage != null) {
                                                             nodeDisplay = false
                                                             displayedNodes = createNodeMask(
-                                                                generateNodes(NodeGeneratorType.SQUARE)
+                                                                generateNodes(GeneratorType.SQUARE)
                                                             )
                                                             nodeDisplay = true
                                                         }
@@ -415,10 +415,10 @@ fun App() {
                                                 }
                                                 .onFocusChanged {
                                                     if (!it.isFocused) {
-                                                        if(squareColumns > 0 && displayedImage != null) {
+                                                        if(squareColumns.value() > 0 && displayedImage != null) {
                                                             nodeDisplay = false
                                                             displayedNodes = createNodeMask(
-                                                                generateNodes(NodeGeneratorType.SQUARE)
+                                                                generateNodes(GeneratorType.SQUARE)
                                                             )
                                                             nodeDisplay = true
                                                         }
@@ -629,8 +629,8 @@ fun App() {
                                 buttonRow(
                                     rowOffset = 0.dp, buttonOffset = 25.dp, width = 250.dp,
                                     buttonEvent = {
-                                        genType = 0
-                                        generatorType = 0
+                                        genType.set(GeneratorType.NONE)
+                                        generatorType.set(GeneratorType.NONE)
                                         genTypeA = "15"
                                         genTypeB = "15"
                                         squareGenerator = true

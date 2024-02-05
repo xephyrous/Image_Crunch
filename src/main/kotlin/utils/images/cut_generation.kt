@@ -13,13 +13,13 @@ fun squareCutGenerator(
     rows: Int,
     columns: Int
 ) : Mask {
-    val cutMask: Mask = Mask(loadedImageSize)
+    val cutMask = Mask(loadedImageSize.value())
     var backStep: Int
 
     for(pos in 0 until nodes.size) {
         //Step from node to edge/prev. node horizontally
         if(nodes[pos].first != 0) {
-            backStep =  if (nodes[pos].first == ceil(loadedImageSize.width / columns.toDouble()).toInt())
+            backStep =  if (nodes[pos].first == ceil(loadedImageSize.value().width / columns.toDouble()).toInt())
                             nodes[pos].first else nodes[pos - 1].first
 
             for(xPos in (nodes[pos].first - backStep)
@@ -30,7 +30,7 @@ fun squareCutGenerator(
 
         //Step from node to edge/prev. node vertically
         if(nodes[pos].second != 0) {
-            backStep =  if (nodes[pos].second == ceil(loadedImageSize.height / rows.toDouble()).toInt())
+            backStep =  if (nodes[pos].second == ceil(loadedImageSize.value().height / rows.toDouble()).toInt())
                 nodes[pos].second else nodes[pos - 1].second
 
             for(yPos in (nodes[pos].second - backStep).coerceAtLeast(0) .. nodes[pos].second) {
