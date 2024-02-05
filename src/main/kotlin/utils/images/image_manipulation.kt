@@ -1,21 +1,17 @@
 package utils.images
 
+import utils.storage.GeneratorType
 import utils.storage.PositionNode
 import utils.storage.squareColumns
 import utils.storage.squareRows
-
-//List of node generation functions
-enum class NodeGeneratorType {
-    SQUARE,
-}
 
 //This function calls as the first step in image processing,
 //TODO : Get function parameters from UI elements
 //TODO : Create UI menus for each generator type
 
-fun generateNodes(genType: NodeGeneratorType) : ArrayList<PositionNode> {
+fun generateNodes(genType: GeneratorType) : ArrayList<PositionNode> {
     return when (genType) {
-        NodeGeneratorType.SQUARE -> squareNodeGenerator(squareRows, squareColumns)
+        GeneratorType.SQUARE -> squareNodeGenerator(squareRows.value(), squareColumns.value())
         else -> {
             squareNodeGenerator(1, 1)
         }

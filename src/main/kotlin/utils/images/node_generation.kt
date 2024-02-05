@@ -18,15 +18,15 @@ fun squareNodeGenerator(
 ) : ArrayList<PositionNode> {
     val nodeList: ArrayList<PositionNode> = ArrayList()
 
-    val xSpacing: Int  = ceil(loadedImageSize.width / columns.toDouble()).toInt()
-    val ySpacing: Int  = ceil(loadedImageSize.height / rows.toDouble()).toInt()
+    val xSpacing: Int  = ceil(loadedImageSize.value().width / columns.toDouble()).toInt()
+    val ySpacing: Int  = ceil(loadedImageSize.value().height / rows.toDouble()).toInt()
 
     for(y in 0 .. rows) {
         for(x in 0 .. columns) {
             nodeList.add(
                 PositionNode(
-                    (x * xSpacing).coerceAtMost(loadedImageSize.width - 1),
-                    (y * ySpacing).coerceAtMost(loadedImageSize.height - 1)
+                    (x * xSpacing).coerceAtMost(loadedImageSize.value().width - 1),
+                    (y * ySpacing).coerceAtMost(loadedImageSize.value().height - 1)
                 )
             )
         }
