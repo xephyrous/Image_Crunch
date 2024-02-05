@@ -23,15 +23,3 @@ fun ImageFileSelection(): File? {
     }
     return null
 }
-
-// idk why this still exists
-private fun getExtension(input: File): String? {
-    var extension: String? = null
-    val fileName = input.name
-    val x = fileName.lastIndexOf('.')
-
-    if (x > 0 && x < (fileName.length - 1)) {
-        extension = fileName.substring(x+1).lowercase()
-    }
-    return extension
-}
