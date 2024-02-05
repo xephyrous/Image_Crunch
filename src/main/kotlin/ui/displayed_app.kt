@@ -174,7 +174,7 @@ fun App() {
                         }
                         IconButton(onClick = {
                             displayedNodes = createNodeMask(
-                                generateNodes(NodeGeneratorType.SQUARE)
+                                generateNodes(GeneratorType.SQUARE)
                             )
                             menuCardState = !menuCardState
                             imageModifier = if (menuCardState || settingsCardState) {
@@ -641,9 +641,9 @@ fun App() {
                                 buttonRow(
                                     rowOffset = 50.dp, buttonOffset = 25.dp, width = 250.dp,
                                     buttonEvent = {
-                                                  displayed = false
+
                                     },
-                                    buttonText = "nuke the bitch", themeColor = themeColor,
+                                    buttonText = "Does Not Exist", themeColor = themeColor,
                                     buttonColor = 4, textColor = 2
                                 )
                                 buttonRow(
