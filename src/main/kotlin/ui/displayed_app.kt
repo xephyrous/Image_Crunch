@@ -16,6 +16,8 @@ import androidx.compose.material.icons.sharp.List
 import androidx.compose.material.icons.sharp.PlayArrow
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.BlurredEdgeTreatment
+import androidx.compose.ui.draw.blur
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
@@ -24,6 +26,7 @@ import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onKeyEvent
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.loadImageBitmap
@@ -43,10 +46,6 @@ import java.awt.image.BufferedImage
 @Suppress("DuplicatedCode")
 @Composable
 fun App() {
-    // Image Displays
-    var displayedImage by remember { mutableStateOf<BufferedImage?>(null) }
-    var displayedNodes by remember { mutableStateOf<BufferedImage?>(null) }
-
     // Settings
     var settingsLines by remember { mutableStateOf(3) }
     var genType by remember { mutableStateOf(generatorType) }
@@ -71,6 +70,14 @@ fun App() {
     var screenWidth by remember { mutableStateOf(1200.dp) }
     var screenHeight by remember { mutableStateOf(800.dp) }
     val density = LocalDensity.current
+
+    // Image Displays
+    var displayedImage by remember { mutableStateOf<BufferedImage?>(null) }
+    var displayedNodes by remember { mutableStateOf<BufferedImage?>(null) }
+
+    var imageModifier by remember { mutableStateOf(
+        Modifier.size(width = (screenWidth/2)-10.dp, height = screenHeight-230.dp).offset(5.dp, 5.dp))
+    }
 
     // Colors
     var themeColor by remember { mutableStateOf(darkThemes) }
@@ -143,6 +150,21 @@ fun App() {
 
                         IconButton(onClick = {
                             settingsCardState = !settingsCardState
+                            imageModifier = if (menuCardState || settingsCardState) {
+                                Modifier
+                                    .size(width = (screenWidth/2)-10.dp, height = screenHeight-230.dp)
+                                    .blur(
+                                        radiusX = 10.dp,
+                                        radiusY = 10.dp,
+                                        edgeTreatment = BlurredEdgeTreatment.Unbounded
+                                    )
+                                    .offset(5.dp, 5.dp)
+                            } else {
+                                Modifier.size(
+                                    width = (screenWidth/2)-10.dp,
+                                    height = screenHeight-230.dp
+                                ).offset(5.dp, 5.dp)
+                            }
                         }) {
                             Icon(
                                 imageVector = Icons.Sharp.Build,
@@ -151,7 +173,25 @@ fun App() {
                             )
                         }
                         IconButton(onClick = {
+                            displayedNodes = createNodeMask(
+                                generateNodes(NodeGeneratorType.SQUARE)
+                            )
                             menuCardState = !menuCardState
+                            imageModifier = if (menuCardState || settingsCardState) {
+                                Modifier
+                                    .size(width = (screenWidth/2)-10.dp, height = screenHeight-230.dp)
+                                    .blur(
+                                        radiusX = 10.dp,
+                                        radiusY = 10.dp,
+                                        edgeTreatment = BlurredEdgeTreatment.Unbounded
+                                    )
+                                    .offset(5.dp, 5.dp)
+                            } else {
+                                Modifier.size(
+                                    width = (screenWidth/2)-10.dp,
+                                    height = screenHeight-230.dp
+                                ).offset(5.dp, 5.dp)
+                            }
                         }) {
                             Icon(
                                 imageVector = Icons.Sharp.List,
@@ -181,9 +221,7 @@ fun App() {
         ) {
             Box(
                 modifier = Modifier
-//                    .background(themeColor[1])
                     .background(
-//                        Brush.sweepGradient(listOf(themeColor[1], themeColor[5], themeColor[1], themeColor[5], themeColor[1]))
                         Brush.linearGradient(
                             colors = listOf(themeColor[1], themeColor[5]),
                             start = Offset(0f, 0f),
@@ -195,20 +233,48 @@ fun App() {
                     .onGloballyPositioned {
                         screenWidth = with(density) {it.size.width.toDp()}
                         screenHeight = with(density) {it.size.height.toDp()}
+
+                        imageModifier = if (menuCardState || settingsCardState) {
+                            Modifier
+                                .size(width = (screenWidth/2)-10.dp, height = screenHeight-230.dp)
+                                .blur(
+                                    radiusX = 10.dp,
+                                    radiusY = 10.dp,
+                                    edgeTreatment = BlurredEdgeTreatment.Unbounded
+                                )
+                                .offset(5.dp, 5.dp)
+                        } else {
+                            Modifier.size(
+                                width = (screenWidth/2)-10.dp,
+                                height = screenHeight-230.dp
+                            ).offset(5.dp, 5.dp)
+                        }
                     }
             ) {
-                if (displayed) {
-                    AsyncImage(
-                        load = { loadImageBitmap(inputStream = bufferedImageToOutputStream(displayedImage!!)) },
-                        contentDescription = "The Passed Image",
-                        painterFor = { remember { BitmapPainter(it) } }
-                    )
-                    if (nodeDisplay) {
+
+                // Display box
+                Box(
+                    modifier = Modifier
+                        .size(width = screenWidth/2, height = screenHeight)
+                ){
+                    // IMAGE SCOPE
+                    if (displayed) {
                         AsyncImage(
-                            load = { loadImageBitmap(inputStream = bufferedImageToOutputStream(displayedNodes!!)) },
-                            contentDescription = "The Image Mask",
-                            painterFor = { remember { BitmapPainter(it) } }
+                            load = { loadImageBitmap(inputStream = bufferedImageToOutputStream(displayedImage!!)) },
+                            contentDescription = "The Passed Image",
+                            painterFor = { remember { BitmapPainter(it) } },
+                            contentScale = ContentScale.Fit,
+                            modifier = imageModifier
                         )
+                        if (nodeDisplay) {
+                            AsyncImage(
+                                load = { loadImageBitmap(inputStream = bufferedImageToOutputStream(displayedNodes!!)) },
+                                contentDescription = "The Image Mask",
+                                painterFor = { remember { BitmapPainter(it) } },
+                                contentScale = ContentScale.Fit,
+                                modifier = imageModifier
+                            )
+                        }
                     }
                 }
 
