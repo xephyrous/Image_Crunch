@@ -82,12 +82,6 @@ fun App() {
     // Colors
     var themeColor by remember { mutableStateOf(darkThemes) }
 
-    val horizontalGradient by remember { mutableStateOf(Brush.horizontalGradient(listOf(themeColor[1], themeColor[5]))) }
-    val linearGradient by remember { mutableStateOf(Brush.linearGradient(listOf(themeColor[1], themeColor[5]))) }
-    val verticalGradient by remember { mutableStateOf(Brush.verticalGradient(listOf(themeColor[1], themeColor[5]))) }
-    val sweepGradient by remember { mutableStateOf(Brush.sweepGradient(listOf(themeColor[1], themeColor[5], themeColor[1], themeColor[5], themeColor[1]))) }
-    val radialGradient by remember { mutableStateOf(Brush.radialGradient(listOf(themeColor[1], themeColor[5]))) }
-
     // Configuration Settings
     val numbersOnly = remember { Regex("^\\d+\$") }
 
@@ -173,9 +167,6 @@ fun App() {
                             )
                         }
                         IconButton(onClick = {
-                            displayedNodes = createNodeMask(
-                                generateNodes(GeneratorType.SQUARE)
-                            )
                             menuCardState = !menuCardState
                             imageModifier = if (menuCardState || settingsCardState) {
                                 Modifier
@@ -352,6 +343,14 @@ fun App() {
                                                     }
                                                 }
                                             },
+                                            colors = TextFieldDefaults.textFieldColors(
+                                                textColor = themeColor[2],
+                                                disabledTextColor = themeColor[2],
+                                                backgroundColor = themeColor[1],
+                                                cursorColor = themeColor[2],
+                                                focusedIndicatorColor = themeColor[2],
+                                                unfocusedIndicatorColor = themeColor[1]
+                                            ),
                                             modifier = Modifier.size((screenWidth/3)-10.dp, 50.dp).offset(5.dp, 5.dp)
                                                 .onKeyEvent {
                                                     if (it.key == Key.Enter) {
