@@ -16,7 +16,7 @@ enum class GeneratorType {
 
 //A masked region of an image with its top-left coordinate
 class Mask(val size: Dimension) {
-    var bits: Array<Array<Byte>>
+    var bits: ImageMask
     var position: PositionNode = PositionNode(-1, -1)
 
     init {
