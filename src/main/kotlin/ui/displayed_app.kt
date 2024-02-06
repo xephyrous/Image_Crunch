@@ -16,6 +16,8 @@ import androidx.compose.material.icons.sharp.List
 import androidx.compose.material.icons.sharp.PlayArrow
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.BlurredEdgeTreatment
+import androidx.compose.ui.draw.blur
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
@@ -24,6 +26,7 @@ import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onKeyEvent
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.loadImageBitmap
@@ -48,6 +51,10 @@ fun App() {
 
     val density = LocalDensity.current
 
+    var imageModifier by remember { mutableStateOf(
+        Modifier.size(width = (vm.screenWidth/2)-10.dp, height = vm.screenHeight-230.dp).offset(5.dp, 5.dp))
+    }
+    
     //Card Animations
     val menuOffset by animateDpAsState(targetValue = (if (vm.menuCardState) (if (!vm.settingsCardState) 10 else 320) else (-310)).dp)
     val menuSize by animateDpAsState(targetValue = (vm.menuLines * 50).dp)
@@ -98,6 +105,22 @@ fun App() {
 
                         IconButton(onClick = {
                             vm.settingsCardState = !vm.settingsCardState
+                            vm.settingsCardState = !vm.settingsCardState
+                            imageModifier = if (vm.menuCardState || vm.settingsCardState) {
+                                Modifier
+                                    .size(width = (vm.screenWidth/2)-10.dp, height = vm.screenHeight-230.dp)
+                                    .blur(
+                                        radiusX = 10.dp,
+                                        radiusY = 10.dp,
+                                        edgeTreatment = BlurredEdgeTreatment.Unbounded
+                                    )
+                                    .offset(5.dp, 5.dp)
+                            } else {
+                                Modifier.size(
+                                    width = (vm.screenWidth/2)-10.dp,
+                                    height = vm.screenHeight-230.dp
+                                ).offset(5.dp, 5.dp)
+                            }
                         }) {
                             Icon(
                                 imageVector = Icons.Sharp.Build,
@@ -107,6 +130,22 @@ fun App() {
                         }
                         IconButton(onClick = {
                             vm.menuCardState = !vm.menuCardState
+                            vm.menuCardState = !vm.menuCardState
+                            imageModifier = if (vm.menuCardState || vm.settingsCardState) {
+                                Modifier
+                                    .size(width = (vm.screenWidth/2)-10.dp, height = vm.screenHeight-230.dp)
+                                    .blur(
+                                        radiusX = 10.dp,
+                                        radiusY = 10.dp,
+                                        edgeTreatment = BlurredEdgeTreatment.Unbounded
+                                    )
+                                    .offset(5.dp, 5.dp)
+                            } else {
+                                Modifier.size(
+                                    width = (vm.screenWidth/2)-10.dp,
+                                    height = vm.screenHeight-230.dp
+                                ).offset(5.dp, 5.dp)
+                            }
                         }) {
                             Icon(
                                 imageVector = Icons.Sharp.List,
@@ -150,6 +189,22 @@ fun App() {
                     .onGloballyPositioned {
                         vm.screenWidth = with(density) {it.size.width.toDp()}
                         vm.screenHeight = with(density) {it.size.height.toDp()}
+
+                        imageModifier = if (vm.menuCardState || vm.settingsCardState) {
+                            Modifier
+                                .size(width = (vm.screenWidth/2)-10.dp, height = vm.screenHeight-230.dp)
+                                .blur(
+                                    radiusX = 10.dp,
+                                    radiusY = 10.dp,
+                                    edgeTreatment = BlurredEdgeTreatment.Unbounded
+                                )
+                                .offset(5.dp, 5.dp)
+                        } else {
+                            Modifier.size(
+                                width = (vm.screenWidth/2)-10.dp,
+                                height = vm.screenHeight-230.dp
+                            ).offset(5.dp, 5.dp)
+                        }
                     }
             ) {
                 if (vm.displayed) {
@@ -164,6 +219,30 @@ fun App() {
                             contentDescription = "The Image Mask",
                             painterFor = { remember { BitmapPainter(it) } }
                         )
+
+                // Display box
+                Box(
+                    modifier = Modifier
+                        .size(width = vm.screenWidth/2, height = vm.screenHeight)
+                ){
+                    // IMAGE SCOPE
+                    if (vm.displayed) {
+                        AsyncImage(
+                            load = { loadImageBitmap(inputStream = bufferedImageToOutputStream(vm.displayedImage!!)) },
+                            contentDescription = "The Passed Image",
+                            painterFor = { remember { BitmapPainter(it) } },
+                            contentScale = ContentScale.Fit,
+                            modifier = imageModifier
+                        )
+                        if (vm.nodeDisplay) {
+                            AsyncImage(
+                                load = { loadImageBitmap(inputStream = bufferedImageToOutputStream(vm.displayedNodes!!)) },
+                                contentDescription = "The Image Mask",
+                                painterFor = { remember { BitmapPainter(it) } },
+                                contentScale = ContentScale.Fit,
+                                modifier = imageModifier
+                            )
+                        }
                     }
                 }
 
@@ -241,6 +320,14 @@ fun App() {
                                                     }
                                                 }
                                             },
+                                            colors = TextFieldDefaults.textFieldColors(
+                                                textColor = vm.themeColor[2],
+                                                disabledTextColor = vm.themeColor[2],
+                                                backgroundColor = vm.themeColor[1],
+                                                cursorColor = vm.themeColor[2],
+                                                focusedIndicatorColor = vm.themeColor[2],
+                                                unfocusedIndicatorColor = vm.themeColor[1]
+                                            ),
                                             modifier = Modifier.size((vm.screenWidth/3)-10.dp, 50.dp).offset(5.dp, 5.dp)
                                                 .onKeyEvent {
                                                     if (it.key == Key.Enter) {
