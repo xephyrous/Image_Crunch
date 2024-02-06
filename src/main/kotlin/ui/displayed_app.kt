@@ -37,73 +37,28 @@ import utils.app.settingsToCSV
 import utils.app.settingsToString
 import utils.images.*
 import utils.storage.*
-import java.awt.image.BufferedImage
-
 
 @Suppress("DuplicatedCode")
 @Composable
 fun App() {
-    // Image Displays
-    var displayedImage by remember { mutableStateOf<BufferedImage?>(null) }
-    var displayedNodes by remember { mutableStateOf<BufferedImage?>(null) }
-
-    // Settings
-    var settingsLines by remember { mutableStateOf(3) }
-    var genType by remember { mutableStateOf(generatorType) }
-    var menuLines by remember { mutableStateOf(2) }
-    var compactExportToggle by remember { mutableStateOf(compactExport) }
-
-    // The good shi
-    var settingsMain by remember { mutableStateOf(true) }
-    var selectGenerator by remember { mutableStateOf(false) }
-    var selectOutput by remember { mutableStateOf(false) }
-
-    var configGenerator by remember { mutableStateOf(false) }
-    var configMasks by remember { mutableStateOf(false) }
-    var configSlices by remember { mutableStateOf(false) }
-
-    var squareGenerator by remember { mutableStateOf(false) }
-
-    var mainMain by remember { mutableStateOf(true) }
-    var exportSettings by remember { mutableStateOf(false) }
-    var themeSettings by remember { mutableStateOf(false) }
-
-    var screenWidth by remember { mutableStateOf(1200.dp) }
-    var screenHeight by remember { mutableStateOf(800.dp) }
-    val density = LocalDensity.current
-
-    // Colors
-    var themeColor by remember { mutableStateOf(darkThemes) }
-
-    val horizontalGradient by remember { mutableStateOf(Brush.horizontalGradient(listOf(themeColor[1], themeColor[5]))) }
-    val linearGradient by remember { mutableStateOf(Brush.linearGradient(listOf(themeColor[1], themeColor[5]))) }
-    val verticalGradient by remember { mutableStateOf(Brush.verticalGradient(listOf(themeColor[1], themeColor[5]))) }
-    val sweepGradient by remember { mutableStateOf(Brush.sweepGradient(listOf(themeColor[1], themeColor[5], themeColor[1], themeColor[5], themeColor[1]))) }
-    val radialGradient by remember { mutableStateOf(Brush.radialGradient(listOf(themeColor[1], themeColor[5]))) }
+    val vm = remember { ViewModel() }
 
     // Configuration Settings
-    val numbersOnly = remember { Regex("^\\d+\$") }
+    val numbersOnly = Regex("^\\d+\$")
 
-    var genTypeA by remember { mutableStateOf("") }
-    var genTypeB by remember { mutableStateOf("") }
+    val density = LocalDensity.current
 
-    // Display Settings
-    var displayed by remember { mutableStateOf(false) }
-    var nodeDisplay by remember { mutableStateOf(true) }
-
-    // Card Animations
-    var menuCardState by remember { mutableStateOf(false) }
-    var settingsCardState by remember { mutableStateOf(false) }
-    val menuOffset by animateDpAsState(targetValue = (if (menuCardState) (if (!settingsCardState) 10 else 320) else (-310)).dp)
-    val menuSize by animateDpAsState(targetValue = (menuLines * 50).dp)
-    val menuTitle by animateDpAsState(targetValue = if (menuCardState) 5.dp else 60.dp)
-    val menuExit by animateDpAsState(targetValue = if (mainMain) (60 + ((menuLines - 1) * 50)).dp else (65 + (menuLines * 50)).dp)
-    val settingsOffset by animateDpAsState(targetValue = (if (settingsCardState) 10 else (-310)).dp)
-    val settingsSize by animateDpAsState(targetValue = (settingsLines * 50).dp)
-    val settingsTitle by animateDpAsState(targetValue = if (settingsCardState) 5.dp else 60.dp)
-    val settingsExit by animateDpAsState(targetValue = if (settingsMain) (60 + ((settingsLines - 1) * 50)).dp else (65 + (settingsLines * 50)).dp)
-    val bottomCardsY by animateDpAsState(targetValue = screenHeight)
-    val bottomCardsX by animateDpAsState(targetValue = screenWidth)
+    //Card Animations
+    val menuOffset by animateDpAsState(targetValue = (if (vm.menuCardState) (if (!vm.settingsCardState) 10 else 320) else (-310)).dp)
+    val menuSize by animateDpAsState(targetValue = (vm.menuLines * 50).dp)
+    val menuTitle by animateDpAsState(targetValue = if (vm.menuCardState) 5.dp else 60.dp)
+    val menuExit by animateDpAsState(targetValue = if (vm.mainMain) (60 + ((vm.menuLines - 1) * 50)).dp else (65 + (vm.menuLines * 50)).dp)
+    val settingsOffset by animateDpAsState(targetValue = (if (vm.settingsCardState) 10 else (-310)).dp)
+    val settingsSize by animateDpAsState(targetValue = (vm.settingsLines * 50).dp)
+    val settingsTitle by animateDpAsState(targetValue = if (vm.settingsCardState) 5.dp else 60.dp)
+    val settingsExit by animateDpAsState(targetValue = if (vm.settingsMain) (60 + ((vm.settingsLines - 1) * 50)).dp else (65 + (vm.settingsLines * 50)).dp)
+    val bottomCardsY by animateDpAsState(targetValue = vm.screenHeight)
+    val bottomCardsX by animateDpAsState(targetValue = vm.screenWidth)
 
     AppTheme {
         Scaffold(
@@ -112,51 +67,51 @@ fun App() {
                     title = {
                         Text(
                             "Image Chomp",
-                            color = themeColor[2],
+                            color = vm.themeColor[2],
                             fontSize = 30.sp,
                             fontWeight = FontWeight.ExtraBold
                         )
                     },
-                    backgroundColor = themeColor[0],
+                    backgroundColor = vm.themeColor[0],
                     actions = {
                         // holy spaghetti
                         IconButton(onClick = {
-                            displayed = false
+                            vm.displayed = false
                             val tempImage = ImageFileSelection()
                             if (tempImage != null) {
-                                displayedImage = fileToBufferedImage(tempImage)
-                                loadedImageSize.set(getDim(displayedImage!!))
+                                vm.displayedImage = fileToBufferedImage(tempImage)
+                                loadedImageSize.set(getDim(vm.displayedImage!!))
                             }
-                            if (displayedImage != null) {
-                                displayedNodes = createNodeMask(
+                            if (vm.displayedImage != null) {
+                                vm.displayedNodes = createNodeMask(
                                     generateNodes(GeneratorType.SQUARE)
                                 )
-                                displayed = true
+                                vm.displayed = true
                             }
                         }) {
                             Icon(
                                 imageVector = Icons.Sharp.Add,
                                 contentDescription = "Select Image",
-                                tint = themeColor[3]
+                                tint = vm.themeColor[3]
                             )
                         }
 
                         IconButton(onClick = {
-                            settingsCardState = !settingsCardState
+                            vm.settingsCardState = !vm.settingsCardState
                         }) {
                             Icon(
                                 imageVector = Icons.Sharp.Build,
                                 contentDescription = "Settings",
-                                tint = themeColor[3]
+                                tint = vm.themeColor[3]
                             )
                         }
                         IconButton(onClick = {
-                            menuCardState = !menuCardState
+                            vm.menuCardState = !vm.menuCardState
                         }) {
                             Icon(
                                 imageVector = Icons.Sharp.List,
                                 contentDescription = "Test Text",
-                                tint = themeColor[3]
+                                tint = vm.themeColor[3]
                             )
                         }
                     }
@@ -167,25 +122,25 @@ fun App() {
                     onClick = {
                         // run the code :thumb:
                     },
-                    text = { Text("Run", color = themeColor[2]) },
+                    text = { Text("Run", color = vm.themeColor[2]) },
                     icon = {
                         Icon(
                             Icons.Sharp.PlayArrow, "Run",
-                            tint = themeColor[3]
+                            tint = vm.themeColor[3]
                         )
                     },
-                    backgroundColor = themeColor[4],
+                    backgroundColor = vm.themeColor[4],
                     modifier = Modifier.offset(0.dp, (-100).dp)
                 )
             },
         ) {
             Box(
                 modifier = Modifier
-//                    .background(themeColor[1])
+//                    .background(vm.themeColor[1])
                     .background(
-//                        Brush.sweepGradient(listOf(themeColor[1], themeColor[5], themeColor[1], themeColor[5], themeColor[1]))
+//                        Brush.sweepGradient(listOf(vm.themeColor[1], vm.themeColor[5], vm.themeColor[1], vm.themeColor[5], vm.themeColor[1]))
                         Brush.linearGradient(
-                            colors = listOf(themeColor[1], themeColor[5]),
+                            colors = listOf(vm.themeColor[1], vm.themeColor[5]),
                             start = Offset(0f, 0f),
                             end = Offset(Float.POSITIVE_INFINITY, 0f),
                             tileMode = TileMode.Clamp
@@ -193,19 +148,19 @@ fun App() {
                     )
                     .fillMaxSize()
                     .onGloballyPositioned {
-                        screenWidth = with(density) {it.size.width.toDp()}
-                        screenHeight = with(density) {it.size.height.toDp()}
+                        vm.screenWidth = with(density) {it.size.width.toDp()}
+                        vm.screenHeight = with(density) {it.size.height.toDp()}
                     }
             ) {
-                if (displayed) {
+                if (vm.displayed) {
                     AsyncImage(
-                        load = { loadImageBitmap(inputStream = bufferedImageToOutputStream(displayedImage!!)) },
+                        load = { loadImageBitmap(inputStream = bufferedImageToOutputStream(vm.displayedImage!!)) },
                         contentDescription = "The Passed Image",
                         painterFor = { remember { BitmapPainter(it) } }
                     )
-                    if (nodeDisplay) {
+                    if (vm.nodeDisplay) {
                         AsyncImage(
-                            load = { loadImageBitmap(inputStream = bufferedImageToOutputStream(displayedNodes!!)) },
+                            load = { loadImageBitmap(inputStream = bufferedImageToOutputStream(vm.displayedNodes!!)) },
                             contentDescription = "The Image Mask",
                             painterFor = { remember { BitmapPainter(it) } }
                         )
@@ -216,11 +171,11 @@ fun App() {
                 createCard(
                     xOffset = 0.dp, yOffset = bottomCardsY-100.dp,
                     width = bottomCardsX/3, height = 400.dp, elevation = 5.dp,
-                    themeColor = themeColor, cardColor = 5,
+                    themeColor = vm.themeColor, cardColor = 5,
                     cardContent = {
                         textRow(
                             rowOffset = 0.dp, displayedText = "Node Generator\nSettings", textOffset = 15.dp,
-                            fontSize = 30.sp, font = FontWeight.SemiBold, themeColor = themeColor, textColor = 2
+                            fontSize = 30.sp, font = FontWeight.SemiBold, themeColor = vm.themeColor, textColor = 2
                         )
                     }
                 )
@@ -228,11 +183,11 @@ fun App() {
                 createCard(
                     xOffset = bottomCardsX/3, yOffset = bottomCardsY-100.dp,
                     width = bottomCardsX/3, height = 400.dp, elevation = 5.dp,
-                    themeColor = themeColor, cardColor = 5,
+                    themeColor = vm.themeColor, cardColor = 5,
                     cardContent = {
                         textRow(
                             rowOffset = 0.dp, displayedText = "Mask Generator\nSettings", textOffset = 15.dp,
-                            fontSize = 30.sp, font = FontWeight.SemiBold, themeColor = themeColor, textColor = 2
+                            fontSize = 30.sp, font = FontWeight.SemiBold, themeColor = vm.themeColor, textColor = 2
                         )
                     }
                 )
@@ -240,25 +195,25 @@ fun App() {
                 createCard(
                     xOffset = (bottomCardsX/3)*2, yOffset = bottomCardsY-100.dp,
                     width = bottomCardsX/3, height = 400.dp, elevation = 5.dp,
-                    themeColor = themeColor, cardColor = 5,
+                    themeColor = vm.themeColor, cardColor = 5,
                     cardContent = {
                         textRow(
                             rowOffset = 0.dp, displayedText = "Slice Generator\nSettings", textOffset = 15.dp,
-                            fontSize = 30.sp, font = FontWeight.SemiBold, themeColor = themeColor, textColor = 2
+                            fontSize = 30.sp, font = FontWeight.SemiBold, themeColor = vm.themeColor, textColor = 2
                         )
                     }
                 )
 
                 // Bottom Bar Settings
                 verticalVisibilityPane(
-                    visibility = configGenerator, animationHeight = 2, duration = 369, paneContent = {
+                    visibility = vm.configGenerator, animationHeight = 2, duration = 369, paneContent = {
                         createCard(
                             xOffset = 0.dp, yOffset = bottomCardsY-220.dp,
                             width = bottomCardsX/3, height = 500.dp, elevation = 5.dp,
-                            themeColor = themeColor, cardColor = 5,
+                            themeColor = vm.themeColor, cardColor = 5,
                             cardContent = {
                                 AnimatedVisibility(
-                                    visible = squareGenerator,
+                                    visible = vm.squareGenerator,
                                     enter = slideInVertically(
                                         animationSpec = tween(durationMillis = 369)
                                     ) { fullHeight -> fullHeight * 2 },
@@ -268,7 +223,7 @@ fun App() {
                                 ) {
                                     Row() {
                                         Text(
-                                            "Number of Rows:", color = themeColor[2],
+                                            "Number of Rows:", color = vm.themeColor[2],
                                             modifier = Modifier.fillMaxSize().offset(y= 5.dp),
                                             fontSize = 40.sp, textAlign = TextAlign.Center, fontWeight = FontWeight.Normal
                                         )
@@ -277,36 +232,36 @@ fun App() {
                                         modifier = Modifier.offset(y = 50.dp)
                                     ) {
                                         TextField(
-                                            value = genTypeA,
+                                            value = vm.genTypeA,
                                             onValueChange = {
                                                 if(it.length < 5 && (it.matches(numbersOnly) || it.isEmpty())) {
-                                                    genTypeA = it
-                                                    if(genTypeA.isNotEmpty()) {
-                                                        squareRows.set(genTypeA.toInt())
+                                                    vm.genTypeA = it
+                                                    if(vm.genTypeA.isNotEmpty()) {
+                                                        squareRows.set(vm.genTypeA.toInt())
                                                     }
                                                 }
                                             },
-                                            modifier = Modifier.size((screenWidth/3)-10.dp, 50.dp).offset(5.dp, 5.dp)
+                                            modifier = Modifier.size((vm.screenWidth/3)-10.dp, 50.dp).offset(5.dp, 5.dp)
                                                 .onKeyEvent {
                                                     if (it.key == Key.Enter) {
-                                                        if(squareRows.value() > 0 && displayedImage != null) {
-                                                            nodeDisplay = false
-                                                            displayedNodes = createNodeMask(
+                                                        if(squareRows.value() > 0 && vm.displayedImage != null) {
+                                                            vm.nodeDisplay = false
+                                                            vm.displayedNodes = createNodeMask(
                                                                 generateNodes(GeneratorType.SQUARE)
                                                             )
-                                                            nodeDisplay = true
+                                                            vm.nodeDisplay = true
                                                         }
                                                     }
                                                     true
                                                 }
                                                 .onFocusChanged {
                                                     if (!it.isFocused) {
-                                                        if(squareRows.value() > 0 && displayedImage != null) {
-                                                            nodeDisplay = false
-                                                            displayedNodes = createNodeMask(
+                                                        if(squareRows.value() > 0 && vm.displayedImage != null) {
+                                                            vm.nodeDisplay = false
+                                                            vm.displayedNodes = createNodeMask(
                                                                 generateNodes(GeneratorType.SQUARE)
                                                             )
-                                                            nodeDisplay = true
+                                                            vm.nodeDisplay = true
                                                         }
                                                     }
                                                 },
@@ -318,7 +273,7 @@ fun App() {
                                         modifier = Modifier.offset(y = 110.dp)
                                     ) {
                                         Text(
-                                            "Number of Columns:", color = themeColor[2],
+                                            "Number of Columns:", color = vm.themeColor[2],
                                             modifier = Modifier.fillMaxSize().offset(y= 5.dp),
                                             fontSize = 40.sp, textAlign = TextAlign.Center, fontWeight = FontWeight.Normal
                                         )
@@ -327,34 +282,34 @@ fun App() {
                                         modifier = Modifier.offset(y = 160.dp)
                                     ) {
                                         TextField(
-                                            value = genTypeB,
+                                            value = vm.genTypeB,
                                             onValueChange = {
                                                 if(it.length < 5 && (it.matches(numbersOnly) || it.isEmpty())) {
-                                                    genTypeB = it
-                                                    if(genTypeB.isNotEmpty()) squareColumns.set(genTypeB.toInt())
+                                                    vm.genTypeB = it
+                                                    if(vm.genTypeB.isNotEmpty()) squareColumns.set(vm.genTypeB.toInt())
                                                 }
                                             },
-                                            modifier = Modifier.size((screenWidth/3)-10.dp, 50.dp).offset(5.dp, 5.dp)
+                                            modifier = Modifier.size((vm.screenWidth/3)-10.dp, 50.dp).offset(5.dp, 5.dp)
                                                 .onKeyEvent {
                                                     if (it.key == Key.Enter) {
-                                                        if(squareColumns.value() > 0 && displayedImage != null) {
-                                                            nodeDisplay = false
-                                                            displayedNodes = createNodeMask(
+                                                        if(squareColumns.value() > 0 && vm.displayedImage != null) {
+                                                            vm.nodeDisplay = false
+                                                            vm.displayedNodes = createNodeMask(
                                                                 generateNodes(GeneratorType.SQUARE)
                                                             )
-                                                            nodeDisplay = true
+                                                            vm.nodeDisplay = true
                                                         }
                                                     }
                                                     true
                                                 }
                                                 .onFocusChanged {
                                                     if (!it.isFocused) {
-                                                        if(squareColumns.value() > 0 && displayedImage != null) {
-                                                            nodeDisplay = false
-                                                            displayedNodes = createNodeMask(
+                                                        if(squareColumns.value() > 0 && vm.displayedImage != null) {
+                                                            vm.nodeDisplay = false
+                                                            vm.displayedNodes = createNodeMask(
                                                                 generateNodes(GeneratorType.SQUARE)
                                                             )
-                                                            nodeDisplay = true
+                                                            vm.nodeDisplay = true
                                                         }
                                                     }
                                                 },
@@ -368,25 +323,25 @@ fun App() {
                     }
                 )
                 verticalVisibilityPane(
-                    visibility = configMasks, animationHeight = 2, duration = 369, paneContent = {
+                    visibility = vm.configMasks, animationHeight = 2, duration = 369, paneContent = {
                         createCard(
                             xOffset = bottomCardsX/3, yOffset = bottomCardsY-150.dp,
                             width = bottomCardsX/3, height = 400.dp, elevation = 5.dp,
-                            themeColor = themeColor, cardColor = 5,
+                            themeColor = vm.themeColor, cardColor = 5,
                             cardContent = {}
                         )
                     }
                 )
                 verticalVisibilityPane(
-                    visibility = configSlices, animationHeight = 2, duration = 369, paneContent = {
+                    visibility = vm.configSlices, animationHeight = 2, duration = 369, paneContent = {
                         createCard(
                             xOffset = (bottomCardsX/3)*2, yOffset = bottomCardsY-150.dp,
                             width = bottomCardsX/3, height = 400.dp, elevation = 5.dp,
-                            themeColor = themeColor, cardColor = 5,
+                            themeColor = vm.themeColor, cardColor = 5,
                             cardContent = {
                                 textRow(
                                     rowOffset = 0.dp, displayedText = "Filla Text", textOffset = 5.dp,
-                                    fontSize = 40.sp, font = FontWeight.Normal, themeColor = themeColor, textColor = 2
+                                    fontSize = 40.sp, font = FontWeight.Normal, themeColor = vm.themeColor, textColor = 2
                                 )
                             }
                         )
@@ -398,35 +353,35 @@ fun App() {
                     menuOffset = menuOffset, titleOffset = menuTitle, mainOffset = 60.dp, returnOffset = menuExit,
                     menuWidth = 300.dp, mainHeight = menuSize, elevation = 20.dp,
                     menuTitle = "Main Menu", returnTitle = "Return to main",
-                    themeColor = themeColor, cardColor = 5, buttonColor = 4, titleColor = 2, textColor = 2,
+                    themeColor = vm.themeColor, cardColor = 5, buttonColor = 4, titleColor = 2, textColor = 2,
                     exitOperation = {
-                        exportSettings = false
-                        themeSettings = false
-                        mainMain = true
-                        menuLines = 2
+                        vm.exportSettings = false
+                        vm.themeSettings = false
+                        vm.mainMain = true
+                        vm.menuLines = 2
                     },
                     menuPages = {
                         // Main Menu
                         horizontalVisibilityPane(
-                            visibility = mainMain, animationWidth = -2, duration = 369, paneContent = {
+                            visibility = vm.mainMain, animationWidth = -2, duration = 369, paneContent = {
                                 buttonRow(
                                     rowOffset = 0.dp, buttonOffset = 25.dp, width = 250.dp,
                                     buttonEvent = {
-                                        mainMain = false
-                                        exportSettings = true
-                                        menuLines = if (compactExportToggle) (1) else (2)
+                                        vm.mainMain = false
+                                        vm.exportSettings = true
+                                        vm.menuLines = if (vm.compactExportToggle) (1) else (2)
                                     },
-                                    buttonText = "Export Settings", themeColor = themeColor,
+                                    buttonText = "Export Settings", themeColor = vm.themeColor,
                                     buttonColor = 4, textColor = 2
                                 )
                                 buttonRow(
                                     rowOffset = 50.dp, buttonOffset = 25.dp, width = 250.dp,
                                     buttonEvent = {
-                                        mainMain = false
-                                        themeSettings = true
-                                        menuLines = 4
+                                        vm.mainMain = false
+                                        vm.themeSettings = true
+                                        vm.menuLines = 4
                                     },
-                                    buttonText = "Select Theme", themeColor = themeColor,
+                                    buttonText = "Select Theme", themeColor = vm.themeColor,
                                     buttonColor = 4, textColor = 2
                                 )
                             }
@@ -434,14 +389,14 @@ fun App() {
 
                         // Export Settings
                         horizontalVisibilityPane(
-                            visibility = exportSettings, animationWidth = 2, duration = 369, paneContent = {
+                            visibility = vm.exportSettings, animationWidth = 2, duration = 369, paneContent = {
                                 Row() {
                                     Switch(
-                                        checked = compactExportToggle,
+                                        checked = vm.compactExportToggle,
                                         onCheckedChange = {
-                                            compactExportToggle = it
-                                            compactExport = compactExportToggle
-                                            menuLines = if (!compactExport) { 2 } else { 1 }
+                                            vm.compactExportToggle = it
+                                            compactExport = vm.compactExportToggle
+                                            vm.menuLines = if (!compactExport) { 2 } else { 1 }
                                         },
                                         modifier = Modifier.offset(50.dp, 0.dp).width(25.dp)
                                     )
@@ -454,17 +409,17 @@ fun App() {
                                             }
                                         },
                                         modifier = Modifier.offset(75.dp, 0.dp).width(150.dp),
-                                        colors = ButtonDefaults.buttonColors(backgroundColor = themeColor[4])
+                                        colors = ButtonDefaults.buttonColors(backgroundColor = vm.themeColor[4])
                                     ) {
-                                        Text("Button?", color = themeColor[2])
+                                        Text("Button?", color = vm.themeColor[2])
                                     }
                                 }
-                                if (!compactExportToggle) {
+                                if (!vm.compactExportToggle) {
                                     Row(
                                         modifier = Modifier
                                             .offset(0.dp, 50.dp)
                                     ) {
-                                        Text("Select Output Here", color = themeColor[2])
+                                        Text("Select Output Here", color = vm.themeColor[2])
                                     }
                                 }
                             }
@@ -472,37 +427,37 @@ fun App() {
 
                         // Theme Selection
                         horizontalVisibilityPane(
-                            visibility = themeSettings, animationWidth = 2, duration = 369, paneContent = {
+                            visibility = vm.themeSettings, animationWidth = 2, duration = 369, paneContent = {
                                 buttonRow(
                                     rowOffset = 0.dp, buttonOffset = 25.dp, width = 250.dp,
                                     buttonEvent = {
-                                        themeColor = darkThemes
+                                        vm.themeColor = darkThemes
                                     },
-                                    buttonText = "Theme: Dark", themeColor = themeColor,
+                                    buttonText = "Theme: Dark", themeColor = vm.themeColor,
                                     buttonColor = 4, textColor = 2
                                 )
                                 buttonRow(
                                     rowOffset = 50.dp, buttonOffset = 25.dp, width = 250.dp,
                                     buttonEvent = {
-                                        themeColor = lightThemes
+                                        vm.themeColor = lightThemes
                                     },
-                                    buttonText = "Theme: Light", themeColor = themeColor,
+                                    buttonText = "Theme: Light", themeColor = vm.themeColor,
                                     buttonColor = 4, textColor = 2
                                 )
                                 buttonRow(
                                     rowOffset = 100.dp, buttonOffset = 25.dp, width = 250.dp,
                                     buttonEvent = {
-                                        themeColor = celesteThemes
+                                        vm.themeColor = celesteThemes
                                     },
-                                    buttonText = "Theme: Celeste", themeColor = themeColor,
+                                    buttonText = "Theme: Celeste", themeColor = vm.themeColor,
                                     buttonColor = 4, textColor = 2
                                 )
                                 buttonRow(
                                     rowOffset = 150.dp, buttonOffset = 25.dp, width = 250.dp,
                                     buttonEvent = {
-                                        themeColor = aqueousThemes
+                                        vm.themeColor = aqueousThemes
                                     },
-                                    buttonText = "Theme: Aqueous", themeColor = themeColor,
+                                    buttonText = "Theme: Aqueous", themeColor = vm.themeColor,
                                     buttonColor = 4, textColor = 2
                                 )
                             }
@@ -515,43 +470,43 @@ fun App() {
                     menuOffset = settingsOffset, titleOffset = settingsTitle, mainOffset = 60.dp, returnOffset = settingsExit,
                     menuWidth = 300.dp, mainHeight = settingsSize, elevation = 20.dp,
                     menuTitle = "Generation Settings", returnTitle = "Return to main",
-                    themeColor = themeColor, cardColor = 5, buttonColor = 4, titleColor = 2, textColor = 2,
+                    themeColor = vm.themeColor, cardColor = 5, buttonColor = 4, titleColor = 2, textColor = 2,
                     exitOperation = {
-                        selectGenerator = false
-                        selectOutput = false
-                        settingsMain = true
-                        settingsLines = 3
+                        vm.selectGenerator = false
+                        vm.selectOutput = false
+                        vm.settingsMain = true
+                        vm.settingsLines = 3
                     },
                     menuPages = {
                         horizontalVisibilityPane(
-                            visibility = settingsMain, animationWidth = -2, duration = 369, paneContent = {
+                            visibility = vm.settingsMain, animationWidth = -2, duration = 369, paneContent = {
                                 buttonRow(
                                     rowOffset = 0.dp, buttonOffset = 25.dp, width = 250.dp,
                                     buttonEvent = {
-                                        settingsMain = false
-                                        configGenerator = true
-                                        selectGenerator = true
-                                        settingsLines = 4
+                                        vm.settingsMain = false
+                                        vm.configGenerator = true
+                                        vm.selectGenerator = true
+                                        vm.settingsLines = 4
                                     },
-                                    buttonText = "Select Generator", themeColor = themeColor,
+                                    buttonText = "Select Generator", themeColor = vm.themeColor,
                                     buttonColor = 4, textColor = 2
                                 )
                                 buttonRow(
                                     rowOffset = 50.dp, buttonOffset = 25.dp, width = 250.dp,
                                     buttonEvent = {
-                                        configSlices = true
+                                        vm.configSlices = true
                                     },
-                                    buttonText = "Select Cut Type", themeColor = themeColor,
+                                    buttonText = "Select Cut Type", themeColor = vm.themeColor,
                                     buttonColor = 4, textColor = 2
                                 )
                                 buttonRow(
                                     rowOffset = 100.dp, buttonOffset = 25.dp, width = 250.dp,
                                     buttonEvent = {
-                                        settingsMain = false
-                                        selectOutput = true
-                                        settingsLines = 1
+                                        vm.settingsMain = false
+                                        vm.selectOutput = true
+                                        vm.settingsLines = 1
                                     },
-                                    buttonText = "Select Output", themeColor = themeColor,
+                                    buttonText = "Select Output", themeColor = vm.themeColor,
                                     buttonColor = 4, textColor = 2
                                 )
                             }
@@ -559,25 +514,25 @@ fun App() {
 
                         // Generator Type Selection
                         horizontalVisibilityPane(
-                            visibility = selectGenerator, animationWidth = 2, duration = 369, paneContent = {
+                            visibility = vm.selectGenerator, animationWidth = 2, duration = 369, paneContent = {
                                 buttonRow(
                                     rowOffset = 0.dp, buttonOffset = 25.dp, width = 250.dp,
                                     buttonEvent = {
-                                        genType.set(GeneratorType.NONE)
+                                        vm.genType.set(GeneratorType.NONE)
                                         generatorType.set(GeneratorType.NONE)
-                                        genTypeA = "15"
-                                        genTypeB = "15"
-                                        squareGenerator = true
+                                        vm.genTypeA = "15"
+                                        vm.genTypeB = "15"
+                                        vm.squareGenerator = true
                                     },
-                                    buttonText = "Square Generator", themeColor = themeColor,
+                                    buttonText = "Square Generator", themeColor = vm.themeColor,
                                     buttonColor = 4, textColor = 2
                                 )
                                 buttonRow(
                                     rowOffset = 50.dp, buttonOffset = 25.dp, width = 250.dp,
                                     buttonEvent = {
-                                                  displayed = false
+                                        vm.displayed = false
                                     },
-                                    buttonText = "nuke the bitch", themeColor = themeColor,
+                                    buttonText = "nuke the bitch",  themeColor = vm.themeColor,
                                     buttonColor = 4, textColor = 2
                                 )
                                 buttonRow(
@@ -585,7 +540,7 @@ fun App() {
                                     buttonEvent = {
 
                                     },
-                                    buttonText = "Does Not Exist", themeColor = themeColor,
+                                    buttonText = "Does Not Exist", themeColor = vm.themeColor,
                                     buttonColor = 4, textColor = 2
                                 )
                                 buttonRow(
@@ -593,7 +548,7 @@ fun App() {
                                     buttonEvent = {
 
                                     },
-                                    buttonText = "Does Not Exist", themeColor = themeColor,
+                                    buttonText = "Does Not Exist", themeColor = vm.themeColor,
                                     buttonColor = 4, textColor = 2
                                 )
                             }
@@ -601,13 +556,13 @@ fun App() {
 
                         // Output location, needs to be finished
                         horizontalVisibilityPane(
-                            visibility = selectOutput, animationWidth = 2, duration = 369, paneContent = {
+                            visibility = vm.selectOutput, animationWidth = 2, duration = 369, paneContent = {
                                 buttonRow(
                                     rowOffset = 0.dp, buttonOffset = 25.dp, width = 250.dp,
                                     buttonEvent = {
                                         // TODO: implement location picking cuz that doesnt exist yet
                                     },
-                                    buttonText = "Select Output Location", themeColor = themeColor,
+                                    buttonText = "Select Output Location", themeColor = vm.themeColor,
                                     buttonColor = 4, textColor = 2
                                 )
                             }
