@@ -27,9 +27,7 @@ class ViewModel {
     var compactExportToggle by mutableStateOf(compactExport)
 
     // The good shi
-    var settingsMain by mutableStateOf(true)
-    var selectGenerator by mutableStateOf(false)
-    var selectOutput by mutableStateOf(false)
+    var settingsPage by mutableStateOf(0)
 
     var configGenerator by mutableStateOf(false)
     var configMasks by mutableStateOf(false)
@@ -37,9 +35,7 @@ class ViewModel {
 
     var squareGenerator by mutableStateOf(false)
 
-    var mainMain by mutableStateOf(true)
-    var exportSettings by mutableStateOf(false)
-    var themeSettings by mutableStateOf(false)
+    var menuPage by mutableStateOf(0)
 
     var screenWidth by mutableStateOf(1200.dp)
     var screenHeight by mutableStateOf(800.dp)

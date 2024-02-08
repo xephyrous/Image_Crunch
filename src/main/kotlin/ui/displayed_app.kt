@@ -1,10 +1,8 @@
 package ui
 
-import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.*
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
@@ -56,14 +54,15 @@ fun App() {
     }
     
     //Card Animations
+    // TODO: rewrite this later to be more compact
     val menuOffset by animateDpAsState(targetValue = (if (vm.menuCardState) (if (!vm.settingsCardState) 10 else 320) else (-310)).dp)
     val menuSize by animateDpAsState(targetValue = (vm.menuLines * 50).dp)
     val menuTitle by animateDpAsState(targetValue = if (vm.menuCardState) 5.dp else 60.dp)
-    val menuExit by animateDpAsState(targetValue = if (vm.mainMain) (60 + ((vm.menuLines - 1) * 50)).dp else (65 + (vm.menuLines * 50)).dp)
+    val menuExit by animateDpAsState(targetValue = if (vm.menuPage == 0) (60 + ((vm.menuLines - 1) * 50)).dp else (65 + (vm.menuLines * 50)).dp)
     val settingsOffset by animateDpAsState(targetValue = (if (vm.settingsCardState) 10 else (-310)).dp)
     val settingsSize by animateDpAsState(targetValue = (vm.settingsLines * 50).dp)
     val settingsTitle by animateDpAsState(targetValue = if (vm.settingsCardState) 5.dp else 60.dp)
-    val settingsExit by animateDpAsState(targetValue = if (vm.settingsMain) (60 + ((vm.settingsLines - 1) * 50)).dp else (65 + (vm.settingsLines * 50)).dp)
+    val settingsExit by animateDpAsState(targetValue = if (vm.settingsPage == 0) (60 + ((vm.settingsLines - 1) * 50)).dp else (65 + (vm.settingsLines * 50)).dp)
     val bottomCardsY by animateDpAsState(targetValue = vm.screenHeight)
     val bottomCardsX by animateDpAsState(targetValue = vm.screenWidth)
 
@@ -105,7 +104,6 @@ fun App() {
 
                         IconButton(onClick = {
                             vm.settingsCardState = !vm.settingsCardState
-                            vm.settingsCardState = !vm.settingsCardState
                             imageModifier = if (vm.menuCardState || vm.settingsCardState) {
                                 Modifier
                                     .size(width = (vm.screenWidth/2)-10.dp, height = vm.screenHeight-230.dp)
@@ -129,7 +127,6 @@ fun App() {
                             )
                         }
                         IconButton(onClick = {
-                            vm.menuCardState = !vm.menuCardState
                             vm.menuCardState = !vm.menuCardState
                             imageModifier = if (vm.menuCardState || vm.settingsCardState) {
                                 Modifier
@@ -175,9 +172,7 @@ fun App() {
         ) {
             Box(
                 modifier = Modifier
-//                    .background(vm.themeColor[1])
                     .background(
-//                        Brush.sweepGradient(listOf(vm.themeColor[1], vm.themeColor[5], vm.themeColor[1], vm.themeColor[5], vm.themeColor[1]))
                         Brush.linearGradient(
                             colors = listOf(vm.themeColor[1], vm.themeColor[5]),
                             start = Offset(0f, 0f),
@@ -207,26 +202,22 @@ fun App() {
                         }
                     }
             ) {
-                if (vm.displayed) {
-                    AsyncImage(
-                        load = { loadImageBitmap(inputStream = bufferedImageToOutputStream(vm.displayedImage!!)) },
-                        contentDescription = "The Passed Image",
-                        painterFor = { remember { BitmapPainter(it) } }
-                    )
-                    if (vm.nodeDisplay) {
-                        AsyncImage(
-                            load = { loadImageBitmap(inputStream = bufferedImageToOutputStream(vm.displayedNodes!!)) },
-                            contentDescription = "The Image Mask",
-                            painterFor = { remember { BitmapPainter(it) } }
-                        )
-
                 // Display box
                 Box(
                     modifier = Modifier
                         .size(width = vm.screenWidth/2, height = vm.screenHeight)
                 ){
                     // IMAGE SCOPE
-                    if (vm.displayed) {
+                    // i cant man, ive tried everything and it just DOESNT WORK
+                    AnimatedVisibility(
+                        visible = vm.displayed,
+                        enter = fadeIn(
+                            animationSpec = tween(durationMillis = 125)
+                        ),
+                        exit = fadeOut(
+                            animationSpec = tween(durationMillis = 125)
+                        )
+                    ) {
                         AsyncImage(
                             load = { loadImageBitmap(inputStream = bufferedImageToOutputStream(vm.displayedImage!!)) },
                             contentDescription = "The Passed Image",
@@ -234,7 +225,15 @@ fun App() {
                             contentScale = ContentScale.Fit,
                             modifier = imageModifier
                         )
-                        if (vm.nodeDisplay) {
+                        AnimatedVisibility(
+                            visible = vm.nodeDisplay,
+                            enter = fadeIn(
+                                animationSpec = tween(durationMillis = 125)
+                            ),
+                            exit = fadeOut(
+                                animationSpec = tween(durationMillis = 125)
+                            )
+                        ) {
                             AsyncImage(
                                 load = { loadImageBitmap(inputStream = bufferedImageToOutputStream(vm.displayedNodes!!)) },
                                 contentDescription = "The Image Mask",
@@ -284,6 +283,8 @@ fun App() {
                 )
 
                 // Bottom Bar Settings
+
+                // IDK HOW TO REFERENCE PASS STILL SO IM GONNA JUST MAKE A NEW CLASS FOR THIS LATER FUCK YOU
                 verticalVisibilityPane(
                     visibility = vm.configGenerator, animationHeight = 2, duration = 369, paneContent = {
                         createCard(
@@ -376,6 +377,14 @@ fun App() {
                                                     if(vm.genTypeB.isNotEmpty()) squareColumns.set(vm.genTypeB.toInt())
                                                 }
                                             },
+                                            colors = TextFieldDefaults.textFieldColors(
+                                                textColor = vm.themeColor[2],
+                                                disabledTextColor = vm.themeColor[2],
+                                                backgroundColor = vm.themeColor[1],
+                                                cursorColor = vm.themeColor[2],
+                                                focusedIndicatorColor = vm.themeColor[2],
+                                                unfocusedIndicatorColor = vm.themeColor[1]
+                                            ),
                                             modifier = Modifier.size((vm.screenWidth/3)-10.dp, 50.dp).offset(5.dp, 5.dp)
                                                 .onKeyEvent {
                                                     if (it.key == Key.Enter) {
@@ -442,20 +451,17 @@ fun App() {
                     menuTitle = "Main Menu", returnTitle = "Return to main",
                     themeColor = vm.themeColor, cardColor = 5, buttonColor = 4, titleColor = 2, textColor = 2,
                     exitOperation = {
-                        vm.exportSettings = false
-                        vm.themeSettings = false
-                        vm.mainMain = true
+                        vm.menuPage = 0
                         vm.menuLines = 2
                     },
                     menuPages = {
                         // Main Menu
                         horizontalVisibilityPane(
-                            visibility = vm.mainMain, animationWidth = -2, duration = 369, paneContent = {
+                            visibility = (vm.menuPage == 0), animationWidth = -2, duration = 369, paneContent = {
                                 buttonRow(
                                     rowOffset = 0.dp, buttonOffset = 25.dp, width = 250.dp,
                                     buttonEvent = {
-                                        vm.mainMain = false
-                                        vm.exportSettings = true
+                                        vm.menuPage = 1
                                         vm.menuLines = if (vm.compactExportToggle) (1) else (2)
                                     },
                                     buttonText = "Export Settings", themeColor = vm.themeColor,
@@ -464,8 +470,7 @@ fun App() {
                                 buttonRow(
                                     rowOffset = 50.dp, buttonOffset = 25.dp, width = 250.dp,
                                     buttonEvent = {
-                                        vm.mainMain = false
-                                        vm.themeSettings = true
+                                        vm.menuPage = 2
                                         vm.menuLines = 4
                                     },
                                     buttonText = "Select Theme", themeColor = vm.themeColor,
@@ -476,7 +481,7 @@ fun App() {
 
                         // Export Settings
                         horizontalVisibilityPane(
-                            visibility = vm.exportSettings, animationWidth = 2, duration = 369, paneContent = {
+                            visibility = (vm.menuPage == 1), animationWidth = 2, duration = 369, paneContent = {
                                 Row() {
                                     Switch(
                                         checked = vm.compactExportToggle,
@@ -514,7 +519,7 @@ fun App() {
 
                         // Theme Selection
                         horizontalVisibilityPane(
-                            visibility = vm.themeSettings, animationWidth = 2, duration = 369, paneContent = {
+                            visibility = (vm.menuPage == 2), animationWidth = 2, duration = 369, paneContent = {
                                 buttonRow(
                                     rowOffset = 0.dp, buttonOffset = 25.dp, width = 250.dp,
                                     buttonEvent = {
@@ -559,20 +564,17 @@ fun App() {
                     menuTitle = "Generation Settings", returnTitle = "Return to main",
                     themeColor = vm.themeColor, cardColor = 5, buttonColor = 4, titleColor = 2, textColor = 2,
                     exitOperation = {
-                        vm.selectGenerator = false
-                        vm.selectOutput = false
-                        vm.settingsMain = true
+                        vm.settingsPage = 0
                         vm.settingsLines = 3
                     },
                     menuPages = {
                         horizontalVisibilityPane(
-                            visibility = vm.settingsMain, animationWidth = -2, duration = 369, paneContent = {
+                            visibility = (vm.settingsPage == 0), animationWidth = -2, duration = 369, paneContent = {
                                 buttonRow(
                                     rowOffset = 0.dp, buttonOffset = 25.dp, width = 250.dp,
                                     buttonEvent = {
-                                        vm.settingsMain = false
+                                        vm.settingsPage = 1
                                         vm.configGenerator = true
-                                        vm.selectGenerator = true
                                         vm.settingsLines = 4
                                     },
                                     buttonText = "Select Generator", themeColor = vm.themeColor,
@@ -589,8 +591,7 @@ fun App() {
                                 buttonRow(
                                     rowOffset = 100.dp, buttonOffset = 25.dp, width = 250.dp,
                                     buttonEvent = {
-                                        vm.settingsMain = false
-                                        vm.selectOutput = true
+                                        vm.settingsPage = 2
                                         vm.settingsLines = 1
                                     },
                                     buttonText = "Select Output", themeColor = vm.themeColor,
@@ -601,7 +602,7 @@ fun App() {
 
                         // Generator Type Selection
                         horizontalVisibilityPane(
-                            visibility = vm.selectGenerator, animationWidth = 2, duration = 369, paneContent = {
+                            visibility = (vm.settingsPage == 1), animationWidth = 2, duration = 369, paneContent = {
                                 buttonRow(
                                     rowOffset = 0.dp, buttonOffset = 25.dp, width = 250.dp,
                                     buttonEvent = {
@@ -617,9 +618,9 @@ fun App() {
                                 buttonRow(
                                     rowOffset = 50.dp, buttonOffset = 25.dp, width = 250.dp,
                                     buttonEvent = {
-                                        vm.displayed = false
+
                                     },
-                                    buttonText = "nuke the bitch",  themeColor = vm.themeColor,
+                                    buttonText = "Does Not Exist",  themeColor = vm.themeColor,
                                     buttonColor = 4, textColor = 2
                                 )
                                 buttonRow(
@@ -643,7 +644,7 @@ fun App() {
 
                         // Output location, needs to be finished
                         horizontalVisibilityPane(
-                            visibility = vm.selectOutput, animationWidth = 2, duration = 369, paneContent = {
+                            visibility = (vm.settingsPage == 2), animationWidth = 2, duration = 369, paneContent = {
                                 buttonRow(
                                     rowOffset = 0.dp, buttonOffset = 25.dp, width = 250.dp,
                                     buttonEvent = {

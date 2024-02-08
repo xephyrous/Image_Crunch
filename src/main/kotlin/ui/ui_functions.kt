@@ -4,7 +4,10 @@ import androidx.compose.animation.*
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.*
+import androidx.compose.material.Button
+import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.Card
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.produceState
@@ -18,14 +21,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.ui.focus.onFocusChanged
-import androidx.compose.ui.input.key.KeyEvent
-import androidx.compose.ui.input.key.key
-import androidx.compose.ui.input.key.Key
-import androidx.compose.ui.input.key.onKeyEvent
-import androidx.compose.ui.text.input.KeyboardType
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.IOException
@@ -188,67 +183,6 @@ fun createMenu(
         themeColor = themeColor, cardColor = cardColor,
         cardContent = menuPages
     )
-}
-
-fun inputRow(
-    rowOffset: Dp,
-    text: String,
-    rowWidth: Dp,
-    limiter: Regex,
-    themeColor: List<Color>,
-    textColor: Int,
-    inputTextColor: Int,
-    inputPlaceholderColor: Int,
-    inputBackground: Int,
-    inputCursor: Int,
-    focusIndicatorOn: Int,
-    focusIndicatorOff: Int,
-    onKeyEvent: (KeyEvent) -> Boolean,
-    runEvent: () -> Unit,
-) {
-    Row(
-        modifier = Modifier.offset(y = rowOffset)
-    ) {
-        Text(
-            text = text, color = themeColor[textColor],
-            modifier = Modifier.fillMaxSize().offset(y= 5.dp),
-            fontSize = 40.sp, textAlign = TextAlign.Center, fontWeight = FontWeight.Normal
-        )
-    }
-    Row(
-        modifier = Modifier.offset(y = 50.dp)
-    ) {
-        TextField(
-            value = "",
-            onValueChange = {
-                if(it.length < 5 && (it.matches(limiter) || it.isEmpty())) {
-                    // figure this out ig idfk
-                }
-            },
-            colors = TextFieldDefaults.textFieldColors(
-                textColor = themeColor[inputTextColor],
-                disabledTextColor = themeColor[inputPlaceholderColor],
-                backgroundColor = themeColor[inputBackground],
-                cursorColor = themeColor[inputCursor],
-                focusedIndicatorColor = themeColor[focusIndicatorOn],
-                unfocusedIndicatorColor = themeColor[focusIndicatorOff]
-            ),
-            modifier = Modifier.size(-10.dp, 50.dp).offset(5.dp, 5.dp)
-                .onKeyEvent {
-                    if (it.key == Key.Enter) {
-                        run(runEvent)
-                    }
-                    true
-                }
-                .onFocusChanged {
-                    if (!it.isFocused) {
-                        run(runEvent)
-                    }
-                },
-            readOnly = false,
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-        )
-    }
 }
 
 @Composable
