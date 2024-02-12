@@ -1,8 +1,10 @@
 package ui
 
-import androidx.compose.animation.*
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
@@ -12,7 +14,9 @@ import androidx.compose.material.icons.sharp.Add
 import androidx.compose.material.icons.sharp.Build
 import androidx.compose.material.icons.sharp.List
 import androidx.compose.material.icons.sharp.PlayArrow
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.BlurredEdgeTreatment
 import androidx.compose.ui.draw.blur
@@ -20,11 +24,9 @@ import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.TileMode
-import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onKeyEvent
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.loadImageBitmap
@@ -49,9 +51,8 @@ fun App() {
 
     val density = LocalDensity.current
 
-    var imageModifier by remember { mutableStateOf(
-        Modifier.size(width = (vm.screenWidth/2)-10.dp, height = vm.screenHeight-230.dp).offset(5.dp, 5.dp))
-    }
+    var x: Unit
+    var y: Unit
     
     //Card Animations
     // TODO: rewrite this later to be more compact
@@ -92,6 +93,9 @@ fun App() {
                                 vm.displayedNodes = createNodeMask(
                                     generateNodes(GeneratorType.SQUARE)
                                 )
+                                vm.imageInputStream = loadImageBitmap(inputStream = bufferedImageToOutputStream(vm.displayedImage!!))
+                                vm.nodeInputStream = loadImageBitmap(inputStream = bufferedImageToOutputStream(vm.displayedNodes!!))
+
                                 vm.displayed = true
                             }
                         }) {
@@ -104,7 +108,7 @@ fun App() {
 
                         IconButton(onClick = {
                             vm.settingsCardState = !vm.settingsCardState
-                            imageModifier = if (vm.menuCardState || vm.settingsCardState) {
+                            vm.imageModifier = if (vm.menuCardState || vm.settingsCardState) {
                                 Modifier
                                     .size(width = (vm.screenWidth/2)-10.dp, height = vm.screenHeight-230.dp)
                                     .blur(
@@ -128,7 +132,7 @@ fun App() {
                         }
                         IconButton(onClick = {
                             vm.menuCardState = !vm.menuCardState
-                            imageModifier = if (vm.menuCardState || vm.settingsCardState) {
+                            vm.imageModifier = if (vm.menuCardState || vm.settingsCardState) {
                                 Modifier
                                     .size(width = (vm.screenWidth/2)-10.dp, height = vm.screenHeight-230.dp)
                                     .blur(
@@ -185,7 +189,7 @@ fun App() {
                         vm.screenWidth = with(density) {it.size.width.toDp()}
                         vm.screenHeight = with(density) {it.size.height.toDp()}
 
-                        imageModifier = if (vm.menuCardState || vm.settingsCardState) {
+                        vm.imageModifier = if (vm.menuCardState || vm.settingsCardState) {
                             Modifier
                                 .size(width = (vm.screenWidth/2)-10.dp, height = vm.screenHeight-230.dp)
                                 .blur(
@@ -208,39 +212,10 @@ fun App() {
                         .size(width = vm.screenWidth/2, height = vm.screenHeight)
                 ){
                     // IMAGE SCOPE
-                    // i cant man, ive tried everything and it just DOESNT WORK
-                    AnimatedVisibility(
-                        visible = vm.displayed,
-                        enter = fadeIn(
-                            animationSpec = tween(durationMillis = 125)
-                        ),
-                        exit = fadeOut(
-                            animationSpec = tween(durationMillis = 125)
-                        )
-                    ) {
-                        AsyncImage(
-                            load = { loadImageBitmap(inputStream = bufferedImageToOutputStream(vm.displayedImage!!)) },
-                            contentDescription = "The Passed Image",
-                            painterFor = { remember { BitmapPainter(it) } },
-                            contentScale = ContentScale.Fit,
-                            modifier = imageModifier
-                        )
-                        AnimatedVisibility(
-                            visible = vm.nodeDisplay,
-                            enter = fadeIn(
-                                animationSpec = tween(durationMillis = 125)
-                            ),
-                            exit = fadeOut(
-                                animationSpec = tween(durationMillis = 125)
-                            )
-                        ) {
-                            AsyncImage(
-                                load = { loadImageBitmap(inputStream = bufferedImageToOutputStream(vm.displayedNodes!!)) },
-                                contentDescription = "The Image Mask",
-                                painterFor = { remember { BitmapPainter(it) } },
-                                contentScale = ContentScale.Fit,
-                                modifier = imageModifier
-                            )
+                    if (vm.displayed) {
+                        x = asyncImageLoad(vm)
+                        if (vm.nodeDisplay) {
+                            y = asyncNodeLoad(vm)
                         }
                     }
                 }
@@ -331,12 +306,14 @@ fun App() {
                                             ),
                                             modifier = Modifier.size((vm.screenWidth/3)-10.dp, 50.dp).offset(5.dp, 5.dp)
                                                 .onKeyEvent {
+                                                    // THERE IS NO GOD
                                                     if (it.key == Key.Enter) {
                                                         if(squareRows.value() > 0 && vm.displayedImage != null) {
                                                             vm.nodeDisplay = false
                                                             vm.displayedNodes = createNodeMask(
                                                                 generateNodes(GeneratorType.SQUARE)
                                                             )
+                                                            vm.nodeInputStream = loadImageBitmap(inputStream = bufferedImageToOutputStream(vm.displayedNodes!!))
                                                             vm.nodeDisplay = true
                                                         }
                                                     }
@@ -349,6 +326,7 @@ fun App() {
                                                             vm.displayedNodes = createNodeMask(
                                                                 generateNodes(GeneratorType.SQUARE)
                                                             )
+                                                            vm.nodeInputStream = loadImageBitmap(inputStream = bufferedImageToOutputStream(vm.displayedNodes!!))
                                                             vm.nodeDisplay = true
                                                         }
                                                     }
@@ -393,6 +371,7 @@ fun App() {
                                                             vm.displayedNodes = createNodeMask(
                                                                 generateNodes(GeneratorType.SQUARE)
                                                             )
+                                                            vm.nodeInputStream = loadImageBitmap(inputStream = bufferedImageToOutputStream(vm.displayedNodes!!))
                                                             vm.nodeDisplay = true
                                                         }
                                                     }
@@ -405,6 +384,7 @@ fun App() {
                                                             vm.displayedNodes = createNodeMask(
                                                                 generateNodes(GeneratorType.SQUARE)
                                                             )
+                                                            vm.nodeInputStream = loadImageBitmap(inputStream = bufferedImageToOutputStream(vm.displayedNodes!!))
                                                             vm.nodeDisplay = true
                                                         }
                                                     }

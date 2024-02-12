@@ -1,8 +1,12 @@
 package ui
 
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.unit.dp
 import utils.storage.compactExport
 import utils.storage.darkThemes
@@ -19,6 +23,9 @@ class ViewModel {
     // Image Displays
     var displayedImage by mutableStateOf<BufferedImage?>(null)
     var displayedNodes by mutableStateOf<BufferedImage?>(null)
+
+    var imageInputStream by mutableStateOf<ImageBitmap?>(null)
+    var nodeInputStream by mutableStateOf<ImageBitmap?>(null)
 
     // Settings
     var settingsLines by mutableStateOf(3)
@@ -39,6 +46,10 @@ class ViewModel {
 
     var screenWidth by mutableStateOf(1200.dp)
     var screenHeight by mutableStateOf(800.dp)
+
+    var imageModifier by mutableStateOf(
+        Modifier.size(width = (screenWidth/2)-10.dp, height = screenHeight-230.dp).offset(5.dp, 5.dp)
+    )
 
     var genTypeA by mutableStateOf("")
     var genTypeB by mutableStateOf("")

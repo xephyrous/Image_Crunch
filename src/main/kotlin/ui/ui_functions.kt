@@ -13,6 +13,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.produceState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
@@ -212,4 +213,30 @@ fun <T> AsyncImage(
             modifier = modifier
         )
     }
+}
+
+@Composable
+fun asyncImageLoad(
+    vm: ViewModel
+) {
+    return AsyncImage(
+        load = { vm.imageInputStream!! },
+        contentDescription = "The Passed Image",
+        painterFor = { BitmapPainter(it) },
+        contentScale = ContentScale.Fit,
+        modifier = vm.imageModifier
+    )
+}
+
+@Composable
+fun asyncNodeLoad(
+    vm: ViewModel
+) {
+    return AsyncImage(
+        load = { vm.nodeInputStream!! },
+        contentDescription = "The Passed Image",
+        painterFor = { BitmapPainter(it) },
+        contentScale = ContentScale.Fit,
+        modifier = vm.imageModifier
+    )
 }
