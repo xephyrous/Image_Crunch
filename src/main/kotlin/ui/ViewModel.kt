@@ -40,7 +40,7 @@ class ViewModel {
     var configMasks by mutableStateOf(false)
     var configSlices by mutableStateOf(false)
 
-    var squareGenerator by mutableStateOf(false)
+    var selectedGenerator by mutableStateOf(0)
 
     var menuPage by mutableStateOf(0)
 

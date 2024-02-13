@@ -1,13 +1,8 @@
 package ui
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.sharp.Add
@@ -20,19 +15,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.BlurredEdgeTreatment
 import androidx.compose.ui.draw.blur
-import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.TileMode
-import androidx.compose.ui.input.key.Key
-import androidx.compose.ui.input.key.key
-import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.loadImageBitmap
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import utils.app.ImageFileSelection
@@ -47,8 +36,6 @@ fun App() {
     val vm = remember { ViewModel() }
 
     // Configuration Settings
-    val numbersOnly = Regex("^\\d+\$")
-
     val density = LocalDensity.current
 
     var x: Unit
@@ -93,6 +80,7 @@ fun App() {
                                 vm.displayedNodes = createNodeMask(
                                     generateNodes(GeneratorType.SQUARE)
                                 )
+
                                 vm.imageInputStream = loadImageBitmap(inputStream = bufferedImageToOutputStream(vm.displayedImage!!))
                                 vm.nodeInputStream = loadImageBitmap(inputStream = bufferedImageToOutputStream(vm.displayedNodes!!))
 
@@ -258,171 +246,12 @@ fun App() {
                 )
 
                 // Bottom Bar Settings
-
-                // IDK HOW TO REFERENCE PASS STILL SO IM GONNA JUST MAKE A NEW CLASS FOR THIS LATER FUCK YOU
-                verticalVisibilityPane(
-                    visibility = vm.configGenerator, animationHeight = 2, duration = 369, paneContent = {
-                        createCard(
-                            xOffset = 0.dp, yOffset = bottomCardsY-220.dp,
-                            width = bottomCardsX/3, height = 500.dp, elevation = 5.dp,
-                            themeColor = vm.themeColor, cardColor = 5,
-                            cardContent = {
-                                AnimatedVisibility(
-                                    visible = vm.squareGenerator,
-                                    enter = slideInVertically(
-                                        animationSpec = tween(durationMillis = 369)
-                                    ) { fullHeight -> fullHeight * 2 },
-                                    exit = slideOutVertically(
-                                        tween(durationMillis = 369)
-                                    ) { fullHeight -> fullHeight * 2 }
-                                ) {
-                                    Row() {
-                                        Text(
-                                            "Number of Rows:", color = vm.themeColor[2],
-                                            modifier = Modifier.fillMaxSize().offset(y= 5.dp),
-                                            fontSize = 40.sp, textAlign = TextAlign.Center, fontWeight = FontWeight.Normal
-                                        )
-                                    }
-                                    Row(
-                                        modifier = Modifier.offset(y = 50.dp)
-                                    ) {
-                                        TextField(
-                                            value = vm.genTypeA,
-                                            onValueChange = {
-                                                if(it.length < 5 && (it.matches(numbersOnly) || it.isEmpty())) {
-                                                    vm.genTypeA = it
-                                                    if(vm.genTypeA.isNotEmpty()) {
-                                                        squareRows.set(vm.genTypeA.toInt())
-                                                    }
-                                                }
-                                            },
-                                            colors = TextFieldDefaults.textFieldColors(
-                                                textColor = vm.themeColor[2],
-                                                disabledTextColor = vm.themeColor[2],
-                                                backgroundColor = vm.themeColor[1],
-                                                cursorColor = vm.themeColor[2],
-                                                focusedIndicatorColor = vm.themeColor[2],
-                                                unfocusedIndicatorColor = vm.themeColor[1]
-                                            ),
-                                            modifier = Modifier.size((vm.screenWidth/3)-10.dp, 50.dp).offset(5.dp, 5.dp)
-                                                .onKeyEvent {
-                                                    // THERE IS NO GOD
-                                                    if (it.key == Key.Enter) {
-                                                        if(squareRows.value() > 0 && vm.displayedImage != null) {
-                                                            vm.nodeDisplay = false
-                                                            vm.displayedNodes = createNodeMask(
-                                                                generateNodes(GeneratorType.SQUARE)
-                                                            )
-                                                            vm.nodeInputStream = loadImageBitmap(inputStream = bufferedImageToOutputStream(vm.displayedNodes!!))
-                                                            vm.nodeDisplay = true
-                                                        }
-                                                    }
-                                                    true
-                                                }
-                                                .onFocusChanged {
-                                                    if (!it.isFocused) {
-                                                        if(squareRows.value() > 0 && vm.displayedImage != null) {
-                                                            vm.nodeDisplay = false
-                                                            vm.displayedNodes = createNodeMask(
-                                                                generateNodes(GeneratorType.SQUARE)
-                                                            )
-                                                            vm.nodeInputStream = loadImageBitmap(inputStream = bufferedImageToOutputStream(vm.displayedNodes!!))
-                                                            vm.nodeDisplay = true
-                                                        }
-                                                    }
-                                                },
-                                            readOnly = false,
-                                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                                        )
-                                    }
-                                    Row(
-                                        modifier = Modifier.offset(y = 110.dp)
-                                    ) {
-                                        Text(
-                                            "Number of Columns:", color = vm.themeColor[2],
-                                            modifier = Modifier.fillMaxSize().offset(y= 5.dp),
-                                            fontSize = 40.sp, textAlign = TextAlign.Center, fontWeight = FontWeight.Normal
-                                        )
-                                    }
-                                    Row(
-                                        modifier = Modifier.offset(y = 160.dp)
-                                    ) {
-                                        TextField(
-                                            value = vm.genTypeB,
-                                            onValueChange = {
-                                                if(it.length < 5 && (it.matches(numbersOnly) || it.isEmpty())) {
-                                                    vm.genTypeB = it
-                                                    if(vm.genTypeB.isNotEmpty()) squareColumns.set(vm.genTypeB.toInt())
-                                                }
-                                            },
-                                            colors = TextFieldDefaults.textFieldColors(
-                                                textColor = vm.themeColor[2],
-                                                disabledTextColor = vm.themeColor[2],
-                                                backgroundColor = vm.themeColor[1],
-                                                cursorColor = vm.themeColor[2],
-                                                focusedIndicatorColor = vm.themeColor[2],
-                                                unfocusedIndicatorColor = vm.themeColor[1]
-                                            ),
-                                            modifier = Modifier.size((vm.screenWidth/3)-10.dp, 50.dp).offset(5.dp, 5.dp)
-                                                .onKeyEvent {
-                                                    if (it.key == Key.Enter) {
-                                                        if(squareColumns.value() > 0 && vm.displayedImage != null) {
-                                                            vm.nodeDisplay = false
-                                                            vm.displayedNodes = createNodeMask(
-                                                                generateNodes(GeneratorType.SQUARE)
-                                                            )
-                                                            vm.nodeInputStream = loadImageBitmap(inputStream = bufferedImageToOutputStream(vm.displayedNodes!!))
-                                                            vm.nodeDisplay = true
-                                                        }
-                                                    }
-                                                    true
-                                                }
-                                                .onFocusChanged {
-                                                    if (!it.isFocused) {
-                                                        if(squareColumns.value() > 0 && vm.displayedImage != null) {
-                                                            vm.nodeDisplay = false
-                                                            vm.displayedNodes = createNodeMask(
-                                                                generateNodes(GeneratorType.SQUARE)
-                                                            )
-                                                            vm.nodeInputStream = loadImageBitmap(inputStream = bufferedImageToOutputStream(vm.displayedNodes!!))
-                                                            vm.nodeDisplay = true
-                                                        }
-                                                    }
-                                                },
-                                            readOnly = false,
-                                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                                        )
-                                    }
-                                }
-                            }
-                        )
-                    }
-                )
-                verticalVisibilityPane(
-                    visibility = vm.configMasks, animationHeight = 2, duration = 369, paneContent = {
-                        createCard(
-                            xOffset = bottomCardsX/3, yOffset = bottomCardsY-150.dp,
-                            width = bottomCardsX/3, height = 400.dp, elevation = 5.dp,
-                            themeColor = vm.themeColor, cardColor = 5,
-                            cardContent = {}
-                        )
-                    }
-                )
-                verticalVisibilityPane(
-                    visibility = vm.configSlices, animationHeight = 2, duration = 369, paneContent = {
-                        createCard(
-                            xOffset = (bottomCardsX/3)*2, yOffset = bottomCardsY-150.dp,
-                            width = bottomCardsX/3, height = 400.dp, elevation = 5.dp,
-                            themeColor = vm.themeColor, cardColor = 5,
-                            cardContent = {
-                                textRow(
-                                    rowOffset = 0.dp, displayedText = "Filla Text", textOffset = 5.dp,
-                                    fontSize = 40.sp, font = FontWeight.Normal, themeColor = vm.themeColor, textColor = 2
-                                )
-                            }
-                        )
-                    }
-                )
+                // If I don't have to look at it, it cant hurt me :D
+                // Yes, it sucks
+                // No, I DON'T know what im doing
+                // No, it isn't more efficient
+                // Yes, I need help
+                bottomBar(vm, bottomCardsX, bottomCardsY)
 
                 // Main Menu
                 createMenu(
@@ -590,7 +419,7 @@ fun App() {
                                         generatorType.set(GeneratorType.NONE)
                                         vm.genTypeA = "15"
                                         vm.genTypeB = "15"
-                                        vm.squareGenerator = true
+                                        vm.selectedGenerator = 1
                                     },
                                     buttonText = "Square Generator", themeColor = vm.themeColor,
                                     buttonColor = 4, textColor = 2
