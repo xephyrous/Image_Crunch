@@ -10,6 +10,7 @@ import androidx.compose.material.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onKeyEvent
@@ -32,6 +33,7 @@ fun updateMask(vm: ViewModel, type: GeneratorType) {
         generateNodes(type)
     )
     vm.nodeInputStream = loadImageBitmap(inputStream = bufferedImageToOutputStream(vm.displayedNodes!!))
+    vm.nodeBitmapPainter = BitmapPainter(vm.nodeInputStream!!)
     vm.nodeDisplay = true
 }
 

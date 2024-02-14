@@ -1,6 +1,7 @@
 package ui
 
 import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
@@ -18,6 +19,8 @@ import androidx.compose.ui.draw.blur
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.TileMode
+import androidx.compose.ui.graphics.painter.BitmapPainter
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.loadImageBitmap
@@ -37,11 +40,8 @@ fun App() {
 
     // Configuration Settings
     val density = LocalDensity.current
-
-    var x: Unit
-    var y: Unit
     
-    //Card Animations
+    // Card Animations
     // TODO: rewrite this later to be more compact
     val menuOffset by animateDpAsState(targetValue = (if (vm.menuCardState) (if (!vm.settingsCardState) 10 else 320) else (-310)).dp)
     val menuSize by animateDpAsState(targetValue = (vm.menuLines * 50).dp)
@@ -83,6 +83,9 @@ fun App() {
 
                                 vm.imageInputStream = loadImageBitmap(inputStream = bufferedImageToOutputStream(vm.displayedImage!!))
                                 vm.nodeInputStream = loadImageBitmap(inputStream = bufferedImageToOutputStream(vm.displayedNodes!!))
+
+                                vm.imageBitmapPainter = BitmapPainter(vm.imageInputStream!!)
+                                vm.nodeBitmapPainter = BitmapPainter(vm.nodeInputStream!!)
 
                                 vm.displayed = true
                             }
@@ -201,9 +204,19 @@ fun App() {
                 ){
                     // IMAGE SCOPE
                     if (vm.displayed) {
-                        x = asyncImageLoad(vm)
+                        Image(
+                            painter = vm.imageBitmapPainter!!,
+                            contentDescription = "picture",
+                            modifier = vm.imageModifier,
+                            contentScale = ContentScale.Fit
+                        )
                         if (vm.nodeDisplay) {
-                            y = asyncNodeLoad(vm)
+                            Image(
+                                painter = vm.nodeBitmapPainter!!,
+                                contentDescription = "picture",
+                                modifier = vm.imageModifier,
+                                contentScale = ContentScale.Fit
+                            )
                         }
                     }
                 }

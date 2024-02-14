@@ -2,29 +2,20 @@ package ui
 
 import androidx.compose.animation.*
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Card
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.produceState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.BitmapPainter
-import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
-import java.io.IOException
 
 // Set of functions to make composable easier
 // Passes inputs in a more user-friendly way when designing app
@@ -183,60 +174,5 @@ fun createMenu(
         width = menuWidth, height = mainHeight, elevation = elevation,
         themeColor = themeColor, cardColor = cardColor,
         cardContent = menuPages
-    )
-}
-
-@Composable
-fun <T> AsyncImage(
-    load: suspend () -> T,
-    painterFor: @Composable (T) -> Painter,
-    contentDescription: String,
-    modifier: Modifier = Modifier,
-    contentScale: ContentScale = ContentScale.Fit,
-) {
-    val image: T? by produceState<T?>(null) {
-        value = withContext(Dispatchers.IO) {
-            try {
-                load()
-            } catch (e: IOException) {
-                e.printStackTrace()
-                null
-            }
-        }
-    }
-
-    if (image != null) {
-        Image(
-            painter = painterFor(image!!),
-            contentDescription = contentDescription,
-            contentScale = contentScale,
-            modifier = modifier
-        )
-    }
-}
-
-@Composable
-fun asyncImageLoad(
-    vm: ViewModel
-) {
-    return AsyncImage(
-        load = { vm.imageInputStream!! },
-        contentDescription = "The Passed Image",
-        painterFor = { BitmapPainter(it) },
-        contentScale = ContentScale.Fit,
-        modifier = vm.imageModifier
-    )
-}
-
-@Composable
-fun asyncNodeLoad(
-    vm: ViewModel
-) {
-    return AsyncImage(
-        load = { vm.nodeInputStream!! },
-        contentDescription = "The Passed Image",
-        painterFor = { BitmapPainter(it) },
-        contentScale = ContentScale.Fit,
-        modifier = vm.imageModifier
     )
 }

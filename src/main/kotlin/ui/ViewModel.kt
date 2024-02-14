@@ -7,6 +7,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.unit.dp
 import utils.storage.compactExport
 import utils.storage.darkThemes
@@ -26,6 +27,10 @@ class ViewModel {
 
     var imageInputStream by mutableStateOf<ImageBitmap?>(null)
     var nodeInputStream by mutableStateOf<ImageBitmap?>(null)
+
+    // try this meow :3
+    var imageBitmapPainter by mutableStateOf<Painter?>(null)
+    var nodeBitmapPainter by mutableStateOf<Painter?>(null)
 
     // Settings
     var settingsLines by mutableStateOf(3)
