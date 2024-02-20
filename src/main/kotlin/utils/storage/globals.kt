@@ -1,6 +1,7 @@
 package utils.storage
 
 import java.awt.Dimension
+import java.io.FileOutputStream
 
 /**
  * All global variables are stored as LockType<T> to prevent possible race conditions
@@ -12,6 +13,8 @@ import java.awt.Dimension
  */
 var loadedImageSize: LockType<Dimension> = LockType(Dimension())
 var compactExport: Boolean = true
+
+var outputLocation: FileOutputStream? = null
 
 var generatorType: LockType<GeneratorType> = LockType(GeneratorType.NONE)
 

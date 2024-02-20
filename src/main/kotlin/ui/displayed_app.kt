@@ -28,6 +28,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import utils.app.ImageFileSelection
+import utils.app.SelectOutputPath
 import utils.app.settingsToCSV
 import utils.app.settingsToString
 import utils.images.*
@@ -53,6 +54,7 @@ fun App() {
     val settingsExit by animateDpAsState(targetValue = if (vm.settingsPage == 0) (60 + ((vm.settingsLines - 1) * 50)).dp else (65 + (vm.settingsLines * 50)).dp)
     val bottomCardsY by animateDpAsState(targetValue = vm.screenHeight)
     val bottomCardsX by animateDpAsState(targetValue = vm.screenWidth)
+    val fabLocation by animateDpAsState(targetValue = 0.dp)
 
     AppTheme {
         Scaffold(
@@ -329,12 +331,14 @@ fun App() {
                                     }
                                 }
                                 if (!vm.compactExportToggle) {
-                                    Row(
-                                        modifier = Modifier
-                                            .offset(0.dp, 50.dp)
-                                    ) {
-                                        Text("Select Output Here", color = vm.themeColor[2])
-                                    }
+                                    buttonRow(
+                                        rowOffset = 50.dp, buttonOffset = 25.dp, width = 250.dp,
+                                        buttonEvent = {
+                                            outputLocation = SelectOutputPath()
+                                        },
+                                        buttonText = "Select Output", themeColor = vm.themeColor,
+                                        buttonColor = 4, textColor = 2
+                                    )
                                 }
                             }
                         )
