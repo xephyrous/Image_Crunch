@@ -33,8 +33,8 @@ fun buttonRow(
     buttonEvent: () -> Unit,
     buttonText: String,
     themeColor: List<Color>,
-    buttonColor: Int = 11,
-    textColor: Int = 3,
+    buttonColor: Int = 10,
+    textColor: Int = 2,
 ){
     Row(
         modifier = Modifier.offset(y = rowOffset)
@@ -57,7 +57,7 @@ fun textRow(
     fontSize: TextUnit,
     font: FontWeight = FontWeight.Normal,
     themeColor: List<Color>,
-    textColor: Int = 2
+    textColor: Int = 1
 ){
     Row(
         modifier = Modifier.offset(y = rowOffset)
@@ -119,10 +119,10 @@ fun createCard(
     height: Dp,
     elevation: Dp,
     themeColor: List<Color>,
-    cardGrad1: Int = 9, // Card color
-    cardGrad2: Int = 10,
+    cardGrad1: Int = 8, // Card color
+    cardGrad2: Int = 9,
     borderWidth: Dp = 1.dp,
-    borderColor: Int = 19,
+    borderColor: Int = 18,
     cardContent: @Composable BoxScope.()-> Unit
 ) {
     Card(
@@ -162,13 +162,13 @@ fun createMenu(
     menuTitle: String, // Title
     returnTitle: String, // Return button text
     themeColor: List<Color>, // Theme colors
-    cardGrad1: Int = 9, // Card color
-    cardGrad2: Int = 10,
+    cardGrad1: Int = 8, // Card color
+    cardGrad2: Int = 9,
     borderWidth: Dp = 1.dp,
-    borderColor: Int = 19,
-    buttonColor: Int = 11, // Button Color
-    titleColor: Int, // Title color
-    textColor: Int, // button text color
+    borderColor: Int = 18,
+    buttonColor: Int = 10, // Button Color
+    titleColor: Int = 1, // Title color
+    textColor: Int = 2, // button text color
     exitOperation: () -> Unit, // the exit button
     menuPages: @Composable BoxScope.()-> Unit // the main menu pages
 ) {

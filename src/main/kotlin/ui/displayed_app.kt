@@ -68,7 +68,7 @@ fun App() {
                     title = {
                         Text(
                             "Image Chomp",
-                            color = vm.themeColor[2],
+                            color = vm.themeColor[1],
                             fontSize = 30.sp,
                             fontWeight = FontWeight.ExtraBold
                         )
@@ -100,7 +100,7 @@ fun App() {
                             Icon(
                                 imageVector = Icons.Sharp.Add,
                                 contentDescription = "Select Image",
-                                tint = vm.themeColor[3]
+                                tint = vm.themeColor[4]
                             )
                         }
 
@@ -125,7 +125,7 @@ fun App() {
                             Icon(
                                 imageVector = Icons.Sharp.Build,
                                 contentDescription = "Settings",
-                                tint = vm.themeColor[3]
+                                tint = vm.themeColor[4]
                             )
                         }
                         IconButton(onClick = {
@@ -149,7 +149,7 @@ fun App() {
                             Icon(
                                 imageVector = Icons.Sharp.List,
                                 contentDescription = "Test Text",
-                                tint = vm.themeColor[3]
+                                tint = vm.themeColor[4]
                             )
                         }
                     }
@@ -164,10 +164,10 @@ fun App() {
                     icon = {
                         Icon(
                             Icons.Sharp.PlayArrow, "Run",
-                            tint = vm.themeColor[3]
+                            tint = vm.themeColor[4]
                         )
                     },
-                    backgroundColor = vm.themeColor[4],
+                    backgroundColor = vm.themeColor[11],
                     modifier = Modifier.offset(0.dp, (-100).dp)
                 )
             },
@@ -176,7 +176,7 @@ fun App() {
                 modifier = Modifier
                     .background(
                         Brush.linearGradient(
-                            colors = listOf(vm.themeColor[1], vm.themeColor[5]),
+                            colors = listOf(vm.themeColor[5], vm.themeColor[6], vm.themeColor[7]),
                             start = Offset(0f, 0f),
                             end = Offset(Float.POSITIVE_INFINITY, 0f),
                             tileMode = TileMode.Clamp
@@ -232,12 +232,11 @@ fun App() {
                 createCard(
                     xOffset = 0.dp, yOffset = bottomCardsY-100.dp,
                     width = bottomCardsX/3, height = 400.dp, elevation = 5.dp,
-                    themeColor = vm.themeColor, cardGrad1 = 4, cardGrad2 = 5,
-                    borderWidth = 1.dp, borderColor = 2,
+                    themeColor = vm.themeColor, borderWidth = 1.dp,
                     cardContent = {
                         textRow(
                             rowOffset = 0.dp, displayedText = "Node Generator\nSettings", textOffset = 15.dp,
-                            fontSize = 30.sp, font = FontWeight.SemiBold, themeColor = vm.themeColor, textColor = 2
+                            fontSize = 30.sp, font = FontWeight.SemiBold, themeColor = vm.themeColor, textColor = 3
                         )
                     }
                 )
@@ -245,12 +244,11 @@ fun App() {
                 createCard(
                     xOffset = bottomCardsX/3, yOffset = bottomCardsY-100.dp,
                     width = bottomCardsX/3, height = 400.dp, elevation = 5.dp,
-                    themeColor = vm.themeColor, cardGrad1 = 4, cardGrad2 = 5,
-                    borderWidth = 1.dp, borderColor = 2,
+                    themeColor = vm.themeColor, borderWidth = 1.dp,
                     cardContent = {
                         textRow(
                             rowOffset = 0.dp, displayedText = "Mask Generator\nSettings", textOffset = 15.dp,
-                            fontSize = 30.sp, font = FontWeight.SemiBold, themeColor = vm.themeColor, textColor = 2
+                            fontSize = 30.sp, font = FontWeight.SemiBold, themeColor = vm.themeColor, textColor = 3
                         )
                     }
                 )
@@ -258,12 +256,11 @@ fun App() {
                 createCard(
                     xOffset = (bottomCardsX/3)*2, yOffset = bottomCardsY-100.dp,
                     width = bottomCardsX/3, height = 400.dp, elevation = 5.dp,
-                    themeColor = vm.themeColor, cardGrad1 = 4, cardGrad2 = 5,
-                    borderWidth = 1.dp, borderColor = 2,
+                    themeColor = vm.themeColor, borderWidth = 1.dp,
                     cardContent = {
                         textRow(
                             rowOffset = 0.dp, displayedText = "Slice Generator\nSettings", textOffset = 15.dp,
-                            fontSize = 30.sp, font = FontWeight.SemiBold, themeColor = vm.themeColor, textColor = 2
+                            fontSize = 30.sp, font = FontWeight.SemiBold, themeColor = vm.themeColor, textColor = 3
                         )
                     }
                 )
@@ -281,8 +278,7 @@ fun App() {
                     menuOffset = menuOffset, titleOffset = menuTitle, mainOffset = 60.dp, returnOffset = menuExit,
                     menuWidth = 300.dp, mainHeight = menuSize, elevation = 20.dp,
                     menuTitle = "Main Menu", returnTitle = "Return to main",
-                    themeColor = vm.themeColor, cardGrad1 = 5, cardGrad2 = 5, borderWidth = 1.dp,
-                    borderColor = 2, buttonColor = 4, titleColor = 2, textColor = 2,
+                    themeColor = vm.themeColor, borderWidth = 1.dp,
                     exitOperation = {
                         vm.menuPage = 0
                         vm.menuLines = 2
@@ -297,8 +293,7 @@ fun App() {
                                         vm.menuPage = 1
                                         vm.menuLines = 3
                                     },
-                                    buttonText = "Export Settings", themeColor = vm.themeColor,
-                                    buttonColor = 4, textColor = 2
+                                    buttonText = "Export Settings", themeColor = vm.themeColor
                                 )
                                 buttonRow(
                                     rowOffset = 50.dp, buttonOffset = 25.dp, width = 250.dp,
@@ -306,8 +301,7 @@ fun App() {
                                         vm.menuPage = 2
                                         vm.menuLines = 4
                                     },
-                                    buttonText = "Select Theme", themeColor = vm.themeColor,
-                                    buttonColor = 4, textColor = 2
+                                    buttonText = "Select Theme", themeColor = vm.themeColor
                                 )
                             }
                         )
@@ -322,24 +316,21 @@ fun App() {
                                         val s = StringSelection(settingsToString())
                                         cb.setContents(s, s)
                                     },
-                                    buttonText = "Export to Clipboard", themeColor = vm.themeColor,
-                                    buttonColor = 4, textColor = 2
+                                    buttonText = "Export to Clipboard", themeColor = vm.themeColor
                                 )
                                 buttonRow(
                                     rowOffset = 50.dp, buttonOffset = 25.dp, width = 250.dp,
                                     buttonEvent = {
                                         settingsToCSV()
                                     },
-                                    buttonText = "Export to CSV", themeColor = vm.themeColor,
-                                    buttonColor = 4, textColor = 2
+                                    buttonText = "Export to CSV", themeColor = vm.themeColor
                                 )
                                 buttonRow(
                                     rowOffset = 100.dp, buttonOffset = 25.dp, width = 250.dp,
                                     buttonEvent = {
                                         outputLocation = SelectOutputPath()
                                     },
-                                    buttonText = "Select Output", themeColor = vm.themeColor,
-                                    buttonColor = 4, textColor = 2
+                                    buttonText = "Select Output", themeColor = vm.themeColor
                                 )
                             }
                         )
@@ -352,32 +343,28 @@ fun App() {
                                     buttonEvent = {
                                         vm.themeColor = darkThemes
                                     },
-                                    buttonText = "Theme: Dark", themeColor = vm.themeColor,
-                                    buttonColor = 4, textColor = 2
+                                    buttonText = "Theme: Dark", themeColor = vm.themeColor
                                 )
                                 buttonRow(
                                     rowOffset = 50.dp, buttonOffset = 25.dp, width = 250.dp,
                                     buttonEvent = {
                                         vm.themeColor = lightThemes
                                     },
-                                    buttonText = "Theme: Light", themeColor = vm.themeColor,
-                                    buttonColor = 4, textColor = 2
+                                    buttonText = "Theme: Light", themeColor = vm.themeColor
                                 )
                                 buttonRow(
                                     rowOffset = 100.dp, buttonOffset = 25.dp, width = 250.dp,
                                     buttonEvent = {
                                         vm.themeColor = celesteThemes
                                     },
-                                    buttonText = "Theme: Celeste", themeColor = vm.themeColor,
-                                    buttonColor = 4, textColor = 2
+                                    buttonText = "Theme: Celeste", themeColor = vm.themeColor
                                 )
                                 buttonRow(
                                     rowOffset = 150.dp, buttonOffset = 25.dp, width = 250.dp,
                                     buttonEvent = {
                                         vm.themeColor = aqueousThemes
                                     },
-                                    buttonText = "Theme: Aqueous", themeColor = vm.themeColor,
-                                    buttonColor = 4, textColor = 2
+                                    buttonText = "Theme: Aqueous", themeColor = vm.themeColor
                                 )
                             }
                         )
@@ -389,8 +376,7 @@ fun App() {
                     menuOffset = settingsOffset, titleOffset = settingsTitle, mainOffset = 60.dp, returnOffset = settingsExit,
                     menuWidth = 300.dp, mainHeight = settingsSize, elevation = 20.dp,
                     menuTitle = "Generation Settings", returnTitle = "Return to main",
-                    themeColor = vm.themeColor, cardGrad1 = 4, cardGrad2 = 5, borderWidth = 1.dp,
-                    borderColor = 2, buttonColor = 4, titleColor = 2, textColor = 2,
+                    themeColor = vm.themeColor, borderWidth = 1.dp,
                     exitOperation = {
                         vm.settingsPage = 0
                         vm.settingsLines = 3
@@ -405,16 +391,14 @@ fun App() {
                                         vm.configGenerator = true
                                         vm.settingsLines = 4
                                     },
-                                    buttonText = "Select Generator", themeColor = vm.themeColor,
-                                    buttonColor = 4, textColor = 2
+                                    buttonText = "Select Generator", themeColor = vm.themeColor
                                 )
                                 buttonRow(
                                     rowOffset = 50.dp, buttonOffset = 25.dp, width = 250.dp,
                                     buttonEvent = {
                                         vm.configSlices = true
                                     },
-                                    buttonText = "Select Cut Type", themeColor = vm.themeColor,
-                                    buttonColor = 4, textColor = 2
+                                    buttonText = "Select Cut Type", themeColor = vm.themeColor
                                 )
                                 buttonRow(
                                     rowOffset = 100.dp, buttonOffset = 25.dp, width = 250.dp,
@@ -422,8 +406,7 @@ fun App() {
                                         vm.settingsPage = 2
                                         vm.settingsLines = 1
                                     },
-                                    buttonText = "Select Output", themeColor = vm.themeColor,
-                                    buttonColor = 4, textColor = 2
+                                    buttonText = "Select Output", themeColor = vm.themeColor
                                 )
                             }
                         )
@@ -440,32 +423,28 @@ fun App() {
                                         vm.genTypeB = "15"
                                         vm.selectedGenerator = 1
                                     },
-                                    buttonText = "Square Generator", themeColor = vm.themeColor,
-                                    buttonColor = 4, textColor = 2
+                                    buttonText = "Square Generator", themeColor = vm.themeColor
                                 )
                                 buttonRow(
                                     rowOffset = 50.dp, buttonOffset = 25.dp, width = 250.dp,
                                     buttonEvent = {
 
                                     },
-                                    buttonText = "Does Not Exist",  themeColor = vm.themeColor,
-                                    buttonColor = 4, textColor = 2
+                                    buttonText = "Does Not Exist",  themeColor = vm.themeColor
                                 )
                                 buttonRow(
                                     rowOffset = 100.dp, buttonOffset = 25.dp, width = 250.dp,
                                     buttonEvent = {
 
                                     },
-                                    buttonText = "Does Not Exist", themeColor = vm.themeColor,
-                                    buttonColor = 4, textColor = 2
+                                    buttonText = "Does Not Exist", themeColor = vm.themeColor
                                 )
                                 buttonRow(
                                     rowOffset = 150.dp, buttonOffset = 25.dp, width = 250.dp,
                                     buttonEvent = {
 
                                     },
-                                    buttonText = "Does Not Exist", themeColor = vm.themeColor,
-                                    buttonColor = 4, textColor = 2
+                                    buttonText = "Does Not Exist", themeColor = vm.themeColor
                                 )
                             }
                         )
@@ -478,8 +457,7 @@ fun App() {
                                     buttonEvent = {
                                         // TODO: implement location picking cuz that doesnt exist yet
                                     },
-                                    buttonText = "Select Output Location", themeColor = vm.themeColor,
-                                    buttonColor = 4, textColor = 2
+                                    buttonText = "Select Output Location", themeColor = vm.themeColor
                                 )
                             }
                         )
