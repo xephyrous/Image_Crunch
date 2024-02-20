@@ -2,6 +2,8 @@ package ui
 
 import androidx.compose.animation.*
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
@@ -9,7 +11,10 @@ import androidx.compose.material.Card
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
@@ -22,14 +27,14 @@ import androidx.compose.ui.unit.sp
 
 @Composable
 fun buttonRow(
-    rowOffset: Dp,
-    buttonOffset: Dp,
-    width: Dp,
+    rowOffset: Dp = 0.dp,
+    buttonOffset: Dp = 25.dp,
+    width: Dp = 250.dp,
     buttonEvent: () -> Unit,
     buttonText: String,
     themeColor: List<Color>,
-    buttonColor: Int,
-    textColor: Int,
+    buttonColor: Int = 11,
+    textColor: Int = 3,
 ){
     Row(
         modifier = Modifier.offset(y = rowOffset)
@@ -46,13 +51,13 @@ fun buttonRow(
 
 @Composable
 fun textRow(
-    rowOffset: Dp,
+    rowOffset: Dp = 0.dp,
     displayedText: String,
     textOffset: Dp,
     fontSize: TextUnit,
-    font: FontWeight,
+    font: FontWeight = FontWeight.Normal,
     themeColor: List<Color>,
-    textColor: Int
+    textColor: Int = 2
 ){
     Row(
         modifier = Modifier.offset(y = rowOffset)
@@ -71,8 +76,8 @@ fun textRow(
 @Composable
 fun horizontalVisibilityPane(
     visibility: Boolean,
-    animationWidth: Int,
-    duration: Int,
+    animationWidth: Int = 2,
+    duration: Int = 250,
     paneContent: @Composable() (AnimatedVisibilityScope.() -> Unit)
 ){
     AnimatedVisibility(
@@ -90,8 +95,8 @@ fun horizontalVisibilityPane(
 @Composable
 fun verticalVisibilityPane(
     visibility: Boolean,
-    animationHeight: Int,
-    duration: Int,
+    animationHeight: Int = 2,
+    duration: Int = 250,
     paneContent: @Composable() (AnimatedVisibilityScope.() -> Unit)
 ){
     AnimatedVisibility(
@@ -114,14 +119,34 @@ fun createCard(
     height: Dp,
     elevation: Dp,
     themeColor: List<Color>,
-    cardColor: Int,
-    cardContent: @Composable () -> Unit
+    cardGrad1: Int = 9, // Card color
+    cardGrad2: Int = 10,
+    borderWidth: Dp = 1.dp,
+    borderColor: Int = 19,
+    cardContent: @Composable BoxScope.()-> Unit
 ) {
     Card(
-        modifier = Modifier.offset(xOffset, yOffset).size(width, height),
-        backgroundColor = themeColor[cardColor],
+        modifier = Modifier.offset(xOffset, yOffset).size(width, height).background(
+            Brush.linearGradient(
+                colors = listOf(themeColor[cardGrad1], themeColor[cardGrad2]),
+                start = Offset(0f, 0f),
+                end = Offset(Float.POSITIVE_INFINITY, 0f),
+                tileMode = TileMode.Clamp
+            )),
         elevation = elevation,
-        content = cardContent
+        border = BorderStroke(borderWidth, themeColor[borderColor]),
+        content = {
+            Box(
+                modifier = Modifier.background(
+                    Brush.linearGradient(
+                        colors = listOf(themeColor[cardGrad1], themeColor[cardGrad2]),
+                        start = Offset(0f, 0f),
+                        end = Offset(Float.POSITIVE_INFINITY, 0f),
+                        tileMode = TileMode.Clamp
+                    )).fillMaxSize(),
+                content = cardContent
+            )
+        }
     )
 }
 
@@ -137,17 +162,21 @@ fun createMenu(
     menuTitle: String, // Title
     returnTitle: String, // Return button text
     themeColor: List<Color>, // Theme colors
-    cardColor: Int, // Card color
-    buttonColor: Int, // Button Color
+    cardGrad1: Int = 9, // Card color
+    cardGrad2: Int = 10,
+    borderWidth: Dp = 1.dp,
+    borderColor: Int = 19,
+    buttonColor: Int = 11, // Button Color
     titleColor: Int, // Title color
     textColor: Int, // button text color
     exitOperation: () -> Unit, // the exit button
-    menuPages: @Composable () -> Unit // the main menu pages
+    menuPages: @Composable BoxScope.()-> Unit // the main menu pages
 ) {
     createCard(
         xOffset = menuOffset, yOffset = titleOffset,
         width = menuWidth, height = 50.dp, elevation,
-        themeColor = themeColor, cardColor = cardColor,
+        themeColor = themeColor, cardGrad1 = cardGrad1, cardGrad2 = cardGrad2,
+        borderWidth = borderWidth, borderColor = borderColor,
         cardContent = {
             textRow(
                 rowOffset = 0.dp, displayedText = menuTitle, textOffset = 10.dp,
@@ -159,7 +188,8 @@ fun createMenu(
     createCard(
         xOffset = menuOffset, yOffset = returnOffset,
         width = menuWidth, height = 50.dp, elevation = elevation,
-        themeColor = themeColor, cardColor = cardColor,
+        themeColor = themeColor, cardGrad1 = cardGrad1, cardGrad2 = cardGrad2,
+        borderWidth = borderWidth, borderColor = borderColor,
         cardContent = {
             buttonRow(
                 rowOffset = 0.dp, buttonOffset = 25.dp, width = 250.dp,
@@ -172,7 +202,8 @@ fun createMenu(
     createCard(
         xOffset = menuOffset, yOffset = mainOffset,
         width = menuWidth, height = mainHeight, elevation = elevation,
-        themeColor = themeColor, cardColor = cardColor,
+        themeColor = themeColor, cardGrad1 = cardGrad1, cardGrad2 = cardGrad2,
+        borderWidth = borderWidth, borderColor = borderColor,
         cardContent = menuPages
     )
 }

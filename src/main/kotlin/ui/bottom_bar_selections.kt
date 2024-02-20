@@ -47,7 +47,8 @@ fun bottomBar(vm: ViewModel, bottomCardsX: Dp, bottomCardsY: Dp) {
             createCard(
                 xOffset = 0.dp, yOffset = bottomCardsY-220.dp,
                 width = bottomCardsX/3, height = 500.dp, elevation = 5.dp,
-                themeColor = vm.themeColor, cardColor = 5,
+                themeColor = vm.themeColor, cardGrad1 = 4, cardGrad2 = 5,
+                borderWidth = 1.dp, borderColor = 2,
                 cardContent = {
                     // card content i GUESS
                     verticalVisibilityPane(
@@ -156,7 +157,8 @@ fun bottomBar(vm: ViewModel, bottomCardsX: Dp, bottomCardsY: Dp) {
             createCard(
                 xOffset = bottomCardsX/3, yOffset = bottomCardsY-150.dp,
                 width = bottomCardsX/3, height = 400.dp, elevation = 5.dp,
-                themeColor = vm.themeColor, cardColor = 5,
+                themeColor = vm.themeColor, cardGrad1 = 4, cardGrad2 = 5,
+                borderWidth = 1.dp, borderColor = 2,
                 cardContent = {}
             )
         }
@@ -166,7 +168,8 @@ fun bottomBar(vm: ViewModel, bottomCardsX: Dp, bottomCardsY: Dp) {
             createCard(
                 xOffset = (bottomCardsX/3)*2, yOffset = bottomCardsY-150.dp,
                 width = bottomCardsX/3, height = 400.dp, elevation = 5.dp,
-                themeColor = vm.themeColor, cardColor = 5,
+                themeColor = vm.themeColor, cardGrad1 = 4, cardGrad2 = 5,
+                borderWidth = 1.dp, borderColor = 2,
                 cardContent = {
                     textRow(
                         rowOffset = 0.dp, displayedText = "Filla Text", textOffset = 5.dp,

@@ -232,7 +232,8 @@ fun App() {
                 createCard(
                     xOffset = 0.dp, yOffset = bottomCardsY-100.dp,
                     width = bottomCardsX/3, height = 400.dp, elevation = 5.dp,
-                    themeColor = vm.themeColor, cardColor = 5,
+                    themeColor = vm.themeColor, cardGrad1 = 4, cardGrad2 = 5,
+                    borderWidth = 1.dp, borderColor = 2,
                     cardContent = {
                         textRow(
                             rowOffset = 0.dp, displayedText = "Node Generator\nSettings", textOffset = 15.dp,
@@ -244,7 +245,8 @@ fun App() {
                 createCard(
                     xOffset = bottomCardsX/3, yOffset = bottomCardsY-100.dp,
                     width = bottomCardsX/3, height = 400.dp, elevation = 5.dp,
-                    themeColor = vm.themeColor, cardColor = 5,
+                    themeColor = vm.themeColor, cardGrad1 = 4, cardGrad2 = 5,
+                    borderWidth = 1.dp, borderColor = 2,
                     cardContent = {
                         textRow(
                             rowOffset = 0.dp, displayedText = "Mask Generator\nSettings", textOffset = 15.dp,
@@ -256,7 +258,8 @@ fun App() {
                 createCard(
                     xOffset = (bottomCardsX/3)*2, yOffset = bottomCardsY-100.dp,
                     width = bottomCardsX/3, height = 400.dp, elevation = 5.dp,
-                    themeColor = vm.themeColor, cardColor = 5,
+                    themeColor = vm.themeColor, cardGrad1 = 4, cardGrad2 = 5,
+                    borderWidth = 1.dp, borderColor = 2,
                     cardContent = {
                         textRow(
                             rowOffset = 0.dp, displayedText = "Slice Generator\nSettings", textOffset = 15.dp,
@@ -278,7 +281,8 @@ fun App() {
                     menuOffset = menuOffset, titleOffset = menuTitle, mainOffset = 60.dp, returnOffset = menuExit,
                     menuWidth = 300.dp, mainHeight = menuSize, elevation = 20.dp,
                     menuTitle = "Main Menu", returnTitle = "Return to main",
-                    themeColor = vm.themeColor, cardColor = 5, buttonColor = 4, titleColor = 2, textColor = 2,
+                    themeColor = vm.themeColor, cardGrad1 = 5, cardGrad2 = 5, borderWidth = 1.dp,
+                    borderColor = 2, buttonColor = 4, titleColor = 2, textColor = 2,
                     exitOperation = {
                         vm.menuPage = 0
                         vm.menuLines = 2
@@ -385,7 +389,8 @@ fun App() {
                     menuOffset = settingsOffset, titleOffset = settingsTitle, mainOffset = 60.dp, returnOffset = settingsExit,
                     menuWidth = 300.dp, mainHeight = settingsSize, elevation = 20.dp,
                     menuTitle = "Generation Settings", returnTitle = "Return to main",
-                    themeColor = vm.themeColor, cardColor = 5, buttonColor = 4, titleColor = 2, textColor = 2,
+                    themeColor = vm.themeColor, cardGrad1 = 4, cardGrad2 = 5, borderWidth = 1.dp,
+                    borderColor = 2, buttonColor = 4, titleColor = 2, textColor = 2,
                     exitOperation = {
                         vm.settingsPage = 0
                         vm.settingsLines = 3
