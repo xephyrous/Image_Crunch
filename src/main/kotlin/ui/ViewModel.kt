@@ -9,7 +9,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.unit.dp
-import utils.storage.compactExport
 import utils.storage.darkThemes
 import utils.storage.generatorType
 import java.awt.image.BufferedImage
@@ -36,7 +35,6 @@ class ViewModel {
     var settingsLines by mutableStateOf(3)
     var genType by mutableStateOf(generatorType)
     var menuLines by mutableStateOf(2)
-    var compactExportToggle by mutableStateOf(compactExport)
 
     // The good shi
     var settingsPage by mutableStateOf(0)

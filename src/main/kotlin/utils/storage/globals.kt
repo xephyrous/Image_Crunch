@@ -12,7 +12,6 @@ import java.io.FileOutputStream
  * Loaded image details
  */
 var loadedImageSize: LockType<Dimension> = LockType(Dimension())
-var compactExport: Boolean = true
 
 var outputLocation: FileOutputStream? = null
 

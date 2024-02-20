@@ -1,14 +1,15 @@
 package utils.app
 
-// empty until there are actual settings to export
+import utils.storage.generatorType
+import utils.storage.squareColumns
+import utils.storage.squareRows
 
 fun settingsToCSV() {
     // There's nothing to make...
 }
 
 fun settingsToString(): String {
-    // Still nothing to make
-    return ""
+    return "${generatorType.value()};${squareRows.value()}:${squareColumns.value()}"
 }
 
 fun CSVtoSettings() {

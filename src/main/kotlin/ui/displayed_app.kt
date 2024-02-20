@@ -3,7 +3,10 @@ package ui
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.sharp.Add
@@ -33,6 +36,8 @@ import utils.app.settingsToCSV
 import utils.app.settingsToString
 import utils.images.*
 import utils.storage.*
+import java.awt.Toolkit
+import java.awt.datatransfer.StringSelection
 
 @Suppress("DuplicatedCode")
 @Composable
@@ -286,7 +291,7 @@ fun App() {
                                     rowOffset = 0.dp, buttonOffset = 25.dp, width = 250.dp,
                                     buttonEvent = {
                                         vm.menuPage = 1
-                                        vm.menuLines = if (vm.compactExportToggle) (1) else (2)
+                                        vm.menuLines = 3
                                     },
                                     buttonText = "Export Settings", themeColor = vm.themeColor,
                                     buttonColor = 4, textColor = 2
@@ -306,40 +311,32 @@ fun App() {
                         // Export Settings
                         horizontalVisibilityPane(
                             visibility = (vm.menuPage == 1), animationWidth = 2, duration = 369, paneContent = {
-                                Row() {
-                                    Switch(
-                                        checked = vm.compactExportToggle,
-                                        onCheckedChange = {
-                                            vm.compactExportToggle = it
-                                            compactExport = vm.compactExportToggle
-                                            vm.menuLines = if (!compactExport) { 2 } else { 1 }
-                                        },
-                                        modifier = Modifier.offset(50.dp, 0.dp).width(25.dp)
-                                    )
-                                    Button(
-                                        onClick = {
-                                            if (compactExport) {
-                                                settingsToString()
-                                            } else {
-                                                settingsToCSV()
-                                            }
-                                        },
-                                        modifier = Modifier.offset(75.dp, 0.dp).width(150.dp),
-                                        colors = ButtonDefaults.buttonColors(backgroundColor = vm.themeColor[4])
-                                    ) {
-                                        Text("Button?", color = vm.themeColor[2])
-                                    }
-                                }
-                                if (!vm.compactExportToggle) {
-                                    buttonRow(
-                                        rowOffset = 50.dp, buttonOffset = 25.dp, width = 250.dp,
-                                        buttonEvent = {
-                                            outputLocation = SelectOutputPath()
-                                        },
-                                        buttonText = "Select Output", themeColor = vm.themeColor,
-                                        buttonColor = 4, textColor = 2
-                                    )
-                                }
+                                buttonRow(
+                                    rowOffset = 0.dp, buttonOffset = 25.dp, width = 250.dp,
+                                    buttonEvent = {
+                                        val cb = Toolkit.getDefaultToolkit().systemClipboard
+                                        val s = StringSelection(settingsToString())
+                                        cb.setContents(s, s)
+                                    },
+                                    buttonText = "Export to Clipboard", themeColor = vm.themeColor,
+                                    buttonColor = 4, textColor = 2
+                                )
+                                buttonRow(
+                                    rowOffset = 50.dp, buttonOffset = 25.dp, width = 250.dp,
+                                    buttonEvent = {
+                                        settingsToCSV()
+                                    },
+                                    buttonText = "Export to CSV", themeColor = vm.themeColor,
+                                    buttonColor = 4, textColor = 2
+                                )
+                                buttonRow(
+                                    rowOffset = 100.dp, buttonOffset = 25.dp, width = 250.dp,
+                                    buttonEvent = {
+                                        outputLocation = SelectOutputPath()
+                                    },
+                                    buttonText = "Select Output", themeColor = vm.themeColor,
+                                    buttonColor = 4, textColor = 2
+                                )
                             }
                         )
 
