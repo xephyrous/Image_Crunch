@@ -13,6 +13,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlinx.coroutines.Runnable
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.runBlocking
 import java.util.*
 import kotlin.concurrent.timerTask
 
@@ -36,7 +39,7 @@ class AlertBox {
             visibility = displayed, animationHeight = 2, duration = 250, paneContent = {
                 createCard(
                     xOffset = 5.dp, yOffset = screenHeight-60.dp,
-                    width = screenWidth-60.dp, height = 50.dp, elevation = 20.dp,
+                    width = screenWidth-65.dp, height = 50.dp, elevation = 20.dp,
                     themeColor = themeColor, cardGrad1 = cardGrad1, cardGrad2 = cardGrad2,
                     borderWidth = borderWidth, borderColor = borderColor,
                     cardContent = {
@@ -69,10 +72,20 @@ class AlertBox {
         displayedText: String,
         displayTime: Long = 3000
     ) {
-        if (!displayed) {
+        Thread(Runnable {
+            runBlocking {
+                WaitForCondition(50000, 100)
+            }
             this.text = displayedText
             this.displayed = true
             Timer().schedule(timerTask { displayed = false }, displayTime)
-        }
+        }).start()
+    }
+
+    tailrec suspend fun WaitForCondition(maxDelay: Long, checkPeriod: Long) : Boolean{
+        if(maxDelay < 0) return false
+        if(!displayed) return true
+        delay(checkPeriod)
+        return WaitForCondition(maxDelay - checkPeriod, checkPeriod)
     }
 }

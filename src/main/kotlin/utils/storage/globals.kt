@@ -1,7 +1,7 @@
 package utils.storage
 
 import java.awt.Dimension
-import java.io.FileOutputStream
+import java.awt.image.BufferedImage
 
 /**
  * All global variables are stored as LockType<T> to prevent possible race conditions
@@ -11,11 +11,15 @@ import java.io.FileOutputStream
 /**
  * Loaded image details
  */
-var loadedImageSize: LockType<Dimension> = LockType(Dimension())
+var loadedImageSize: LockType<Dimension?> = LockType(null)
+var loadedImage: LockType<BufferedImage?> = LockType(null)
 
-var outputLocation: FileOutputStream? = null
+var outputLocation: String? = null
 
 var generatorType: LockType<GeneratorType> = LockType(GeneratorType.NONE)
+var nodes: LockType<ArrayList<PositionNode>?> = LockType(null)
+var mask: LockType<Mask?> = LockType(null)
+var slices: LockType<ArrayList<Mask>?> = LockType(null)
 
 // Square Gen Settings
 var squareRows: LockType<Int> = LockType(15)

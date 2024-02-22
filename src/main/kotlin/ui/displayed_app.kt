@@ -84,6 +84,7 @@ fun App() {
                             val tempImage = ImageFileSelection()
                             if (tempImage != null) {
                                 vm.displayedImage = fileToBufferedImage(tempImage)
+                                loadedImage.set(fileToBufferedImage(tempImage))
                                 loadedImageSize.set(getDim(vm.displayedImage!!))
                             }
                             if (vm.displayedImage != null) {
@@ -165,7 +166,38 @@ fun App() {
             floatingActionButton = {
                 ExtendedFloatingActionButton(
                     onClick = {
-                        alertsHandler.DisplayAlert("Run button clicked")
+                        if (loadedImage.value() == null) {
+                            alertsHandler.DisplayAlert("Please select an image", 3002)
+                        } else if (outputLocation == null) {
+                            alertsHandler.DisplayAlert("Please select an output location", 3001)
+                        } else {
+                            loadedImage.lock()
+                            loadedImageSize.lock()
+                            squareRows.lock()
+                            squareColumns.lock()
+                            generatorType.lock()
+
+                            nodes.set(generateNodes(generatorType.value()))
+                            nodes.lock()
+
+                            mask.set(generateCuts(generatorType.value()))
+                            mask.lock()
+
+                            slices.set(generateMasks(generatorType.value()))
+                            slices.lock()
+
+                            for (i in slices.value()!!.indices) {
+                                maskToImage(loadedImage.value()!!, slices.value()!![i], "Output-${i}")
+                            }
+
+                            loadedImage.unlock()
+                            loadedImageSize.unlock()
+                            squareRows.unlock()
+                            squareColumns.unlock()
+                            generatorType.unlock()
+                            nodes.unlock()
+                            mask.unlock()
+                        }
                     },
                     text = { Text("Run", color = vm.themeColor[2]) },
                     icon = {
@@ -487,13 +519,13 @@ fun App() {
                             }
                         )
 
-                        // Output location, needs to be finished
                         horizontalVisibilityPane(
                             visibility = (vm.settingsPage == 2), animationWidth = 2, duration = 369, paneContent = {
                                 buttonRow(
                                     rowOffset = 0.dp, buttonOffset = 25.dp, width = 250.dp,
                                     buttonEvent = {
                                         outputLocation = SelectOutputPath()
+                                        alertsHandler.DisplayAlert("Output Location set to: $outputLocation")
                                     },
                                     buttonText = "Select Output Location", themeColor = vm.themeColor
                                 )

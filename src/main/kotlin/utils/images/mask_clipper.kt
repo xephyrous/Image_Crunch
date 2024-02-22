@@ -1,6 +1,7 @@
 package utils.images
 
 import utils.storage.Mask
+import utils.storage.outputLocation
 import java.awt.Dimension
 import java.awt.image.BufferedImage
 import java.io.ByteArrayInputStream
@@ -54,5 +55,5 @@ fun maskToImage(input: BufferedImage, mask: Mask, name: String) {
         }
     }
 
-    ImageIO.write(img, "PNG", File("$name.png"))
+    ImageIO.write(img, "PNG", File("${outputLocation}\\$name.png"))
 }

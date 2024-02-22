@@ -37,7 +37,7 @@ fun squareMaskGenerator(
 
         //Reach to bottom of image
         if(currRow == rows + 1) {
-            posY = loadedImageSize.value().height - 1
+            posY = loadedImageSize.value()!!.height - 1
         } else {
             //Get node 1 row ahead and 1 row ahead (SouthEast of the current node)
             posY = nodes[((currRow + 1) * (rows + 2)) + currColumn + 1].second
@@ -45,7 +45,7 @@ fun squareMaskGenerator(
 
         //Reach to side of image
         if(currColumn == columns + 1) {
-            posX = loadedImageSize.value().width - 1
+            posX = loadedImageSize.value()!!.width - 1
         } else {
             //Get node 1 row ahead and 1 row ahead (SouthEast of the current node)
             posX = nodes[((currRow + 1) * (rows + 2)) + currColumn + 1].first

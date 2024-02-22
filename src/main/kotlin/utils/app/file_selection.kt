@@ -1,7 +1,6 @@
 package utils.app
 
 import java.io.File
-import java.io.FileOutputStream
 import javax.swing.JFileChooser
 import javax.swing.filechooser.FileNameExtensionFilter
 
@@ -27,7 +26,7 @@ fun ImageFileSelection(): File? {
     return null
 }
 
-fun SelectOutputPath(): FileOutputStream? {
+fun SelectOutputPath(): String? {
     val fileChooser = JFileChooser()
 
     fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY)
@@ -35,7 +34,7 @@ fun SelectOutputPath(): FileOutputStream? {
     val sourceReturn = fileChooser.showOpenDialog(null)
 
     if (sourceReturn == JFileChooser.APPROVE_OPTION) {
-        return FileOutputStream(fileChooser.selectedFile.path)
+        return fileChooser.selectedFile.path
     }
 
     return null

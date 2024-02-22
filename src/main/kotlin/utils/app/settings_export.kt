@@ -9,7 +9,7 @@ fun settingsToCSV() {
 }
 
 fun settingsToString(): String {
-    return "${generatorType.value()};${squareRows.value()}:${squareColumns.value()}"
+    return "${generatorType.value()};${squareRows.value()};${squareColumns.value()}"
 }
 
 fun CSVtoSettings() {
