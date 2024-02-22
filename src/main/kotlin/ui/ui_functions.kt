@@ -5,10 +5,9 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.Button
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.Card
-import androidx.compose.material.Text
+import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.sharp.Close
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -169,12 +168,14 @@ fun createMenu(
     buttonColor: Int = 10, // Button Color
     titleColor: Int = 1, // Title color
     textColor: Int = 2, // button text color
+    iconColor: Int = 4,
     exitOperation: () -> Unit, // the exit button
+    closeOperation: () -> Unit,
     menuPages: @Composable BoxScope.()-> Unit // the main menu pages
 ) {
     createCard(
         xOffset = menuOffset, yOffset = titleOffset,
-        width = menuWidth, height = 50.dp, elevation,
+        width = menuWidth - 55.dp, height = 50.dp, elevation,
         themeColor = themeColor, cardGrad1 = cardGrad1, cardGrad2 = cardGrad2,
         borderWidth = borderWidth, borderColor = borderColor,
         cardContent = {
@@ -183,6 +184,21 @@ fun createMenu(
                 fontSize = 30.sp, font = FontWeight.Normal,
                 themeColor = themeColor, textColor = titleColor
             )
+        }
+    )
+    createCard(
+        xOffset = (menuOffset + (menuWidth - 50.dp)), yOffset = titleOffset,
+        width = 50.dp, height = 50.dp, elevation,
+        themeColor = themeColor, cardGrad1 = cardGrad1, cardGrad2 = cardGrad2,
+        borderWidth = borderWidth, borderColor = borderColor,
+        cardContent = {
+            IconButton(onClick = closeOperation) {
+                Icon(
+                    imageVector = Icons.Sharp.Close,
+                    contentDescription = "Close Button",
+                    tint = themeColor[iconColor]
+                )
+            }
         }
     )
     createCard(

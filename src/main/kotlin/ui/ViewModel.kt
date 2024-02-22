@@ -9,7 +9,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.unit.dp
-import utils.storage.darkThemes
+import utils.storage.aqueousThemes
 import utils.storage.generatorType
 import java.awt.image.BufferedImage
 
@@ -18,7 +18,7 @@ import java.awt.image.BufferedImage
  * Holds shared variables and passes them through scopes
  */
 class ViewModel {
-    var themeColor by mutableStateOf(darkThemes)
+    var themeColor by mutableStateOf(aqueousThemes)
 
     // Image Displays
     var displayedImage by mutableStateOf<BufferedImage?>(null)
@@ -27,7 +27,6 @@ class ViewModel {
     var imageInputStream by mutableStateOf<ImageBitmap?>(null)
     var nodeInputStream by mutableStateOf<ImageBitmap?>(null)
 
-    // try this meow :3
     var imageBitmapPainter by mutableStateOf<Painter?>(null)
     var nodeBitmapPainter by mutableStateOf<Painter?>(null)
 

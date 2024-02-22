@@ -59,7 +59,10 @@ fun App() {
     val settingsExit by animateDpAsState(targetValue = if (vm.settingsPage == 0) (60 + ((vm.settingsLines - 1) * 50)).dp else (65 + (vm.settingsLines * 50)).dp)
     val bottomCardsY by animateDpAsState(targetValue = vm.screenHeight)
     val bottomCardsX by animateDpAsState(targetValue = vm.screenWidth)
-    val fabLocation by animateDpAsState(targetValue = 0.dp)
+    val fabOffset by animateDpAsState(targetValue = 0.dp) // will be fab location :D
+
+    // Alerts Handler
+    val alertsHandler = AlertBox()
 
     AppTheme {
         Scaffold(
@@ -95,6 +98,10 @@ fun App() {
                                 vm.nodeBitmapPainter = BitmapPainter(vm.nodeInputStream!!)
 
                                 vm.displayed = true
+
+                                alertsHandler.DisplayAlert("Image successfully loaded and displayed")
+                            } else {
+                                alertsHandler.DisplayAlert("Image failed to load")
                             }
                         }) {
                             Icon(
@@ -158,7 +165,7 @@ fun App() {
             floatingActionButton = {
                 ExtendedFloatingActionButton(
                     onClick = {
-                        // run the code :thumb:
+                        alertsHandler.DisplayAlert("Run button clicked")
                     },
                     text = { Text("Run", color = vm.themeColor[2]) },
                     icon = {
@@ -168,7 +175,7 @@ fun App() {
                         )
                     },
                     backgroundColor = vm.themeColor[11],
-                    modifier = Modifier.offset(0.dp, (-100).dp)
+                    modifier = Modifier.offset(0.dp, ((-100).dp - fabOffset))
                 )
             },
         ) {
@@ -204,7 +211,7 @@ fun App() {
                         }
                     }
             ) {
-                // Display box
+                // Image Display box
                 Box(
                     modifier = Modifier
                         .size(width = vm.screenWidth/2, height = vm.screenHeight)
@@ -265,12 +272,7 @@ fun App() {
                     }
                 )
 
-                // Bottom Bar Settings
-                // If I don't have to look at it, it cant hurt me :D
-                // Yes, it sucks
-                // No, I DON'T know what im doing
-                // No, it isn't more efficient
-                // Yes, I need help
+                // Bottom Bar Settings - From bottom_bar_selection.kt
                 bottomBar(vm, bottomCardsX, bottomCardsY)
 
                 // Main Menu
@@ -282,6 +284,24 @@ fun App() {
                     exitOperation = {
                         vm.menuPage = 0
                         vm.menuLines = 2
+                    },
+                    closeOperation = {
+                        vm.menuCardState = !vm.menuCardState
+                        vm.imageModifier = if (vm.menuCardState || vm.settingsCardState) {
+                            Modifier
+                                .size(width = (vm.screenWidth/2)-10.dp, height = vm.screenHeight-230.dp)
+                                .blur(
+                                    radiusX = 10.dp,
+                                    radiusY = 10.dp,
+                                    edgeTreatment = BlurredEdgeTreatment.Unbounded
+                                )
+                                .offset(5.dp, 5.dp)
+                        } else {
+                            Modifier.size(
+                                width = (vm.screenWidth/2)-10.dp,
+                                height = vm.screenHeight-230.dp
+                            ).offset(5.dp, 5.dp)
+                        }
                     },
                     menuPages = {
                         // Main Menu
@@ -375,11 +395,29 @@ fun App() {
                 createMenu(
                     menuOffset = settingsOffset, titleOffset = settingsTitle, mainOffset = 60.dp, returnOffset = settingsExit,
                     menuWidth = 300.dp, mainHeight = settingsSize, elevation = 20.dp,
-                    menuTitle = "Generation Settings", returnTitle = "Return to main",
+                    menuTitle = "Crunch Settings", returnTitle = "Return to main",
                     themeColor = vm.themeColor, borderWidth = 1.dp,
                     exitOperation = {
                         vm.settingsPage = 0
                         vm.settingsLines = 3
+                    },
+                    closeOperation = {
+                        vm.settingsCardState = !vm.settingsCardState
+                        vm.imageModifier = if (vm.menuCardState || vm.settingsCardState) {
+                            Modifier
+                                .size(width = (vm.screenWidth/2)-10.dp, height = vm.screenHeight-230.dp)
+                                .blur(
+                                    radiusX = 10.dp,
+                                    radiusY = 10.dp,
+                                    edgeTreatment = BlurredEdgeTreatment.Unbounded
+                                )
+                                .offset(5.dp, 5.dp)
+                        } else {
+                            Modifier.size(
+                                width = (vm.screenWidth/2)-10.dp,
+                                height = vm.screenHeight-230.dp
+                            ).offset(5.dp, 5.dp)
+                        }
                     },
                     menuPages = {
                         horizontalVisibilityPane(
@@ -455,7 +493,7 @@ fun App() {
                                 buttonRow(
                                     rowOffset = 0.dp, buttonOffset = 25.dp, width = 250.dp,
                                     buttonEvent = {
-                                        // TODO: implement location picking cuz that doesnt exist yet
+                                        outputLocation = SelectOutputPath()
                                     },
                                     buttonText = "Select Output Location", themeColor = vm.themeColor
                                 )
@@ -463,6 +501,9 @@ fun App() {
                         )
                     }
                 )
+
+                alertsHandler.CreateAlert(
+                    screenWidth = bottomCardsX, screenHeight = bottomCardsY, themeColor = vm.themeColor)
             }
         }
     }
