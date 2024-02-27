@@ -30,14 +30,14 @@ import androidx.compose.ui.res.loadImageBitmap
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import utils.app.ImageFileSelection
-import utils.app.SelectOutputPath
-import utils.app.settingsToCSV
-import utils.app.settingsToString
+import utils.app.*
 import utils.images.*
 import utils.storage.*
 import java.awt.Toolkit
 import java.awt.datatransfer.StringSelection
+
+val alertsHandler = AlertBox()
+val helpMenu = HelpMenu()
 
 @Suppress("DuplicatedCode")
 @Composable
@@ -48,7 +48,6 @@ fun App() {
     val density = LocalDensity.current
     
     // Card Animations
-    // TODO: rewrite this later to be more compact
     val menuOffset by animateDpAsState(targetValue = (if (vm.menuCardState) (if (!vm.settingsCardState) 10 else 320) else (-310)).dp)
     val menuSize by animateDpAsState(targetValue = (vm.menuLines * 50).dp)
     val menuTitle by animateDpAsState(targetValue = if (vm.menuCardState) 5.dp else 60.dp)
@@ -60,9 +59,6 @@ fun App() {
     val bottomCardsY by animateDpAsState(targetValue = vm.screenHeight)
     val bottomCardsX by animateDpAsState(targetValue = vm.screenWidth)
     val fabOffset by animateDpAsState(targetValue = 0.dp) // will be fab location :D
-
-    // Alerts Handler
-    val alertsHandler = AlertBox()
 
     AppTheme {
         Scaffold(
@@ -80,7 +76,7 @@ fun App() {
                     actions = {
                         // holy spaghetti
                         IconButton(onClick = {
-                            vm.displayed = false
+                            vm.imageDisplay = false
                             val tempImage = ImageFileSelection()
                             if (tempImage != null) {
                                 vm.displayedImage = fileToBufferedImage(tempImage)
@@ -98,7 +94,7 @@ fun App() {
                                 vm.imageBitmapPainter = BitmapPainter(vm.imageInputStream!!)
                                 vm.nodeBitmapPainter = BitmapPainter(vm.nodeInputStream!!)
 
-                                vm.displayed = true
+                                vm.imageDisplay = true
 
                                 alertsHandler.DisplayAlert("Image successfully loaded and displayed")
                             } else {
@@ -249,7 +245,7 @@ fun App() {
                         .size(width = vm.screenWidth/2, height = vm.screenHeight)
                 ){
                     // IMAGE SCOPE
-                    if (vm.displayed) {
+                    if (vm.imageDisplay) {
                         Image(
                             painter = vm.imageBitmapPainter!!,
                             contentDescription = "picture",
@@ -315,7 +311,7 @@ fun App() {
                     themeColor = vm.themeColor, borderWidth = 1.dp,
                     exitOperation = {
                         vm.menuPage = 0
-                        vm.menuLines = 2
+                        vm.menuLines = 3
                     },
                     closeOperation = {
                         vm.menuCardState = !vm.menuCardState
@@ -354,6 +350,13 @@ fun App() {
                                         vm.menuLines = 4
                                     },
                                     buttonText = "Select Theme", themeColor = vm.themeColor
+                                )
+                                buttonRow(
+                                    rowOffset = 100.dp, buttonOffset = 25.dp, width = 250.dp,
+                                    buttonEvent = {
+                                        helpMenu.ShowHelpMenu()
+                                    },
+                                    buttonText = "GET HELP", themeColor = vm.themeColor
                                 )
                             }
                         )
@@ -533,10 +536,18 @@ fun App() {
                         )
                     }
                 )
-
-                alertsHandler.CreateAlert(
-                    screenWidth = bottomCardsX, screenHeight = bottomCardsY, themeColor = vm.themeColor)
             }
+            alertsHandler.CreateAlert(
+                screenWidth = bottomCardsX, screenHeight = bottomCardsY, themeColor = vm.themeColor
+            )
+        }
+
+        helpMenu.CreateHelpMenu(
+            screenWidth = bottomCardsX, screenHeight = bottomCardsY, themeColor = vm.themeColor
+        )
+
+        if (isFirstLaunch()) {
+            helpMenu.ShowHelpMenu()
         }
     }
 }

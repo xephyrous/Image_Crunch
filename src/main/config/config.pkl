@@ -1,0 +1,12 @@
+module configurations
+
+firstBoot: Boolean = true
+
+selectedGenerator: Int = 0
+
+squareRows: Int = 5
+squareColumns: Int = 5
+squareNoise: Float = 0.0
+
+appTheme: Int = 0
+

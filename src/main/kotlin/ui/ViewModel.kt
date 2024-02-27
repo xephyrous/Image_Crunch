@@ -33,7 +33,7 @@ class ViewModel {
     // Settings
     var settingsLines by mutableStateOf(3)
     var genType by mutableStateOf(generatorType)
-    var menuLines by mutableStateOf(2)
+    var menuLines by mutableStateOf(3)
 
     // The good shi
     var settingsPage by mutableStateOf(0)
@@ -57,7 +57,7 @@ class ViewModel {
     var genTypeB by mutableStateOf("")
 
     // Display Settings
-    var displayed by mutableStateOf(false)
+    var imageDisplay by mutableStateOf(false)
     var nodeDisplay by mutableStateOf(true)
 
     // Card Animations
