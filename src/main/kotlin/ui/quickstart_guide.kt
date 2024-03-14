@@ -35,6 +35,7 @@ class HelpMenu {
         "Accessing the App",
         "Configuring Selections",
         "Altering Settings",
+        "Selecting an Image",
         "Generating Your First Image",
         "Exporting Settings",
         "Have Fun!"
@@ -149,11 +150,57 @@ class HelpMenu {
                             tileMode = TileMode.Clamp
                         )).fillMaxSize(),
                 ) {
-                    textRow(
-                        rowOffset = 0.dp, displayedText = "Filler Content :D", textOffset = 10.dp,
-                        fontSize = 30.sp, font = FontWeight.Normal,
-                        themeColor = themeColor, textColor = textColor
-                    )
+                    when (page) {
+                        0 -> {
+                            textRow(
+                                rowOffset = 2.5.dp, displayedText = "App Settings can be accessed by pressing the main menu button in the top right corner", textOffset = 10.dp,
+                                fontSize = 25.sp, font = FontWeight.Normal,
+                                themeColor = themeColor, textColor = textColor
+                            )
+                        }
+                        1 -> {
+                            textRow(
+                                rowOffset = 2.5.dp, displayedText = "Many of the image generation settings can be altered with the settings button in the top right corner", textOffset = 10.dp,
+                                fontSize = 25.sp, font = FontWeight.Normal,
+                                themeColor = themeColor, textColor = textColor
+                            )
+                        }
+                        2 -> {
+                            textRow(
+                                rowOffset = 2.5.dp, displayedText = "Within the settings menu we can configure how to use the generators", textOffset = 10.dp,
+                                fontSize = 25.sp, font = FontWeight.Normal,
+                                themeColor = themeColor, textColor = textColor
+                            )
+                        }
+                        3 -> {
+                            textRow(
+                                rowOffset = 2.5.dp, displayedText = "An image can be chosen by clicking the plus button in the top right", textOffset = 10.dp,
+                                fontSize = 25.sp, font = FontWeight.Normal,
+                                themeColor = themeColor, textColor = textColor
+                            )
+                        }
+                        4 -> {
+                            textRow(
+                                rowOffset = 2.5.dp, displayedText = "Once you have configured each setting to your liking, press the run button to generate", textOffset = 10.dp,
+                                fontSize = 25.sp, font = FontWeight.Normal,
+                                themeColor = themeColor, textColor = textColor
+                            )
+                        }
+                        5 -> {
+                            textRow(
+                                rowOffset = 2.5.dp, displayedText = "You can export your generation settings in the \"Export Settings\" tab of the main menu", textOffset = 10.dp,
+                                fontSize = 25.sp, font = FontWeight.Normal,
+                                themeColor = themeColor, textColor = textColor
+                            )
+                        }
+                        6 -> {
+                            textRow(
+                                rowOffset = 2.5.dp, displayedText = "You can view this help menu again by pressing \"GET HELP\" in the main menu", textOffset = 10.dp,
+                                fontSize = 25.sp, font = FontWeight.Normal,
+                                themeColor = themeColor, textColor = textColor
+                            )
+                        }
+                    }
                 }
             }
             // Bottom Bar

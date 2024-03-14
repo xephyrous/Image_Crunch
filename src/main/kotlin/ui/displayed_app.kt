@@ -58,7 +58,7 @@ fun App() {
     val settingsExit by animateDpAsState(targetValue = if (vm.settingsPage == 0) (60 + ((vm.settingsLines - 1) * 50)).dp else (65 + (vm.settingsLines * 50)).dp)
     val bottomCardsY by animateDpAsState(targetValue = vm.screenHeight)
     val bottomCardsX by animateDpAsState(targetValue = vm.screenWidth)
-    val fabOffset by animateDpAsState(targetValue = 0.dp) // will be fab location :D
+    val fabOffset by animateDpAsState(targetValue = if (vm.configSlices) 50.dp else 0.dp) // will be fab location :D
 
     AppTheme {
         Scaffold(
@@ -490,10 +490,7 @@ fun App() {
                                 buttonRow(
                                     rowOffset = 0.dp, buttonOffset = 25.dp, width = 250.dp,
                                     buttonEvent = {
-                                        vm.genType.set(GeneratorType.NONE)
-                                        generatorType.set(GeneratorType.NONE)
-                                        vm.genTypeA = "15"
-                                        vm.genTypeB = "15"
+                                        generatorType.set(GeneratorType.SQUARE)
                                         vm.selectedGenerator = 1
                                     },
                                     buttonText = "Square Generator", themeColor = vm.themeColor

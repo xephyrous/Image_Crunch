@@ -4,10 +4,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.Text
-import androidx.compose.material.TextField
-import androidx.compose.material.TextFieldDefaults
-import androidx.compose.runtime.Composable
+import androidx.compose.material.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.painter.BitmapPainter
@@ -24,6 +22,7 @@ import utils.images.bufferedImageToOutputStream
 import utils.images.createNodeMask
 import utils.images.generateNodes
 import utils.storage.GeneratorType
+import utils.storage.cutNoise
 import utils.storage.squareColumns
 import utils.storage.squareRows
 
@@ -52,6 +51,8 @@ fun bottomBar(vm: ViewModel, bottomCardsX: Dp, bottomCardsY: Dp) {
                     // card content i GUESS
                     verticalVisibilityPane(
                         visibility = vm.selectedGenerator == 1, animationHeight = 2, duration = 369, paneContent = {
+                            var sRT by mutableStateOf(squareRows.toString())
+                            var sCT by mutableStateOf(squareColumns.toString())
                             Row() {
                                 Text(
                                     "Number of Rows:", color = vm.themeColor[2],
@@ -63,12 +64,12 @@ fun bottomBar(vm: ViewModel, bottomCardsX: Dp, bottomCardsY: Dp) {
                                 modifier = Modifier.offset(y = 50.dp)
                             ) {
                                 TextField(
-                                    value = vm.genTypeA,
+                                    value = sRT,
                                     onValueChange = {
                                         if(it.length < 5 && (it.matches(numbersOnly) || it.isEmpty())) {
-                                            vm.genTypeA = it
-                                            if(vm.genTypeA.isNotEmpty()) {
-                                                squareRows.set(vm.genTypeA.toInt())
+                                            sRT = it
+                                            if(sRT.isNotEmpty()) {
+                                                squareRows.set(sRT.toInt())
                                             }
                                         }
                                     },
@@ -112,11 +113,11 @@ fun bottomBar(vm: ViewModel, bottomCardsX: Dp, bottomCardsY: Dp) {
                                 modifier = Modifier.offset(y = 160.dp)
                             ) {
                                 TextField(
-                                    value = vm.genTypeB,
+                                    value = sCT,
                                     onValueChange = {
                                         if(it.length < 5 && (it.matches(numbersOnly) || it.isEmpty())) {
-                                            vm.genTypeB = it
-                                            if(vm.genTypeB.isNotEmpty()) squareColumns.set(vm.genTypeB.toInt())
+                                            sCT = it
+                                            if(sCT.isNotEmpty()) squareColumns.set(sCT.toInt())
                                         }
                                     },
                                     colors = TextFieldDefaults.textFieldColors(
@@ -168,10 +169,41 @@ fun bottomBar(vm: ViewModel, bottomCardsX: Dp, bottomCardsY: Dp) {
                 width = bottomCardsX/3, height = 400.dp, elevation = 5.dp,
                 themeColor = vm.themeColor, borderWidth = 1.dp,
                 cardContent = {
-                    textRow(
-                        rowOffset = 0.dp, displayedText = "Filla Text", textOffset = 5.dp,
-                        fontSize = 40.sp, font = FontWeight.Normal, themeColor = vm.themeColor
-                    )
+                    var sliderPosition by remember { mutableStateOf(0f) }
+                    Row() {
+                        Text(
+                            "Cut Noise", color = vm.themeColor[2],
+                            modifier = Modifier.fillMaxSize().offset(y= 5.dp),
+                            fontSize = 40.sp, textAlign = TextAlign.Center, fontWeight = FontWeight.Normal
+                        )
+                    }
+                    Row (
+                        modifier = Modifier.offset(y = 50.dp)
+                    ) {
+                        Slider(
+                            value = sliderPosition,
+                            onValueChange = {
+                                sliderPosition = it
+                                cutNoise.set(it.toDouble())
+                                println(it)
+                            },
+                            colors = SliderDefaults.colors(
+                                thumbColor = vm.themeColor[14],
+                                activeTrackColor = vm.themeColor[13], // TODO: make these colors separate later
+                                inactiveTrackColor = vm.themeColor[12],
+                            ),
+                            modifier = Modifier.size(width = bottomCardsX/3-30.dp, 40.dp).offset(x = 15.dp)
+                        )
+                    }
+                    Row(
+                        modifier = Modifier.offset(y = 90.dp)
+                    ) {
+                        Text(
+                            "Current Noise: $sliderPosition", color = vm.themeColor[2],
+                            modifier = Modifier.fillMaxSize().offset(y= 5.dp),
+                            fontSize = 30.sp, textAlign = TextAlign.Center, fontWeight = FontWeight.Normal
+                        )
+                    }
                 }
             )
         }
