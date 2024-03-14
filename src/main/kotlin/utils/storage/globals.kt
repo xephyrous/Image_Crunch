@@ -26,4 +26,4 @@ var squareRows: LockType<Int> = LockType(15)
 var squareColumns: LockType<Int> = LockType(15)
 
 // Cut Noise
-var cutNoise: LockType<Double> = LockType(0.0)
+var cutNoise: LockType<Float> = LockType(0.0F)

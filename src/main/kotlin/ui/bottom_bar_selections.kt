@@ -51,8 +51,8 @@ fun bottomBar(vm: ViewModel, bottomCardsX: Dp, bottomCardsY: Dp) {
                     // card content i GUESS
                     verticalVisibilityPane(
                         visibility = vm.selectedGenerator == 1, animationHeight = 2, duration = 369, paneContent = {
-                            var sRT by mutableStateOf(squareRows.toString())
-                            var sCT by mutableStateOf(squareColumns.toString())
+                            var sRT by mutableStateOf(squareRows.value().toString())
+                            var sCT by mutableStateOf(squareColumns.value().toString())
                             Row() {
                                 Text(
                                     "Number of Rows:", color = vm.themeColor[2],
@@ -169,7 +169,7 @@ fun bottomBar(vm: ViewModel, bottomCardsX: Dp, bottomCardsY: Dp) {
                 width = bottomCardsX/3, height = 400.dp, elevation = 5.dp,
                 themeColor = vm.themeColor, borderWidth = 1.dp,
                 cardContent = {
-                    var sliderPosition by remember { mutableStateOf(0f) }
+                    var sliderPosition by remember { mutableStateOf(cutNoise.value()) }
                     Row() {
                         Text(
                             "Cut Noise", color = vm.themeColor[2],
@@ -184,7 +184,7 @@ fun bottomBar(vm: ViewModel, bottomCardsX: Dp, bottomCardsY: Dp) {
                             value = sliderPosition,
                             onValueChange = {
                                 sliderPosition = it
-                                cutNoise.set(it.toDouble())
+                                cutNoise.set(it)
                                 println(it)
                             },
                             colors = SliderDefaults.colors(

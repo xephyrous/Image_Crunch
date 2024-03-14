@@ -29,12 +29,9 @@ class ViewModel {
     var imageBitmapPainter by mutableStateOf<Painter?>(null)
     var nodeBitmapPainter by mutableStateOf<Painter?>(null)
 
-    // Settings
-    var settingsLines by mutableStateOf(3)
-    var menuLines by mutableStateOf(3)
-
     // The good shi
     var settingsPage by mutableStateOf(0)
+    var settingsLines by mutableStateOf( listOf(3, 4, 1) )
 
     var configGenerator by mutableStateOf(false)
     var configMasks by mutableStateOf(false)
@@ -43,6 +40,7 @@ class ViewModel {
     var selectedGenerator by mutableStateOf(1)
 
     var menuPage by mutableStateOf(0)
+    var menuLines by mutableStateOf( listOf(3, 3, 4) )
 
     var screenWidth by mutableStateOf(1200.dp)
     var screenHeight by mutableStateOf(800.dp)
