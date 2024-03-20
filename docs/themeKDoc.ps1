@@ -12,7 +12,7 @@
  # Then run the following command in the terminal (from root):
  # ./docs/themeKDoc.ps1 [path to file]
  #
- # Ex. "./docs/themeKDoc.ps1 /src/main/kotlin/utils/theme.kt "
+ # Ex. "./docs/themeKDoc.ps1 /src/main/kotlin/utils/theme.kt"
  #>
 
 
