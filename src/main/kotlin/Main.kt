@@ -1,6 +1,5 @@
 /*
- * Project Start : 1/17/2024
- * Project End   : TBD
+ * Project Timeline : 1/17/2024 -> TBD (3/15/2024)
  *
  * This software is under the MIT License
  *
@@ -19,7 +18,9 @@ import androidx.compose.ui.window.rememberWindowState
 import ui.App
 
 fun main() = application {
-//    evalSettings()
+    // parseConfigData()
+    // parseThemeData
+    // TODO : Setup pkl codegen-kotlin implementation (Undocumented Gradle hell)
 
     val state = rememberWindowState(
         size = DpSize(1200.dp, 800.dp),
