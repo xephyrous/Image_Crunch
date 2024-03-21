@@ -173,6 +173,8 @@ fun App() {
                             squareColumns.lock()
                             generatorType.lock()
 
+                            //TODO : Update this to use runImagePipeline
+                            /*
                             nodes.set(generateNodes(generatorType.value()))
                             nodes.lock()
 
@@ -181,6 +183,7 @@ fun App() {
 
                             slices.set(generateMasks(generatorType.value()))
                             slices.lock()
+                            */
 
                             for (i in slices.value()!!.indices) {
                                 maskToImage(loadedImage.value()!!, slices.value()!![i], "Output-${i}")
@@ -537,8 +540,10 @@ fun App() {
             screenWidth = bottomCardsX, screenHeight = bottomCardsY, themeColor = vm.themeColor
         )
 
+        /* TODO : Migrate from isFirstLaunch() to value checking from config parser
         if (isFirstLaunch()) {
             helpMenu.ShowHelpMenu()
         }
+         */
     }
 }
