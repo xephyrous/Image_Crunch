@@ -49,16 +49,16 @@ fun App() {
     
     // Card Animations
     val menuOffset by animateDpAsState(targetValue = (if (vm.menuCardState) (if (!vm.settingsCardState) 10 else 320) else (-310)).dp)
-    val menuSize by animateDpAsState(targetValue = (vm.menuLines * 50).dp)
+    val menuSize by animateDpAsState(targetValue = (vm.menuLines[vm.menuPage] * 50).dp)
     val menuTitle by animateDpAsState(targetValue = if (vm.menuCardState) 5.dp else 60.dp)
-    val menuExit by animateDpAsState(targetValue = if (vm.menuPage == 0) (60 + ((vm.menuLines - 1) * 50)).dp else (65 + (vm.menuLines * 50)).dp)
+    val menuExit by animateDpAsState(targetValue = if (vm.menuPage == 0) (60 + ((vm.menuLines[vm.menuPage] - 1) * 50)).dp else (65 + (vm.menuLines[vm.menuPage] * 50)).dp)
     val settingsOffset by animateDpAsState(targetValue = (if (vm.settingsCardState) 10 else (-310)).dp)
-    val settingsSize by animateDpAsState(targetValue = (vm.settingsLines * 50).dp)
+    val settingsSize by animateDpAsState(targetValue = (vm.settingsLines[vm.settingsPage] * 50).dp)
     val settingsTitle by animateDpAsState(targetValue = if (vm.settingsCardState) 5.dp else 60.dp)
-    val settingsExit by animateDpAsState(targetValue = if (vm.settingsPage == 0) (60 + ((vm.settingsLines - 1) * 50)).dp else (65 + (vm.settingsLines * 50)).dp)
+    val settingsExit by animateDpAsState(targetValue = if (vm.settingsPage == 0) (60 + ((vm.settingsLines[vm.settingsPage] - 1) * 50)).dp else (65 + (vm.settingsLines[vm.settingsPage] * 50)).dp)
     val bottomCardsY by animateDpAsState(targetValue = vm.screenHeight)
     val bottomCardsX by animateDpAsState(targetValue = vm.screenWidth)
-    val fabOffset by animateDpAsState(targetValue = 0.dp) // will be fab location :D
+    val fabOffset by animateDpAsState(targetValue = if (vm.configSlices) 50.dp else 0.dp) // will be fab location :D
 
     AppTheme {
         Scaffold(
@@ -311,7 +311,6 @@ fun App() {
                     themeColor = vm.themeColor, borderWidth = 1.dp,
                     exitOperation = {
                         vm.menuPage = 0
-                        vm.menuLines = 3
                     },
                     closeOperation = {
                         vm.menuCardState = !vm.menuCardState
@@ -339,7 +338,6 @@ fun App() {
                                     rowOffset = 0.dp, buttonOffset = 25.dp, width = 250.dp,
                                     buttonEvent = {
                                         vm.menuPage = 1
-                                        vm.menuLines = 3
                                     },
                                     buttonText = "Export Settings", themeColor = vm.themeColor
                                 )
@@ -347,7 +345,6 @@ fun App() {
                                     rowOffset = 50.dp, buttonOffset = 25.dp, width = 250.dp,
                                     buttonEvent = {
                                         vm.menuPage = 2
-                                        vm.menuLines = 4
                                     },
                                     buttonText = "Select Theme", themeColor = vm.themeColor
                                 )
@@ -434,7 +431,6 @@ fun App() {
                     themeColor = vm.themeColor, borderWidth = 1.dp,
                     exitOperation = {
                         vm.settingsPage = 0
-                        vm.settingsLines = 3
                     },
                     closeOperation = {
                         vm.settingsCardState = !vm.settingsCardState
@@ -462,7 +458,6 @@ fun App() {
                                     buttonEvent = {
                                         vm.settingsPage = 1
                                         vm.configGenerator = true
-                                        vm.settingsLines = 4
                                     },
                                     buttonText = "Select Generator", themeColor = vm.themeColor
                                 )
@@ -477,7 +472,6 @@ fun App() {
                                     rowOffset = 100.dp, buttonOffset = 25.dp, width = 250.dp,
                                     buttonEvent = {
                                         vm.settingsPage = 2
-                                        vm.settingsLines = 1
                                     },
                                     buttonText = "Select Output", themeColor = vm.themeColor
                                 )
@@ -490,10 +484,7 @@ fun App() {
                                 buttonRow(
                                     rowOffset = 0.dp, buttonOffset = 25.dp, width = 250.dp,
                                     buttonEvent = {
-                                        vm.genType.set(GeneratorType.NONE)
-                                        generatorType.set(GeneratorType.NONE)
-                                        vm.genTypeA = "15"
-                                        vm.genTypeB = "15"
+                                        generatorType.set(GeneratorType.SQUARE)
                                         vm.selectedGenerator = 1
                                     },
                                     buttonText = "Square Generator", themeColor = vm.themeColor

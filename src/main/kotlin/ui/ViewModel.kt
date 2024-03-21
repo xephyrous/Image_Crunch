@@ -10,7 +10,6 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.unit.dp
 import utils.storage.aqueousThemes
-import utils.storage.generatorType
 import java.awt.image.BufferedImage
 
 /**
@@ -30,21 +29,18 @@ class ViewModel {
     var imageBitmapPainter by mutableStateOf<Painter?>(null)
     var nodeBitmapPainter by mutableStateOf<Painter?>(null)
 
-    // Settings
-    var settingsLines by mutableStateOf(3)
-    var genType by mutableStateOf(generatorType)
-    var menuLines by mutableStateOf(3)
-
     // The good shi
     var settingsPage by mutableStateOf(0)
+    var settingsLines by mutableStateOf( listOf(3, 4, 1) )
 
     var configGenerator by mutableStateOf(false)
     var configMasks by mutableStateOf(false)
     var configSlices by mutableStateOf(false)
 
-    var selectedGenerator by mutableStateOf(0)
+    var selectedGenerator by mutableStateOf(1)
 
     var menuPage by mutableStateOf(0)
+    var menuLines by mutableStateOf( listOf(3, 3, 4) )
 
     var screenWidth by mutableStateOf(1200.dp)
     var screenHeight by mutableStateOf(800.dp)
@@ -52,9 +48,6 @@ class ViewModel {
     var imageModifier by mutableStateOf(
         Modifier.size(width = (screenWidth/2)-10.dp, height = screenHeight-230.dp).offset(5.dp, 5.dp)
     )
-
-    var genTypeA by mutableStateOf("")
-    var genTypeB by mutableStateOf("")
 
     // Display Settings
     var imageDisplay by mutableStateOf(false)
