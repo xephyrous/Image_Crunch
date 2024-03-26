@@ -8,7 +8,7 @@ import kotlin.math.ceil
 /**
  *
  */
-fun squareCutGenerator(
+fun squareNoiseCutGenerator(
     nodes: ArrayList<PositionNode>,
     rows: Int,
     columns: Int

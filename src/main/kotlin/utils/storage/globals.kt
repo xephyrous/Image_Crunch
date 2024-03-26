@@ -22,8 +22,8 @@ var mask: LockType<Mask?> = LockType(null)
 var slices: LockType<ArrayList<Mask>?> = LockType(null)
 
 // Square Gen Settings
-var squareRows: LockType<Int> = LockType(15)
-var squareColumns: LockType<Int> = LockType(15)
+var squareRows: LockType<Int> = LockType(5)
+var squareColumns: LockType<Int> = LockType(5)
 
 // Cut Noise
 var cutNoise: LockType<Float> = LockType(0.0F)

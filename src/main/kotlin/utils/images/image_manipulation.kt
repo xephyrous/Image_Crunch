@@ -2,9 +2,22 @@ package utils.images
 
 import utils.storage.*
 
-//This function calls as the first step in image processing,
-//TODO : Get function parameters from UI elements
-//TODO : Create UI menus for each generator type
+// This function calls as the first step in image processing,
+// TODO : Get function parameters from UI elements
+// TODO : Create UI menus for each generator type
+
+fun runImagePipeline(genType: GeneratorType): ArrayList<Mask>? {
+    when(genType) {
+        GeneratorType.NONE -> TODO("literally nothing")
+        GeneratorType.SQUARE -> {
+            nodes.set(generateNodes(GeneratorType.SQUARE))
+            return generateMasks(GeneratorType.SQUARE)
+        }
+        else -> {
+            return null
+        }
+    }
+}
 
 fun generateNodes(genType: GeneratorType) : ArrayList<PositionNode> {
     return when (genType) {
@@ -15,20 +28,20 @@ fun generateNodes(genType: GeneratorType) : ArrayList<PositionNode> {
     }
 }
 
-fun generateCuts(genType: GeneratorType) : Mask {
+private fun generateCuts(genType: GeneratorType) : Mask? {
     return when (genType) {
-        GeneratorType.SQUARE -> squareCutGenerator(nodes.value()!!, squareRows.value(), squareColumns.value())
+        GeneratorType.SQUARE_NOISE -> TODO("WAHHH")
         else -> {
-            squareCutGenerator(nodes.value()!!, squareRows.value(), squareColumns.value())
+            TODO("WAHHH 2.0")
         }
     }
 }
 
-fun generateMasks(genType: GeneratorType) : ArrayList<Mask> {
+private fun generateMasks(genType: GeneratorType) : ArrayList<Mask> {
     return when (genType) {
-        GeneratorType.SQUARE -> squareMaskGenerator(mask.value()!!, nodes.value()!!, squareRows.value(), squareColumns.value())
+        GeneratorType.SQUARE -> squareMaskGenerator(nodes.value()!!, squareRows.value(), squareColumns.value())
         else -> {
-            squareMaskGenerator(mask.value()!!, nodes.value()!!, squareRows.value(), squareColumns.value())
+            squareMaskGenerator(nodes.value()!!, squareRows.value(), squareColumns.value())
         }
     }
 }

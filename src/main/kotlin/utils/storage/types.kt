@@ -2,28 +2,33 @@ package utils.storage
 
 import java.awt.Dimension
 
-//An image as a byte mask
+/**
+ * An image as a byte mask
+ */
 typealias ImageMask = Array<Array<Byte>>
 
-//A single position on an image
+/**
+ * A single position on an image
+ */
 typealias PositionNode = Pair<Int, Int>
 
-//List of node generation functions
+/**
+ * List of node generation functions
+ */
 enum class GeneratorType {
     NONE,
-    SQUARE
+    SQUARE,
+    SQUARE_NOISE
 }
 
-//A masked region of an image with its top-left coordinate
+/**
+ * A masked region of an image with its top-left coordinate
+ */
 class Mask(val size: Dimension) {
-    var bits: ImageMask
-    var position: PositionNode = PositionNode(-1, -1)
-
-    init {
-        bits = Array(size.height) {
-            Array(size.width) { 0 }
-        }
+    var bits: ImageMask = Array(size.height) {
+        Array(size.width) { 0 }
     }
+    var position: PositionNode = PositionNode(-1, -1)
 
     fun print() {
         for(y in bits) {
@@ -64,4 +69,59 @@ class LockType<T>(lockVal: T) {
 
         value = newVal
     }
+}
+
+/**
+ * Converts a string to a given type based on a detected inline type
+ */
+inline fun <reified T> String.convert(): T {
+    return when(T::class){
+        Double::class -> toDouble()
+        Int::class -> toInt()
+        Boolean::class -> toBoolean()
+        else -> error("Converter unavailable for ${T::class}")
+    } as T
+}
+
+/**
+ * Converts a string to a given type based on a type parameter
+ */
+inline fun <reified T> String.convertT(typeParam: T): T {
+    return when(typeParam!!::class){
+        Double::class -> toDouble()
+        Int::class -> toInt()
+        Boolean::class -> toBoolean()
+        else -> error("Converter unavailable for ${T::class}")
+    } as T
+}
+
+/**
+ * TODO : Create for parsing .meow files (lord please rename this atrocious file extension 🙏)
+ * Holds a variable name and type along with casting functions (I think (Forgot why I made this 😁))
+ */
+class TypedValue(name: String, type: String) {
+
+}
+
+/**
+ * Represents an array of masks with modification functions
+ * Contains Max and Min values along with dimensions for the array
+ */
+class ImageMaskArray() {
+    var masks = ArrayList<Mask>()
+
+    var max = Pair(0, 0)
+    var min = Pair(0, 0)
+
+    var maskSize = Dimension(0, 0)
+
+    fun add(m: Mask) { masks.add(m) }
+    fun remove(m: Mask) { masks.remove(m) }
+    fun remove(idx: Int) { masks.removeAt(idx) }
+    fun removeLast() { masks.remove(masks.last()) }
+    fun removeFirst() { masks.remove(masks[0]) }
+
+    fun get(idx: Int) : Mask { return masks[idx] }
+    fun last() : Mask { return masks.last() }
+    fun first() : Mask { return masks[0] }
 }
