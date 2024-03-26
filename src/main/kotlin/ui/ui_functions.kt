@@ -24,6 +24,9 @@ import androidx.compose.ui.unit.sp
 // Set of functions to make composable easier
 // Passes inputs in a more user-friendly way when designing app
 
+// CHANGE ROW CODE TO NOT BE ROWS OR SMTH :D
+// basically make this a bit more expandable by rewriting it to make blocks that can be inserted into main handler, rather than a row
+
 @Composable
 fun buttonRow(
     rowOffset: Dp = 0.dp,
