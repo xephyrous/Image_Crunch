@@ -40,7 +40,7 @@ class ViewModel {
     var selectedGenerator by mutableStateOf(1)
 
     var menuPage by mutableStateOf(0)
-    var menuLines by mutableStateOf( listOf(3, 3, 4) )
+    var menuLines by mutableStateOf( listOf(3, 3, 5) )
 
     var screenWidth by mutableStateOf(1200.dp)
     var screenHeight by mutableStateOf(800.dp)

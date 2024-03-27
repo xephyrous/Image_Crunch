@@ -29,8 +29,8 @@ import androidx.compose.ui.unit.sp
 
 @Composable
 fun buttonRow(
-    rowOffset: Dp = 0.dp,
     buttonOffset: Dp = 25.dp,
+    height: Dp = 50.dp,
     width: Dp = 250.dp,
     buttonEvent: () -> Unit,
     buttonText: String,
@@ -39,7 +39,7 @@ fun buttonRow(
     textColor: Int = 2,
 ){
     Row(
-        modifier = Modifier.offset(y = rowOffset)
+        modifier = Modifier.size(height = height, width = width+50.dp)
     ) {
         Button(
             onClick = buttonEvent,
@@ -53,7 +53,7 @@ fun buttonRow(
 
 @Composable
 fun textRow(
-    rowOffset: Dp = 0.dp,
+    height: Dp = 50.dp,
     displayedText: String,
     textOffset: Dp,
     fontSize: TextUnit,
@@ -62,7 +62,7 @@ fun textRow(
     textColor: Int = 1
 ){
     Row(
-        modifier = Modifier.offset(y = rowOffset)
+        modifier = Modifier.height(height = height)
     ) {
         Text(
             text = displayedText,
@@ -183,7 +183,7 @@ fun createMenu(
         borderWidth = borderWidth, borderColor = borderColor,
         cardContent = {
             textRow(
-                rowOffset = 0.dp, displayedText = menuTitle, textOffset = 10.dp,
+                displayedText = menuTitle, textOffset = 10.dp,
                 fontSize = 30.sp, font = FontWeight.Normal,
                 themeColor = themeColor, textColor = titleColor
             )
@@ -211,7 +211,7 @@ fun createMenu(
         borderWidth = borderWidth, borderColor = borderColor,
         cardContent = {
             buttonRow(
-                rowOffset = 0.dp, buttonOffset = 25.dp, width = 250.dp,
+                buttonOffset = 25.dp, width = 250.dp,
                 buttonEvent = exitOperation,
                 buttonText = returnTitle, themeColor = themeColor,
                 buttonColor = buttonColor, textColor = textColor

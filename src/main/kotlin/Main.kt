@@ -1,5 +1,5 @@
 /*
- * Project Timeline : 1/17/2024 -> TBD (3/15/2024)
+ * Project Timeline : 1/17/2024 -> TBD (4/1/2024)
  *
  * This software is under the MIT License
  *
@@ -16,11 +16,15 @@ import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
 import ui.App
+import ui.grabThemes
 
 fun main() = application {
     // parseConfigData()
     // parseThemeData
     // TODO : Setup pkl codegen-kotlin implementation (Undocumented Gradle hell)
+    // is that my bad? -aidan
+
+    println(grabThemes("src/main/config/themes"))
 
     val state = rememberWindowState(
         size = DpSize(1200.dp, 800.dp),
