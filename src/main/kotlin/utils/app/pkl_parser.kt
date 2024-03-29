@@ -6,6 +6,9 @@ import org.pkl.config.kotlin.forKotlin
 import org.pkl.core.ModuleSource
 import java.io.File
 
+/**
+ * Parses the themes into ThemeData objects
+ */
 fun parseThemeData() {
     val evaluator = ConfigEvaluator.preconfigured().forKotlin()
     var file: Config
@@ -15,6 +18,9 @@ fun parseThemeData() {
     }
 }
 
+/**
+ * Parses the config data in a ConfigData object
+ */
 fun parseConfigData() {
     val evaluator = ConfigEvaluator.preconfigured().forKotlin()
     var file: Config

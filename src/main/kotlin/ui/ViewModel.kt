@@ -15,8 +15,32 @@ import java.awt.image.BufferedImage
 /**
  * ViewModel implementation for the application
  * Holds shared variables and passes them through scopes
+ *
+ * @property themeColor The currently selected theme for the application (Default is Aqueous)
+ * @property displayedImage The currently displayed image
+ * @property displayedNodes The graphics for the generated nodes
+ * @property imageInputStream An input stream for writing to the [displayedImage]
+ * @property nodeInputStream An input stream for writing to the [displayedNodes]
+ * @property imageBitmapPainter A bitmap painter for updating the graphics of the [displayedImage]
+ * @property nodeBitmapPainter A bitmap painter for updating the graphics of the [displayedNodes]
+ * @property settingsPage The current page of the settings menu
+ * @property settingsLines Offsets for the settings menu contents
+ * @property configGenerator If the configuration general settings card is displayed
+ * @property configMasks If the configuration menu mask settings card is displayed
+ * @property configSlices If the configuration menu slices settings card is displayed
+ * @property selectedGenerator The currently selected generator for the image pipeline
+ * @property menuPage The current page of the main menu
+ * @property menuLines Offsets for the main menu contents
+ * @property screenWidth The width of the target screen
+ * @property screenHeight The height of the target screen
+ * @property imageModifier Controls the modifiers of the displayed image and nodes
+ * @property imageDisplay If the image is displayed
+ * @property nodeDisplay If the nodes are displayed
+ * @property menuCardState If the menu card animation is running
+ * @property settingsCardState If the settings card animation is running
  */
 class ViewModel {
+    // Application theme
     var themeColor by mutableStateOf(aqueousThemes)
 
     // Image Displays
@@ -29,7 +53,7 @@ class ViewModel {
     var imageBitmapPainter by mutableStateOf<Painter?>(null)
     var nodeBitmapPainter by mutableStateOf<Painter?>(null)
 
-    // The good shi
+    // Internal variables
     var settingsPage by mutableStateOf(0)
     var settingsLines by mutableStateOf( listOf(3, 4, 1) )
 

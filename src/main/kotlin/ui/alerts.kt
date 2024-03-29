@@ -19,10 +19,25 @@ import kotlinx.coroutines.runBlocking
 import java.util.*
 import kotlin.concurrent.timerTask
 
+/**
+ * Represents an Alert Box and its interaction functions
+ */
 class AlertBox {
     var text: String = ""
     var displayed by mutableStateOf(false)
 
+    /**
+     * Creates an Alert GUI object
+     * @param screenWidth The screen width in dot points (Dp)
+     * @param screenHeight The screen height in dot points (Dp)
+     * @param themeColor The current theme colors
+     * @param cardGrad1 The first color tof the card gradient
+     * @param cardGrad2 The first color tof the card gradient
+     * @param borderWidth The width of the card border
+     * @param borderColor The color of the card border
+     * @param iconColor The color of the card icon
+     * @param textColor The color of the card text
+     */
     @Composable
     fun CreateAlert(
         screenWidth: Dp,
@@ -68,6 +83,13 @@ class AlertBox {
         )
     }
 
+    /**
+     * Displays an alert GUI object for a set amount of time
+     * Uses [java.lang.Thread] for displaying
+     *
+     * @param displayedText The text to be displayed in the alert
+     * @param displayTime The amount of time, in milliseconds, that the alert is displayed for
+     */
     fun DisplayAlert(
         displayedText: String,
         displayTime: Long = 3000
@@ -82,7 +104,14 @@ class AlertBox {
         }).start()
     }
 
-    tailrec suspend fun WaitForCondition(maxDelay: Long, checkPeriod: Long) : Boolean{
+    /**
+     * Waits for a condition (If the alert is not displayed) to be met before returning
+     * @see DisplayAlert For usage in thread closing
+     *
+     * @param maxDelay The longest the condition can be delayed before returning false
+     * @param checkPeriod How often the condition is checked, a polling rate
+     */
+    tailrec suspend fun WaitForCondition(maxDelay: Long, checkPeriod: Long) : Boolean {
         if(maxDelay < 0) return false
         if(!displayed) return true
         delay(checkPeriod)

@@ -7,7 +7,15 @@ import java.awt.Color
 import java.awt.Graphics2D
 import java.awt.image.BufferedImage
 
-// Copies image and displays a mask
+/**
+ * Generates an image overlay of dots representing the generated nodes
+ *
+ * @param nodes The nodes to display
+ * @param nodeColor The color of the nodes
+ * @param nodeSize The diameter of each node
+ *
+ * @return An image overlay of the nodes
+ */
 fun createNodeMask(
     nodes: ArrayList<PositionNode>,
     nodeColor: Color = Color.BLACK,
@@ -26,6 +34,8 @@ fun createNodeMask(
     return img
 }
 
-//fun createCutMask(
-//
-//)
+/*
+fun createCutMask() {
+
+}
+*/

@@ -9,10 +9,24 @@ import java.io.ByteArrayOutputStream
 import java.io.File
 import javax.imageio.ImageIO
 
+/**
+ * Returns the dimensions of an image
+ *
+ * @param bufferedImage The image to get the dimensions of
+ *
+ * @return The size of the image
+ */
 fun getDim(bufferedImage: BufferedImage): Dimension {
     return Dimension(bufferedImage.width, bufferedImage.height)
 }
 
+/**
+ * Converts an image file to a BufferedImage object
+ *
+ * @param input The file to convert
+ *
+ * @return The image as a BufferedImage
+ */
 fun fileToBufferedImage(input: File?): BufferedImage {
     val inp = ImageIO.read(input)
 
@@ -27,6 +41,13 @@ fun fileToBufferedImage(input: File?): BufferedImage {
     return output
 }
 
+/**
+ * Converts a BufferedImage to a ByteArrayInputStream
+ *
+ * @param input The BufferedImage object to convert
+ *
+ * @return The BufferedImage as a ByteArrayInputStream
+ */
 fun bufferedImageToOutputStream(input: BufferedImage): ByteArrayInputStream {
     val outputStream = ByteArrayOutputStream()
     ImageIO.write(input, "PNG", outputStream)
@@ -34,13 +55,11 @@ fun bufferedImageToOutputStream(input: BufferedImage): ByteArrayInputStream {
 }
 
 /**
- * maskToImage
+ * Converts an image to smaller image based on a given mask
  *
- * Converts a given image to smaller image based on a given mask
- *
- * @param [input] The given image to be cut.
- * @param [mask] The mask to be applied to the given image.
- * @param [name] Output file name.
+ * @param input The given image to be cut.
+ * @param mask The mask to be applied to the given image.
+ * @param name Output file name.
  */
 fun maskToImage(input: BufferedImage, mask: Mask, name: String) {
     // Create Output

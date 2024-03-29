@@ -29,6 +29,9 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
+/**
+ * The quickstart guide / help menu for the application
+ */
 class HelpMenu {
     private var page by mutableStateOf(0)
     private val pageTitles = listOf(
@@ -42,6 +45,18 @@ class HelpMenu {
     )
     private var displayed by mutableStateOf(false)
 
+    /**
+     * Creates the HelpMenu GUI object
+     * @param screenWidth The screen width in dot points (Dp)
+     * @param screenHeight The screen height in dot points (Dp)
+     * @param themeColor The current theme colors
+     * @param cardGrad1 The first color tof the card gradient
+     * @param cardGrad2 The first color tof the card gradient
+     * @param borderWidth The width of the card border
+     * @param borderColor The color of the card border
+     * @param iconColor The color of the card icon
+     * @param textColor The color of the card text
+     */
     @Composable
     fun CreateHelpMenu(
         screenWidth: Dp,
@@ -302,6 +317,9 @@ class HelpMenu {
         }
     }
 
+    /**
+     * Displays the HelpMenu GUI object
+     */
     fun ShowHelpMenu() {
         page = 0
         displayed = true

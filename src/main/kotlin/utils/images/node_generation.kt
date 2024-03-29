@@ -7,9 +7,12 @@ import kotlin.math.ceil
 // Node Generation Functions must be (list: ParameterList) -> ArrayList<PositionNode>
 
 /**
- * @param rows Desired number of rows
- * @param columns Desired number of columns
- * @return List of PositionNodes for the image in a square grid
+ * Generates nodes on an image in a square grid
+ *
+ * @param rows The number of rows
+ * @param columns The number of columns
+ *
+ * @return List of PositionNodes on the image
  *
  * TODO Add fix for las row/column jamming due to ceil()
  */
