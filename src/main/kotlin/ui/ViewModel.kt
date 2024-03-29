@@ -69,6 +69,9 @@ class ViewModel {
     var screenWidth by mutableStateOf(1200.dp)
     var screenHeight by mutableStateOf(800.dp)
 
+    var xScale by mutableStateOf(1.0F)
+    var yScale by mutableStateOf(1.0F)
+
     var imageModifier by mutableStateOf(
         Modifier.size(width = (screenWidth/2)-10.dp, height = screenHeight-230.dp).offset(5.dp, 5.dp)
     )

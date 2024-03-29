@@ -9,6 +9,7 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.sharp.Close
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
@@ -40,22 +41,25 @@ import androidx.compose.ui.unit.sp
  * @param textColor The position of the text color in the [themeColor]
  */
 @Composable
-fun buttonRow(
-    buttonOffset: Dp = 25.dp,
+fun buttonElement(
     height: Dp = 50.dp,
-    width: Dp = 250.dp,
+    width: Dp = 300.dp,
+    buttonHeight: Dp = 40.dp,
+    buttonWidth: Dp = 250.dp,
+    xScale: Float,
+    yScale: Float,
     buttonEvent: () -> Unit,
     buttonText: String,
     themeColor: List<Color>,
     buttonColor: Int = 10,
     textColor: Int = 2,
 ){
-    Row(
-        modifier = Modifier.size(height = height, width = width+50.dp)
+    Box(
+        modifier = Modifier.size(height = height*yScale, width = width*xScale)
     ) {
         Button(
             onClick = buttonEvent,
-            modifier = Modifier.offset(buttonOffset, 0.dp).width(width),
+            modifier = Modifier.size(height = buttonHeight*yScale, width = buttonWidth*xScale).align(alignment = Alignment.Center),
             colors = ButtonDefaults.buttonColors(backgroundColor = themeColor[buttonColor])
         ) {
             Text(buttonText, color = themeColor[textColor])
@@ -75,8 +79,11 @@ fun buttonRow(
  * @param textColor The position of the text color in the [themeColor]
  */
 @Composable
-fun textRow(
+fun textElement(
     height: Dp = 50.dp,
+    width: Dp = 300.dp,
+    xScale: Float,
+    yScale: Float,
     displayedText: String,
     textOffset: Dp,
     fontSize: TextUnit,
@@ -84,14 +91,14 @@ fun textRow(
     themeColor: List<Color>,
     textColor: Int = 1
 ){
-    Row(
-        modifier = Modifier.height(height = height)
+    Box(
+        modifier = Modifier.size(height = height*yScale, width = width*xScale)
     ) {
         Text(
             text = displayedText,
             color = themeColor[textColor],
-            modifier = Modifier.fillMaxSize().offset(y = textOffset),
-            fontSize = fontSize,
+            modifier = Modifier.fillMaxSize().offset(y = (textOffset)*yScale).align(alignment = Alignment.Center),
+            fontSize = fontSize*xScale.coerceAtMost(yScale),
             textAlign = TextAlign.Center,
             fontWeight = font
         )
@@ -173,6 +180,8 @@ fun createCard(
     yOffset: Dp,
     width: Dp,
     height: Dp,
+    xScale: Float,
+    yScale: Float,
     elevation: Dp,
     themeColor: List<Color>,
     cardGrad1: Int = 8, // Card color
@@ -182,7 +191,7 @@ fun createCard(
     cardContent: @Composable BoxScope.()-> Unit
 ) {
     Card(
-        modifier = Modifier.offset(xOffset, yOffset).size(width, height).background(
+        modifier = Modifier.offset(xOffset*xScale, yOffset*yScale).size(width*xScale, height*yScale).background(
             Brush.linearGradient(
                 colors = listOf(themeColor[cardGrad1], themeColor[cardGrad2]),
                 start = Offset(0f, 0f),
@@ -233,12 +242,15 @@ fun createCard(
  */
 @Composable
 fun createMenu(
-    menuOffset: Dp, // x Location
-    titleOffset: Dp, // Title Y
-    mainOffset: Dp, // Main Y
-    returnOffset: Dp, // Exit Y
-    menuWidth: Dp, // Menu Width
-    mainHeight: Dp, // Main menu height (titles are static 50)
+    xOffset: Dp,
+    yOffset: Dp,
+    width: Dp,
+    height: Dp,
+    titleSize: Dp,
+    gapSize: Dp,
+    xScale: Float,
+    yScale: Float,
+    page: Int,
     elevation: Dp, // Elevation
     menuTitle: String, // Title
     returnTitle: String, // Return button text
@@ -256,21 +268,24 @@ fun createMenu(
     menuPages: @Composable BoxScope.()-> Unit // the main menu pages
 ) {
     createCard(
-        xOffset = menuOffset, yOffset = titleOffset,
-        width = menuWidth - 55.dp, height = 50.dp, elevation,
+        xOffset = xOffset, yOffset = yOffset,
+        width = width-titleSize-gapSize, height = titleSize,
+        xScale = xScale, yScale = yScale, elevation = elevation,
         themeColor = themeColor, cardGrad1 = cardGrad1, cardGrad2 = cardGrad2,
         borderWidth = borderWidth, borderColor = borderColor,
         cardContent = {
-            textRow(
+            textElement(
                 displayedText = menuTitle, textOffset = 10.dp,
+                xScale = xScale, yScale = yScale,
                 fontSize = 30.sp, font = FontWeight.Normal,
                 themeColor = themeColor, textColor = titleColor
             )
         }
     )
     createCard(
-        xOffset = (menuOffset + (menuWidth - 50.dp)), yOffset = titleOffset,
-        width = 50.dp, height = 50.dp, elevation,
+        xOffset = xOffset+(width-titleSize), yOffset = yOffset,
+        width = titleSize, height = titleSize,
+        xScale = xScale, yScale = yScale, elevation = elevation,
         themeColor = themeColor, cardGrad1 = cardGrad1, cardGrad2 = cardGrad2,
         borderWidth = borderWidth, borderColor = borderColor,
         cardContent = {
@@ -284,13 +299,14 @@ fun createMenu(
         }
     )
     createCard(
-        xOffset = menuOffset, yOffset = returnOffset,
-        width = menuWidth, height = 50.dp, elevation = elevation,
+        xOffset = xOffset, yOffset = (if (page==0) height else height+titleSize+(gapSize*2)),
+        width = width, height = titleSize,
+        xScale = xScale, yScale = yScale, elevation = elevation,
         themeColor = themeColor, cardGrad1 = cardGrad1, cardGrad2 = cardGrad2,
         borderWidth = borderWidth, borderColor = borderColor,
         cardContent = {
-            buttonRow(
-                buttonOffset = 25.dp, width = 250.dp,
+            buttonElement(
+                xScale = xScale, yScale = yScale,
                 buttonEvent = exitOperation,
                 buttonText = returnTitle, themeColor = themeColor,
                 buttonColor = buttonColor, textColor = textColor
@@ -298,8 +314,9 @@ fun createMenu(
         }
     )
     createCard(
-        xOffset = menuOffset, yOffset = mainOffset,
-        width = menuWidth, height = mainHeight, elevation = elevation,
+        xOffset = xOffset, yOffset = yOffset+gapSize+titleSize,
+        width = width, height = height,
+        xScale = xScale, yScale = yScale, elevation = elevation,
         themeColor = themeColor, cardGrad1 = cardGrad1, cardGrad2 = cardGrad2,
         borderWidth = borderWidth, borderColor = borderColor,
         cardContent = menuPages

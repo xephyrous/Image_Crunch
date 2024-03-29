@@ -51,15 +51,9 @@ fun App() {
     // Card Animations
     val menuOffset by animateDpAsState(targetValue = (if (vm.menuCardState) (if (!vm.settingsCardState) 10 else 320) else (-310)).dp)
     val menuSize by animateDpAsState(targetValue = (vm.menuLines[vm.menuPage] * 50).dp)
-    val menuTitle by animateDpAsState(targetValue = if (vm.menuCardState) 5.dp else 60.dp)
-    val menuExit by animateDpAsState(targetValue = if (vm.menuPage == 0) (60 + ((vm.menuLines[vm.menuPage] - 1) * 50)).dp else (65 + (vm.menuLines[vm.menuPage] * 50)).dp)
     val settingsOffset by animateDpAsState(targetValue = (if (vm.settingsCardState) 10 else (-310)).dp)
     val settingsSize by animateDpAsState(targetValue = (vm.settingsLines[vm.settingsPage] * 50).dp)
-    val settingsTitle by animateDpAsState(targetValue = if (vm.settingsCardState) 5.dp else 60.dp)
-    val settingsExit by animateDpAsState(targetValue = if (vm.settingsPage == 0) (60 + ((vm.settingsLines[vm.settingsPage] - 1) * 50)).dp else (65 + (vm.settingsLines[vm.settingsPage] * 50)).dp)
-    val bottomCardsY by animateDpAsState(targetValue = vm.screenHeight)
-    val bottomCardsX by animateDpAsState(targetValue = vm.screenWidth)
-    val fabOffset by animateDpAsState(targetValue = if (vm.configSlices) 50.dp else 0.dp) // will be fab location :D
+    val fabOffset by animateDpAsState(targetValue = if (vm.configSlices) 50.dp else 0.dp)
 
     AppTheme {
         Scaffold(
@@ -113,7 +107,7 @@ fun App() {
                             vm.settingsCardState = !vm.settingsCardState
                             vm.imageModifier = if (vm.menuCardState || vm.settingsCardState) {
                                 Modifier
-                                    .size(width = (vm.screenWidth/2)-10.dp, height = vm.screenHeight-230.dp)
+                                    .size(width = (vm.screenWidth*vm.xScale/2)-10.dp, height = (vm.screenHeight-230.dp)*vm.yScale)
                                     .blur(
                                         radiusX = 10.dp,
                                         radiusY = 10.dp,
@@ -121,10 +115,9 @@ fun App() {
                                     )
                                     .offset(5.dp, 5.dp)
                             } else {
-                                Modifier.size(
-                                    width = (vm.screenWidth/2)-10.dp,
-                                    height = vm.screenHeight-230.dp
-                                ).offset(5.dp, 5.dp)
+                                Modifier
+                                    .size(width = (vm.screenWidth*vm.xScale/2)-10.dp, height = (vm.screenHeight-230.dp)*vm.yScale)
+                                    .offset(5.dp, 5.dp)
                             }
                         }) {
                             Icon(
@@ -137,7 +130,7 @@ fun App() {
                             vm.menuCardState = !vm.menuCardState
                             vm.imageModifier = if (vm.menuCardState || vm.settingsCardState) {
                                 Modifier
-                                    .size(width = (vm.screenWidth/2)-10.dp, height = vm.screenHeight-230.dp)
+                                    .size(width = (vm.screenWidth*vm.xScale/2)-10.dp, height = (vm.screenHeight-230.dp)*vm.yScale)
                                     .blur(
                                         radiusX = 10.dp,
                                         radiusY = 10.dp,
@@ -145,10 +138,9 @@ fun App() {
                                     )
                                     .offset(5.dp, 5.dp)
                             } else {
-                                Modifier.size(
-                                    width = (vm.screenWidth/2)-10.dp,
-                                    height = vm.screenHeight-230.dp
-                                ).offset(5.dp, 5.dp)
+                                Modifier
+                                    .size(width = (vm.screenWidth*vm.xScale/2)-10.dp, height = (vm.screenHeight-230.dp)*vm.yScale)
+                                    .offset(5.dp, 5.dp)
                             }
                         }) {
                             Icon(
@@ -207,7 +199,7 @@ fun App() {
                         )
                     },
                     backgroundColor = vm.themeColor[11],
-                    modifier = Modifier.offset(0.dp, ((-100).dp - fabOffset))
+                    modifier = Modifier.offset(0.dp, (((-100).dp - fabOffset)*vm.yScale))
                 )
             },
         ) {
@@ -223,12 +215,12 @@ fun App() {
                     )
                     .fillMaxSize()
                     .onGloballyPositioned {
-                        vm.screenWidth = with(density) {it.size.width.toDp()}
-                        vm.screenHeight = with(density) {it.size.height.toDp()}
+                        vm.xScale = (with(density) {it.size.width.toDp()})/vm.screenWidth
+                        vm.yScale = (with(density) {it.size.height.toDp()})/vm.screenHeight
 
                         vm.imageModifier = if (vm.menuCardState || vm.settingsCardState) {
                             Modifier
-                                .size(width = (vm.screenWidth/2)-10.dp, height = vm.screenHeight-230.dp)
+                                .size(width = (vm.screenWidth*vm.xScale/2)-10.dp, height = (vm.screenHeight-230.dp)*vm.yScale)
                                 .blur(
                                     radiusX = 10.dp,
                                     radiusY = 10.dp,
@@ -236,17 +228,16 @@ fun App() {
                                 )
                                 .offset(5.dp, 5.dp)
                         } else {
-                            Modifier.size(
-                                width = (vm.screenWidth/2)-10.dp,
-                                height = vm.screenHeight-230.dp
-                            ).offset(5.dp, 5.dp)
+                            Modifier
+                                .size(width = (vm.screenWidth*vm.xScale/2)-10.dp, height = (vm.screenHeight-230.dp)*vm.yScale)
+                                .offset(5.dp, 5.dp)
                         }
                     }
             ) {
                 // Image Display box
                 Box(
                     modifier = Modifier
-                        .size(width = vm.screenWidth/2, height = vm.screenHeight)
+                        .size(width = (vm.screenWidth/2)*vm.xScale, height = (vm.screenHeight)*vm.yScale)
                 ){
                     // IMAGE SCOPE
                     if (vm.imageDisplay) {
@@ -269,48 +260,54 @@ fun App() {
 
                 // Bottom Bar
                 createCard(
-                    xOffset = 0.dp, yOffset = bottomCardsY-100.dp,
-                    width = bottomCardsX/3, height = 400.dp, elevation = 5.dp,
+                    xOffset = 0.dp, yOffset = (vm.screenHeight-100.dp),
+                    xScale = vm.xScale, yScale = vm.yScale,
+                    width = vm.screenWidth/3, height = (400.dp), elevation = 5.dp,
                     themeColor = vm.themeColor, borderWidth = 1.dp,
                     cardContent = {
-                        textRow(
-                            height = 400.dp, displayedText = "Node Generator\nSettings", textOffset = 15.dp,
+                        textElement(
+                            height = 400.dp, displayedText = "Node Generator\nSettings", textOffset = (15.dp),
+                            xScale = vm.xScale, yScale = vm.yScale,
                             fontSize = 30.sp, font = FontWeight.SemiBold, themeColor = vm.themeColor, textColor = 3
                         )
                     }
                 )
 
                 createCard(
-                    xOffset = bottomCardsX/3, yOffset = bottomCardsY-100.dp,
-                    width = bottomCardsX/3, height = 400.dp, elevation = 5.dp,
+                    xOffset = vm.screenWidth/3, vm.screenHeight-100.dp,
+                    width = vm.screenWidth/3, height = 400.dp,
+                    xScale = vm.xScale, yScale = vm.yScale,elevation = 5.dp,
                     themeColor = vm.themeColor, borderWidth = 1.dp,
                     cardContent = {
-                        textRow(
+                        textElement(
                             height = 400.dp, displayedText = "Mask Generator\nSettings", textOffset = 15.dp,
+                            xScale = vm.xScale, yScale = vm.yScale,
                             fontSize = 30.sp, font = FontWeight.SemiBold, themeColor = vm.themeColor, textColor = 3
                         )
                     }
                 )
 
                 createCard(
-                    xOffset = (bottomCardsX/3)*2, yOffset = bottomCardsY-100.dp,
-                    width = bottomCardsX/3, height = 400.dp, elevation = 5.dp,
+                    xOffset = vm.screenWidth/3*2, yOffset = vm.screenHeight-100.dp,
+                    width = vm.screenWidth/3, height = 400.dp,
+                    xScale = vm.xScale, yScale = vm.yScale, elevation = 5.dp,
                     themeColor = vm.themeColor, borderWidth = 1.dp,
                     cardContent = {
-                        textRow(
-                            height = 400.dp, displayedText = "Slice Generator\nSettings", textOffset = 15.dp,
+                        textElement(
+                            height = 400.dp, displayedText = "Slice Generator\nSettings",
+                            xScale = vm.xScale, yScale = vm.yScale, textOffset = 15.dp,
                             fontSize = 30.sp, font = FontWeight.SemiBold, themeColor = vm.themeColor, textColor = 3
                         )
                     }
                 )
 
                 // Bottom Bar Settings - From bottom_bar_selection.kt
-                bottomBar(vm, bottomCardsX, bottomCardsY)
+                bottomBar(vm)
 
                 // Main Menu
                 createMenu(
-                    menuOffset = menuOffset, titleOffset = menuTitle, mainOffset = 60.dp, returnOffset = menuExit,
-                    menuWidth = 300.dp, mainHeight = menuSize, elevation = 20.dp,
+                    xOffset = menuOffset, yOffset = 5.dp, width = 300.dp, height = menuSize, titleSize = 50.dp, gapSize = 5.dp,
+                    xScale = vm.xScale, yScale = vm.yScale, page = vm.menuPage,elevation = 20.dp,
                     menuTitle = "Main Menu", returnTitle = "Return to main",
                     themeColor = vm.themeColor, borderWidth = 1.dp,
                     exitOperation = {
@@ -320,7 +317,7 @@ fun App() {
                         vm.menuCardState = !vm.menuCardState
                         vm.imageModifier = if (vm.menuCardState || vm.settingsCardState) {
                             Modifier
-                                .size(width = (vm.screenWidth/2)-10.dp, height = vm.screenHeight-230.dp)
+                                .size(width = (vm.screenWidth*vm.xScale/2)-10.dp, height = (vm.screenHeight-230.dp)*vm.yScale)
                                 .blur(
                                     radiusX = 10.dp,
                                     radiusY = 10.dp,
@@ -328,10 +325,9 @@ fun App() {
                                 )
                                 .offset(5.dp, 5.dp)
                         } else {
-                            Modifier.size(
-                                width = (vm.screenWidth/2)-10.dp,
-                                height = vm.screenHeight-230.dp
-                            ).offset(5.dp, 5.dp)
+                            Modifier
+                                .size(width = (vm.screenWidth*vm.xScale/2)-10.dp, height = (vm.screenHeight-230.dp)*vm.yScale)
+                                .offset(5.dp, 5.dp)
                         }
                     },
                     menuPages = {
@@ -339,22 +335,22 @@ fun App() {
                         horizontalVisibilityPane(
                             visibility = (vm.menuPage == 0), animationWidth = -2, duration = 369, paneContent = {
                                 Column {
-                                    buttonRow(
-                                        buttonOffset = 25.dp, width = 250.dp,
+                                    buttonElement(
+                                        xScale = vm.xScale, yScale = vm.yScale,
                                         buttonEvent = {
 //                                            make thing
                                         },
                                         buttonText = "Open Config Folder", themeColor = vm.themeColor
                                     )
-                                    buttonRow(
-                                        buttonOffset = 25.dp, width = 250.dp,
+                                    buttonElement(
+                                        xScale = vm.xScale, yScale = vm.yScale,
                                         buttonEvent = {
                                             vm.menuPage = 1
                                         },
                                         buttonText = "Select Theme", themeColor = vm.themeColor
                                     )
-                                    buttonRow(
-                                        buttonOffset = 25.dp, width = 250.dp,
+                                    buttonElement(
+                                        xScale = vm.xScale, yScale = vm.yScale,
                                         buttonEvent = {
                                             helpMenu.ShowHelpMenu()
                                         },
@@ -370,61 +366,61 @@ fun App() {
                                 Column {
                                     Column (
                                         Modifier
-                                            .height(200.dp)
+                                            .height(200.dp*vm.yScale)
                                             .verticalScroll(rememberScrollState())
                                     ) {
-                                        buttonRow(
-                                            buttonOffset = 25.dp, width = 250.dp,
+                                        buttonElement(
+                                            xScale = vm.xScale, yScale = vm.yScale,
                                             buttonEvent = {
                                                 vm.themeColor = darkThemes
                                             },
                                             buttonText = "Theme: Dark", themeColor = vm.themeColor
                                         )
-                                        buttonRow(
-                                            buttonOffset = 25.dp, width = 250.dp,
+                                        buttonElement(
+                                            xScale = vm.xScale, yScale = vm.yScale,
                                             buttonEvent = {
                                                 vm.themeColor = lightThemes
                                             },
                                             buttonText = "Theme: Light", themeColor = vm.themeColor
                                         )
-                                        buttonRow(
-                                            buttonOffset = 25.dp, width = 250.dp,
+                                        buttonElement(
+                                            xScale = vm.xScale, yScale = vm.yScale,
                                             buttonEvent = {
                                                 vm.themeColor = celesteThemes
                                             },
                                             buttonText = "Theme: Celeste", themeColor = vm.themeColor
                                         )
-                                        buttonRow(
-                                            buttonOffset = 25.dp, width = 250.dp,
+                                        buttonElement(
+                                            xScale = vm.xScale, yScale = vm.yScale,
                                             buttonEvent = {
                                                 vm.themeColor = aqueousThemes
                                             },
                                             buttonText = "Theme: Aqueous", themeColor = vm.themeColor
                                         )
-                                        buttonRow(
-                                            buttonOffset = 25.dp, width = 250.dp,
+                                        buttonElement(
+                                            xScale = vm.xScale, yScale = vm.yScale,
                                             buttonEvent = {
 
                                             },
                                             buttonText = "Theme: FILLER", themeColor = vm.themeColor
                                         )
-                                        buttonRow(
-                                            buttonOffset = 25.dp, width = 250.dp,
+                                        buttonElement(
+                                            xScale = vm.xScale, yScale = vm.yScale,
                                             buttonEvent = {
 
                                             },
                                             buttonText = "Theme: FILLER", themeColor = vm.themeColor
                                         )
-                                        buttonRow(
-                                            buttonOffset = 25.dp, width = 250.dp,
+                                        buttonElement(
+                                            xScale = vm.xScale, yScale = vm.yScale,
                                             buttonEvent = {
 
                                             },
                                             buttonText = "Theme: FILLER", themeColor = vm.themeColor
                                         )
                                     }
-                                    buttonRow(
-                                        buttonOffset = 25.dp, width = 250.dp,
+                                    buttonElement(
+                                        xScale = vm.xScale, yScale = vm.yScale,
                                         buttonEvent = {
                                             TODO("Fetch Themes")
                                         },
@@ -438,8 +434,8 @@ fun App() {
 
                 // Settings Menu
                 createMenu(
-                    menuOffset = settingsOffset, titleOffset = settingsTitle, mainOffset = 60.dp, returnOffset = settingsExit,
-                    menuWidth = 300.dp, mainHeight = settingsSize, elevation = 20.dp,
+                    xOffset = settingsOffset, yOffset = 5.dp, width = 300.dp, height = settingsSize, titleSize = 50.dp, gapSize = 5.dp,
+                    xScale = vm.xScale, yScale = vm.yScale, page = vm.settingsPage, elevation = 20.dp,
                     menuTitle = "Crunch Settings", returnTitle = "Return to main",
                     themeColor = vm.themeColor, borderWidth = 1.dp,
                     exitOperation = {
@@ -449,7 +445,7 @@ fun App() {
                         vm.settingsCardState = !vm.settingsCardState
                         vm.imageModifier = if (vm.menuCardState || vm.settingsCardState) {
                             Modifier
-                                .size(width = (vm.screenWidth/2)-10.dp, height = vm.screenHeight-230.dp)
+                                .size(width = (vm.screenWidth*vm.xScale/2)-10.dp, height = (vm.screenHeight-230.dp)*vm.yScale)
                                 .blur(
                                     radiusX = 10.dp,
                                     radiusY = 10.dp,
@@ -457,33 +453,32 @@ fun App() {
                                 )
                                 .offset(5.dp, 5.dp)
                         } else {
-                            Modifier.size(
-                                width = (vm.screenWidth/2)-10.dp,
-                                height = vm.screenHeight-230.dp
-                            ).offset(5.dp, 5.dp)
+                            Modifier
+                                .size(width = (vm.screenWidth*vm.xScale/2)-10.dp, height = (vm.screenHeight-230.dp)*vm.yScale)
+                                .offset(5.dp, 5.dp)
                         }
                     },
                     menuPages = {
                         horizontalVisibilityPane(
                             visibility = (vm.settingsPage == 0), animationWidth = -2, duration = 369, paneContent = {
                                 Column {
-                                    buttonRow(
-                                        buttonOffset = 25.dp, width = 250.dp,
+                                    buttonElement(
+                                        xScale = vm.xScale, yScale = vm.yScale,
                                         buttonEvent = {
                                             vm.settingsPage = 1
                                             vm.configGenerator = true
                                         },
                                         buttonText = "Select Generator", themeColor = vm.themeColor
                                     )
-                                    buttonRow(
-                                        buttonOffset = 25.dp, width = 250.dp,
+                                    buttonElement(
+                                        xScale = vm.xScale, yScale = vm.yScale,
                                         buttonEvent = {
                                             vm.configSlices = true
                                         },
                                         buttonText = "Select Cut Type", themeColor = vm.themeColor
                                     )
-                                    buttonRow(
-                                        buttonOffset = 25.dp, width = 250.dp,
+                                    buttonElement(
+                                        xScale = vm.xScale, yScale = vm.yScale,
                                         buttonEvent = {
                                             vm.settingsPage = 2
                                         },
@@ -497,30 +492,30 @@ fun App() {
                         horizontalVisibilityPane(
                             visibility = (vm.settingsPage == 1), animationWidth = 2, duration = 369, paneContent = {
                                 Column {
-                                    buttonRow(
-                                        buttonOffset = 25.dp, width = 250.dp,
+                                    buttonElement(
+                                        xScale = vm.xScale, yScale = vm.yScale,
                                         buttonEvent = {
                                             generatorType.set(GeneratorType.SQUARE)
                                             vm.selectedGenerator = 1
                                         },
                                         buttonText = "Square Generator", themeColor = vm.themeColor
                                     )
-                                    buttonRow(
-                                        buttonOffset = 25.dp, width = 250.dp,
+                                    buttonElement(
+                                        xScale = vm.xScale, yScale = vm.yScale,
                                         buttonEvent = {
 
                                         },
                                         buttonText = "Does Not Exist",  themeColor = vm.themeColor
                                     )
-                                    buttonRow(
-                                        buttonOffset = 25.dp, width = 250.dp,
+                                    buttonElement(
+                                        xScale = vm.xScale, yScale = vm.yScale,
                                         buttonEvent = {
 
                                         },
                                         buttonText = "Does Not Exist", themeColor = vm.themeColor
                                     )
-                                    buttonRow(
-                                        buttonOffset = 25.dp, width = 250.dp,
+                                    buttonElement(
+                                        xScale = vm.xScale, yScale = vm.yScale,
                                         buttonEvent = {
 
                                         },
@@ -533,8 +528,8 @@ fun App() {
                         horizontalVisibilityPane(
                             visibility = (vm.settingsPage == 2), animationWidth = 2, duration = 369, paneContent = {
                                 Column {
-                                    buttonRow(
-                                        buttonOffset = 25.dp, width = 250.dp,
+                                    buttonElement(
+                                        xScale = vm.xScale, yScale = vm.yScale,
                                         buttonEvent = {
                                             outputLocation = SelectOutputPath()
                                             alertsHandler.DisplayAlert("Output Location set to: $outputLocation")
@@ -548,12 +543,12 @@ fun App() {
                 )
             }
             alertsHandler.CreateAlert(
-                screenWidth = bottomCardsX, screenHeight = bottomCardsY, themeColor = vm.themeColor
+                screenWidth = vm.screenWidth*vm.xScale, screenHeight = vm.screenHeight*vm.yScale, xScale = vm.xScale, yScale = vm.yScale, themeColor = vm.themeColor
             )
         }
 
         helpMenu.CreateHelpMenu(
-            screenWidth = bottomCardsX, screenHeight = bottomCardsY, themeColor = vm.themeColor
+            screenWidth = vm.screenWidth*vm.xScale, screenHeight = vm.screenHeight*vm.yScale, xScale = vm.xScale, yScale = vm.yScale, themeColor = vm.themeColor
         )
 
         /* TODO : Migrate from isFirstLaunch() to value checking from config parser

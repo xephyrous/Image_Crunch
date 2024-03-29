@@ -15,7 +15,6 @@ import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.res.loadImageBitmap
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import utils.images.bufferedImageToOutputStream
@@ -51,14 +50,15 @@ fun updateMask(vm: ViewModel, type: GeneratorType) {
  */
 @Suppress("DuplicatedCode")
 @Composable
-fun bottomBar(vm: ViewModel, bottomCardsX: Dp, bottomCardsY: Dp) {
+fun bottomBar(vm: ViewModel) {
     val numbersOnly = Regex("^\\d+\$")
 
     verticalVisibilityPane(
         visibility = vm.configGenerator, animationHeight = 2, duration = 369, paneContent = {
             createCard(
-                xOffset = 0.dp, yOffset = bottomCardsY-220.dp,
-                width = bottomCardsX/3, height = 500.dp, elevation = 5.dp,
+                xOffset = 0.dp, yOffset = vm.screenHeight-220.dp,
+                xScale = vm.xScale, yScale = vm.yScale,
+                width = vm.screenWidth/3, height = 500.dp, elevation = 5.dp,
                 themeColor = vm.themeColor, borderWidth = 1.dp,
                 cardContent = {
                     // card content i GUESS
@@ -168,8 +168,9 @@ fun bottomBar(vm: ViewModel, bottomCardsX: Dp, bottomCardsY: Dp) {
     verticalVisibilityPane(
         visibility = vm.configMasks, animationHeight = 2, duration = 369, paneContent = {
             createCard(
-                xOffset = bottomCardsX/3, yOffset = bottomCardsY-150.dp,
-                width = bottomCardsX/3, height = 400.dp, elevation = 5.dp,
+                xOffset = vm.screenWidth/3, yOffset = vm.screenHeight-150.dp,
+                xScale = vm.xScale, yScale = vm.yScale,
+                width = vm.screenWidth/3, height = 400.dp, elevation = 5.dp,
                 themeColor = vm.themeColor, borderWidth = 1.dp,
                 cardContent = {}
             )
@@ -178,8 +179,9 @@ fun bottomBar(vm: ViewModel, bottomCardsX: Dp, bottomCardsY: Dp) {
     verticalVisibilityPane(
         visibility = vm.configSlices, animationHeight = 2, duration = 369, paneContent = {
             createCard(
-                xOffset = (bottomCardsX/3)*2, yOffset = bottomCardsY-150.dp,
-                width = bottomCardsX/3, height = 400.dp, elevation = 5.dp,
+                xOffset = (vm.screenWidth/3)*2, yOffset = vm.screenHeight-150.dp,
+                xScale = vm.xScale, yScale = vm.yScale,
+                width = vm.screenWidth/3, height = 400.dp, elevation = 5.dp,
                 themeColor = vm.themeColor, borderWidth = 1.dp,
                 cardContent = {
                     var sliderPosition by remember { mutableStateOf(cutNoise.value()) }
@@ -205,7 +207,7 @@ fun bottomBar(vm: ViewModel, bottomCardsX: Dp, bottomCardsY: Dp) {
                                 activeTrackColor = vm.themeColor[13], // TODO: make these colors separate later
                                 inactiveTrackColor = vm.themeColor[12],
                             ),
-                            modifier = Modifier.size(width = bottomCardsX/3-30.dp, 40.dp).offset(x = 15.dp)
+                            modifier = Modifier.size(width = vm.screenWidth/3-30.dp, 40.dp).offset(x = 15.dp)
                         )
                     }
                     Row(

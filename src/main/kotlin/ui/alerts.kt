@@ -42,6 +42,8 @@ class AlertBox {
     fun CreateAlert(
         screenWidth: Dp,
         screenHeight: Dp,
+        xScale: Float,
+        yScale: Float,
         themeColor: List<Color>,
         cardGrad1: Int = 8,
         cardGrad2: Int = 9,
@@ -54,19 +56,21 @@ class AlertBox {
             visibility = displayed, animationHeight = 2, duration = 250, paneContent = {
                 createCard(
                     xOffset = 5.dp, yOffset = screenHeight-60.dp,
-                    width = screenWidth-65.dp, height = 50.dp, elevation = 20.dp,
+                    width = screenWidth-65.dp, height = 50.dp,
+                    xScale = xScale, yScale = yScale, elevation = 20.dp,
                     themeColor = themeColor, cardGrad1 = cardGrad1, cardGrad2 = cardGrad2,
                     borderWidth = borderWidth, borderColor = borderColor,
                     cardContent = {
-                        textRow(
-                            displayedText = text, textOffset = 15.dp,
+                        textElement(
+                            displayedText = text, textOffset = 15.dp, xScale = xScale, yScale = yScale,
                             fontSize = 18.sp, font = FontWeight.Normal, themeColor = themeColor, textColor = textColor
                         )
                     }
                 )
                 createCard(
                     xOffset = screenWidth-55.dp, yOffset = screenHeight-60.dp,
-                    width = 50.dp, height = 50.dp, elevation = 20.dp,
+                    width = 50.dp, height = 50.dp,
+                    xScale = xScale, yScale = yScale, elevation = 20.dp,
                     themeColor = themeColor, cardGrad1 = cardGrad1, cardGrad2 = cardGrad2,
                     borderWidth = borderWidth, borderColor = borderColor,
                     cardContent = {

@@ -61,6 +61,8 @@ class HelpMenu {
     fun CreateHelpMenu(
         screenWidth: Dp,
         screenHeight: Dp,
+        xScale: Float,
+        yScale: Float,
         themeColor: List<Color>,
         cardGrad1: Int = 8,
         cardGrad2: Int = 9,
@@ -80,8 +82,8 @@ class HelpMenu {
             // Title Bar
             Card(
                 modifier = Modifier
-                    .offset(offsetX, offsetY)
-                    .size(screenWidth/2 - 55.dp, 50.dp)
+                    .offset(offsetX*xScale, offsetY*yScale)
+                    .size((screenWidth/2 - 55.dp)*xScale, 50.dp*yScale)
                     .pointerInput(Unit) {
                         detectDragGestures { change, dragAmount ->
                             change.consume()
@@ -101,8 +103,9 @@ class HelpMenu {
                             tileMode = TileMode.Clamp
                         )).fillMaxSize(),
                 ) {
-                    textRow(
+                    textElement(
                         displayedText = pageTitles[page], textOffset = 10.dp,
+                        xScale = xScale, yScale = yScale,
                         fontSize = 30.sp, font = FontWeight.Normal,
                         themeColor = themeColor, textColor = textColor
                     )
@@ -110,8 +113,8 @@ class HelpMenu {
             }
             Card(
                 modifier = Modifier
-                    .offset(offsetX + (screenWidth/2 - 50.dp), offsetY)
-                    .size(50.dp, 50.dp)
+                    .offset((offsetX + (screenWidth/2 - 50.dp))*xScale, offsetY*yScale)
+                    .size(50.dp*xScale, 50.dp*yScale)
                     .pointerInput(Unit) {
                         detectDragGestures { change, dragAmount ->
                             change.consume()
@@ -144,8 +147,8 @@ class HelpMenu {
             // Body
             Card(
                 modifier = Modifier
-                    .offset(offsetX, offsetY+55.dp)
-                    .size(screenWidth/2, screenHeight/2)
+                    .offset(offsetX*xScale, (offsetY+55.dp)*yScale)
+                    .size((screenWidth/2)*xScale, (screenHeight/2)*yScale)
                     .pointerInput(Unit) {
                         detectDragGestures { change, dragAmount ->
                             change.consume()
@@ -172,13 +175,14 @@ class HelpMenu {
                                     painter = painterResource("assets/pic1.png"),
                                     contentDescription = "Picture of the top bar with a red circle",
                                     modifier = Modifier
-                                        .offset(y = 10.dp)
-                                        .height(screenHeight/2-110.dp)
+                                        .offset(y = (10.dp)*yScale)
+                                        .height((screenHeight/2-110.dp)*yScale)
                                         .fillMaxSize(),
                                     contentScale = ContentScale.Fit
                                 )
-                                textRow(
+                                textElement(
                                     displayedText = "App Settings can be accessed by pressing the main menu button in the top right corner",
+                                    xScale = xScale, yScale = yScale,
                                     height = 100.dp, textOffset = 10.dp,
                                     fontSize = 25.sp, font = FontWeight.Normal,
                                     themeColor = themeColor, textColor = textColor
@@ -191,12 +195,14 @@ class HelpMenu {
                                     painter = painterResource("assets/pic2.png"),
                                     contentDescription = "Picture of the top bar with a red circle",
                                     modifier = Modifier
-                                        .height(screenHeight/2-100.dp)
+                                        .offset(y = (10.dp)*yScale)
+                                        .height((screenHeight/2-110.dp)*yScale)
                                         .fillMaxSize(),
                                     contentScale = ContentScale.Fit
                                 )
-                                textRow(
+                                textElement(
                                     displayedText = "Image generation settings can be altered with the settings menu in the top right corner",
+                                    xScale = xScale, yScale = yScale,
                                     height = 100.dp, textOffset = 10.dp,
                                     fontSize = 25.sp, font = FontWeight.Normal,
                                     themeColor = themeColor, textColor = textColor
@@ -204,8 +210,9 @@ class HelpMenu {
                             }
                         }
                         2 -> {
-                            textRow(
+                            textElement(
                                 displayedText = "Within the settings menu we can configure how to use the generators",
+                                xScale = xScale, yScale = yScale,
                                 height = 100.dp,  textOffset = 10.dp,
                                 fontSize = 25.sp, font = FontWeight.Normal,
                                 themeColor = themeColor, textColor = textColor
@@ -217,12 +224,14 @@ class HelpMenu {
                                     painter = painterResource("assets/pic4.png"),
                                     contentDescription = "Picture of the top bar with a red circle",
                                     modifier = Modifier
-                                        .height(screenHeight/2-100.dp)
+                                        .offset(y = (10.dp)*yScale)
+                                        .height((screenHeight/2-110.dp)*yScale)
                                         .fillMaxSize(),
                                     contentScale = ContentScale.Fit
                                 )
-                                textRow(
+                                textElement(
                                     displayedText = "An image can be chosen by clicking the plus button in the top right",
+                                    xScale = xScale, yScale = yScale,
                                     height = 100.dp,  textOffset = 10.dp,
                                     fontSize = 25.sp, font = FontWeight.Normal,
                                     themeColor = themeColor, textColor = textColor
@@ -230,24 +239,27 @@ class HelpMenu {
                             }
                         }
                         4 -> {
-                            textRow(
+                            textElement(
                                 displayedText = "Once you have configured each setting to your liking, press the run button to generate",
+                                xScale = xScale, yScale = yScale,
                                 height = 100.dp,  textOffset = 10.dp,
                                 fontSize = 25.sp, font = FontWeight.Normal,
                                 themeColor = themeColor, textColor = textColor
                             )
                         }
                         5 -> {
-                            textRow(
+                            textElement(
                                 displayedText = "You can export your generation settings in the \"Export Settings\" tab of the main menu",
+                                xScale = xScale, yScale = yScale,
                                 height = 100.dp,  textOffset = 10.dp,
                                 fontSize = 25.sp, font = FontWeight.Normal,
                                 themeColor = themeColor, textColor = textColor
                             )
                         }
                         6 -> {
-                            textRow(
+                            textElement(
                                 displayedText = "You can view this help menu again by pressing \"GET HELP\" in the main menu",
+                                xScale = xScale, yScale = yScale,
                                 height = 100.dp,  textOffset = 10.dp,
                                 fontSize = 25.sp, font = FontWeight.Normal,
                                 themeColor = themeColor, textColor = textColor
@@ -259,8 +271,8 @@ class HelpMenu {
             // Bottom Bar
             Card(
                 modifier = Modifier
-                    .offset(offsetX, offsetY+(screenHeight/2)+60.dp)
-                    .size(50.dp, 50.dp)
+                    .offset(offsetX*xScale, (offsetY+(screenHeight/2)+60.dp)*yScale)
+                    .size(50.dp*xScale, 50.dp*yScale)
                     .pointerInput(Unit) {
                         detectDragGestures { change, dragAmount ->
                             change.consume()
@@ -291,8 +303,8 @@ class HelpMenu {
             }
             Card(
                 modifier = Modifier
-                    .offset(offsetX + 55.dp, offsetY+60.dp + (screenHeight/2))
-                    .size(screenWidth/2- 110.dp, 50.dp)
+                    .offset((offsetX + 55.dp)*xScale, (offsetY+60.dp + (screenHeight/2))*yScale)
+                    .size((screenWidth/2- 110.dp)*xScale, 50.dp*yScale)
                     .pointerInput(Unit) {
                         detectDragGestures { change, dragAmount ->
                             change.consume()
@@ -312,8 +324,9 @@ class HelpMenu {
                             tileMode = TileMode.Clamp
                         )).fillMaxSize()
                 ) {
-                    textRow(
+                    textElement(
                         displayedText = "Welcome To Image Crunch - Page: ${page+1}", textOffset = 10.dp,
+                        xScale = xScale, yScale = yScale,
                         fontSize = 25.sp, font = FontWeight.Normal,
                         themeColor = themeColor, textColor = textColor
                     )
@@ -322,8 +335,8 @@ class HelpMenu {
             }
             Card(
                 modifier = Modifier
-                    .offset(offsetX + (screenWidth/2 - 50.dp), offsetY+60.dp + (screenHeight/2))
-                    .size(50.dp, 50.dp)
+                    .offset((offsetX + (screenWidth/2 - 50.dp))*xScale, (offsetY+60.dp + (screenHeight/2))*yScale)
+                    .size((50.dp)*xScale, (50.dp)*yScale)
                     .pointerInput(Unit) {
                         detectDragGestures { change, dragAmount ->
                             change.consume()
@@ -343,7 +356,7 @@ class HelpMenu {
                             tileMode = TileMode.Clamp
                         )).fillMaxSize(),
                 ){
-                    IconButton(onClick = { if (page < 5) page++ }) {
+                    IconButton(onClick = { if (page < 6) page++ }) {
                         Icon(
                             imageVector = Icons.Sharp.KeyboardArrowRight,
                             contentDescription = "Close Button",
