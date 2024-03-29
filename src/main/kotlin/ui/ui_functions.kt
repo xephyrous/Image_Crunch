@@ -27,6 +27,18 @@ import androidx.compose.ui.unit.sp
 // CHANGE ROW CODE TO NOT BE ROWS OR SMTH :D
 // basically make this a bit more expandable by rewriting it to make blocks that can be inserted into main handler, rather than a row
 
+/**
+ * Creates a row containing a button
+ *
+ * @param rowOffset The Y offset for the row
+ * @param buttonOffset The X offset for the button
+ * @param width The width of the button
+ * @param buttonEvent The function to run when the button is clicked
+ * @param buttonText The text of the button
+ * @param themeColor A list of theme colors to use for styling the button
+ * @param buttonColor The position of the button color in the [themeColor]
+ * @param textColor The position of the text color in the [themeColor]
+ */
 @Composable
 fun buttonRow(
     buttonOffset: Dp = 25.dp,
@@ -51,6 +63,17 @@ fun buttonRow(
     }
 }
 
+/**
+ * Creates a row containing a text element
+ *
+ * @param rowOffset The Y offset of the row in dot points (Dp)
+ * @param displayedText The text to be displayed
+ * @param textOffset The Y offset of the text in dot points (Dp)
+ * @param fontSize The font size
+ * @param font The font
+ * @param themeColor List of theme colors to use for styling the text
+ * @param textColor The position of the text color in the [themeColor]
+ */
 @Composable
 fun textRow(
     height: Dp = 50.dp,
@@ -75,12 +98,20 @@ fun textRow(
     }
 }
 
+/**
+ * An animation pane for horizontally sliding in content
+ *
+ * @param visibility If the pane is displayed
+ * @param animationWidth The width of the animation pane
+ * @param duration The duration of the animation
+ * @param paneContent The content of the pane
+ */
 @Composable
 fun horizontalVisibilityPane(
     visibility: Boolean,
     animationWidth: Int = 2,
     duration: Int = 250,
-    paneContent: @Composable() (AnimatedVisibilityScope.() -> Unit)
+    paneContent: @Composable (AnimatedVisibilityScope.() -> Unit)
 ){
     AnimatedVisibility(
         visible = visibility,
@@ -94,12 +125,20 @@ fun horizontalVisibilityPane(
     )
 }
 
+/**
+ * An animation pane for vertically sliding in content
+ *
+ * @param visibility If the pane is displayed
+ * @param animationHeight The height of the animation pane
+ * @param duration The duration of the animation
+ * @param paneContent The content of the pane
+ */
 @Composable
 fun verticalVisibilityPane(
     visibility: Boolean,
     animationHeight: Int = 2,
     duration: Int = 250,
-    paneContent: @Composable() (AnimatedVisibilityScope.() -> Unit)
+    paneContent: @Composable (AnimatedVisibilityScope.() -> Unit)
 ){
     AnimatedVisibility(
         visible = visibility,
@@ -113,6 +152,21 @@ fun verticalVisibilityPane(
     )
 }
 
+/**
+ * Creates a card GUI object
+ *
+ * @param xOffset The X offset of the card in dot points (Dp)
+ * @param yOffset The Y offset of the card in dot points (Dp)
+ * @param width The width of the card in dot points (Dp)
+ * @param height The height of the card in dot points (Dp)
+ * @param elevation The elevation of the card in dot points (Dp)
+ * @param themeColor A list of theme colors to use for styling the card
+ * @param cardGrad1 Position of the start gradient color in the [themeColor]
+ * @param cardGrad2 Position of the end gradient color in the [themeColor]
+ * @param borderWidth The width of the card border
+ * @param borderColor The position of the border color in the [themeColor]
+ * @param cardContent The content of the card
+ */
 @Composable
 fun createCard(
     xOffset: Dp,
@@ -152,6 +206,31 @@ fun createCard(
     )
 }
 
+/**
+ * Creates a menu GUI object
+ *
+ * @param menuOffset The X offset of the menu in dot points (Dp)
+ * @param titleOffset The Y offset of the menu title in dot points (Dp)
+ * @param mainOffset The Y offset of the menu in dot points (Dp)
+ * @param returnOffset The Y offset of the return button in dot points (Dp)
+ * @param menuWidth The width of the menu in dot points (Dp)
+ * @param mainHeight The height of the main menu in dot points (Dp) Titles are static 50
+ * @param elevation The elevation of the menu in dot points (Dp)
+ * @param menuTitle The title of the menu
+ * @param returnTitle The return button text
+ * @param themeColor A list of theme colors to use for styling the menu
+ * @param cardGrad1 Position of the start gradient in [themeColor]
+ * @param cardGrad2 Position of the end gradient in [themeColor]
+ * @param borderWidth The width of the menu border
+ * @param borderColor The color of the menu border
+ * @param buttonColor The position of the button color in [themeColor]
+ * @param titleColor The position of the title color in [themeColor]
+ * @param textColor The position of the text color in [themeColor]
+ * @param iconColor the position of the icon color in [themeColor]
+ * @param exitOperation The function to be run when the exit button is clicked
+ * @param closeOperation The function to be run when the menu is closed
+ * @param menuPages The GUI objects of the menu pages
+ */
 @Composable
 fun createMenu(
     menuOffset: Dp, // x Location

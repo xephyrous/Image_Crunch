@@ -6,10 +6,7 @@ import javax.swing.filechooser.FileNameExtensionFilter
 
 // i hope this works
 /**
- * ImageFileSelection
- *
- * Opens a window for user to specify an image file
- *
+ * Opens a window for the user to specify an image file
  */
 fun ImageFileSelection(): File? {
     val fileFilter = FileNameExtensionFilter("Image Files", "jpg", "png", "jpeg")
@@ -26,6 +23,9 @@ fun ImageFileSelection(): File? {
     return null
 }
 
+/**
+ * Opens a window for the user to specify an output path
+ */
 fun SelectOutputPath(): String? {
     val fileChooser = JFileChooser()
 

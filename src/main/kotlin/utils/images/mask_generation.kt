@@ -1,18 +1,17 @@
 package utils.images
 
-import utils.storage.ImageMask
-import utils.storage.Mask
-import utils.storage.PositionNode
-import utils.storage.loadedImageSize
+import utils.storage.*
 import java.awt.Dimension
 
 /**
- * @return List of masked pieces of the image
+ * Generates image masks in a square grid
+ *
+ * @param nodes Array of PositionNodes for positioning the mask generation
+ *
+ * @return Array of masks making up the total image in pieces
  */
 fun squareMaskGenerator(
     nodes: ArrayList<PositionNode>,
-    rows: Int,
-    columns: Int
 ) : ArrayList<Mask> {
     val masks: ArrayList<Mask> = ArrayList()
 
@@ -24,6 +23,9 @@ fun squareMaskGenerator(
 
     var addMask: Mask
     var tempBits: ImageMask
+
+    val rows = squareRows.value()
+    val columns = squareColumns.value()
 
     for(i in 0 .. nodes.size) {
         if(currRow == rows) { break }

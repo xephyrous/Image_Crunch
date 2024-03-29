@@ -26,6 +26,12 @@ import utils.storage.cutNoise
 import utils.storage.squareColumns
 import utils.storage.squareRows
 
+/**
+ * Updates the node mask for the displayed image
+ *
+ * @param vm The ViewModel object of the application
+ * @param type The type of generator used to generate the mask nodes
+ */
 fun updateMask(vm: ViewModel, type: GeneratorType) {
     vm.nodeDisplay = false
     vm.displayedNodes = createNodeMask(
@@ -36,6 +42,13 @@ fun updateMask(vm: ViewModel, type: GeneratorType) {
     vm.nodeDisplay = true
 }
 
+/**
+ * Builds the GUI of the bottom bar settings panels
+ *
+ * @param vm The ViewModel object of the application
+ * @param bottomCardsX The width of cards area in dot points (Dp)
+ * @param bottomCardsY The height of the cards area in dot points (Dp)
+ */
 @Suppress("DuplicatedCode")
 @Composable
 fun bottomBar(vm: ViewModel, bottomCardsX: Dp, bottomCardsY: Dp) {

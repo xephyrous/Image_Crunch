@@ -41,6 +41,9 @@ import java.awt.datatransfer.StringSelection
 val alertsHandler = AlertBox()
 val helpMenu = HelpMenu()
 
+/**
+ * The main application
+ */
 @Suppress("DuplicatedCode")
 @Composable
 fun App() {
