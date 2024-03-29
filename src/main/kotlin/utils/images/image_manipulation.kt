@@ -67,9 +67,9 @@ private fun generateCuts(genType: GeneratorType) : Mask? {
  */
 private fun generateMasks(genType: GeneratorType) : ArrayList<Mask> {
     return when (genType) {
-        GeneratorType.SQUARE -> squareMaskGenerator(nodes.value()!!, squareRows.value(), squareColumns.value())
+        GeneratorType.SQUARE -> squareMaskGenerator(nodes.value()!!)
         else -> {
-            squareMaskGenerator(nodes.value()!!, squareRows.value(), squareColumns.value())
+            squareMaskGenerator(nodes.value()!!)
         }
     }
 }

@@ -4,12 +4,10 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectDragGestures
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.offset
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.Card
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
@@ -24,6 +22,8 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -167,50 +167,88 @@ class HelpMenu {
                 ) {
                     when (page) {
                         0 -> {
-                            textRow(
-                                displayedText = "App Settings can be accessed by pressing the main menu button in the top right corner", textOffset = 10.dp,
-                                fontSize = 25.sp, font = FontWeight.Normal,
-                                themeColor = themeColor, textColor = textColor
-                            )
+                            Column {
+                                Image(
+                                    painter = painterResource("assets/pic1.png"),
+                                    contentDescription = "Picture of the top bar with a red circle",
+                                    modifier = Modifier
+                                        .offset(y = 10.dp)
+                                        .height(screenHeight/2-110.dp)
+                                        .fillMaxSize(),
+                                    contentScale = ContentScale.Fit
+                                )
+                                textRow(
+                                    displayedText = "App Settings can be accessed by pressing the main menu button in the top right corner",
+                                    height = 100.dp, textOffset = 10.dp,
+                                    fontSize = 25.sp, font = FontWeight.Normal,
+                                    themeColor = themeColor, textColor = textColor
+                                )
+                            }
                         }
                         1 -> {
-                            textRow(
-                                displayedText = "Many of the image generation settings can be altered with the settings button in the top right corner", textOffset = 10.dp,
-                                fontSize = 25.sp, font = FontWeight.Normal,
-                                themeColor = themeColor, textColor = textColor
-                            )
+                            Column {
+                                Image(
+                                    painter = painterResource("assets/pic2.png"),
+                                    contentDescription = "Picture of the top bar with a red circle",
+                                    modifier = Modifier
+                                        .height(screenHeight/2-100.dp)
+                                        .fillMaxSize(),
+                                    contentScale = ContentScale.Fit
+                                )
+                                textRow(
+                                    displayedText = "Image generation settings can be altered with the settings menu in the top right corner",
+                                    height = 100.dp, textOffset = 10.dp,
+                                    fontSize = 25.sp, font = FontWeight.Normal,
+                                    themeColor = themeColor, textColor = textColor
+                                )
+                            }
                         }
                         2 -> {
                             textRow(
-                                displayedText = "Within the settings menu we can configure how to use the generators", textOffset = 10.dp,
+                                displayedText = "Within the settings menu we can configure how to use the generators",
+                                height = 100.dp,  textOffset = 10.dp,
                                 fontSize = 25.sp, font = FontWeight.Normal,
                                 themeColor = themeColor, textColor = textColor
                             )
                         }
                         3 -> {
-                            textRow(
-                                displayedText = "An image can be chosen by clicking the plus button in the top right", textOffset = 10.dp,
-                                fontSize = 25.sp, font = FontWeight.Normal,
-                                themeColor = themeColor, textColor = textColor
-                            )
+                            Column {
+                                Image(
+                                    painter = painterResource("assets/pic4.png"),
+                                    contentDescription = "Picture of the top bar with a red circle",
+                                    modifier = Modifier
+                                        .height(screenHeight/2-100.dp)
+                                        .fillMaxSize(),
+                                    contentScale = ContentScale.Fit
+                                )
+                                textRow(
+                                    displayedText = "An image can be chosen by clicking the plus button in the top right",
+                                    height = 100.dp,  textOffset = 10.dp,
+                                    fontSize = 25.sp, font = FontWeight.Normal,
+                                    themeColor = themeColor, textColor = textColor
+                                )
+                            }
                         }
                         4 -> {
                             textRow(
-                                displayedText = "Once you have configured each setting to your liking, press the run button to generate", textOffset = 10.dp,
+                                displayedText = "Once you have configured each setting to your liking, press the run button to generate",
+                                height = 100.dp,  textOffset = 10.dp,
                                 fontSize = 25.sp, font = FontWeight.Normal,
                                 themeColor = themeColor, textColor = textColor
                             )
                         }
                         5 -> {
                             textRow(
-                                displayedText = "You can export your generation settings in the \"Export Settings\" tab of the main menu", textOffset = 10.dp,
+                                displayedText = "You can export your generation settings in the \"Export Settings\" tab of the main menu",
+                                height = 100.dp,  textOffset = 10.dp,
                                 fontSize = 25.sp, font = FontWeight.Normal,
                                 themeColor = themeColor, textColor = textColor
                             )
                         }
                         6 -> {
                             textRow(
-                                displayedText = "You can view this help menu again by pressing \"GET HELP\" in the main menu", textOffset = 10.dp,
+                                displayedText = "You can view this help menu again by pressing \"GET HELP\" in the main menu",
+                                height = 100.dp,  textOffset = 10.dp,
                                 fontSize = 25.sp, font = FontWeight.Normal,
                                 themeColor = themeColor, textColor = textColor
                             )

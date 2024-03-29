@@ -31,12 +31,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import utils.app.ImageFileSelection
 import utils.app.SelectOutputPath
-import utils.app.settingsToCSV
-import utils.app.settingsToString
 import utils.images.*
 import utils.storage.*
-import java.awt.Toolkit
-import java.awt.datatransfer.StringSelection
 
 val alertsHandler = AlertBox()
 val helpMenu = HelpMenu()
@@ -346,14 +342,14 @@ fun App() {
                                     buttonRow(
                                         buttonOffset = 25.dp, width = 250.dp,
                                         buttonEvent = {
-                                            vm.menuPage = 1
+//                                            make thing
                                         },
-                                        buttonText = "Export Settings", themeColor = vm.themeColor
+                                        buttonText = "Open Config Folder", themeColor = vm.themeColor
                                     )
                                     buttonRow(
                                         buttonOffset = 25.dp, width = 250.dp,
                                         buttonEvent = {
-                                            vm.menuPage = 2
+                                            vm.menuPage = 1
                                         },
                                         buttonText = "Select Theme", themeColor = vm.themeColor
                                     )
@@ -367,41 +363,9 @@ fun App() {
                                 }
                             }
                         )
-
-                        // Export Settings
-                        horizontalVisibilityPane(
-                            visibility = (vm.menuPage == 1), animationWidth = 2, duration = 369, paneContent = {
-                                Column {
-                                    buttonRow(
-                                        buttonOffset = 25.dp, width = 250.dp,
-                                        buttonEvent = {
-                                            val cb = Toolkit.getDefaultToolkit().systemClipboard
-                                            val s = StringSelection(settingsToString())
-                                            cb.setContents(s, s)
-                                        },
-                                        buttonText = "Export to Clipboard", themeColor = vm.themeColor
-                                    )
-                                    buttonRow(
-                                        buttonOffset = 25.dp, width = 250.dp,
-                                        buttonEvent = {
-                                            settingsToCSV()
-                                        },
-                                        buttonText = "Export to CSV", themeColor = vm.themeColor
-                                    )
-                                    buttonRow(
-                                        buttonOffset = 25.dp, width = 250.dp,
-                                        buttonEvent = {
-                                            outputLocation = SelectOutputPath()
-                                        },
-                                        buttonText = "Select Output", themeColor = vm.themeColor
-                                    )
-                                }
-                            }
-                        )
-
                         // Theme Selection
                         horizontalVisibilityPane(
-                            visibility = (vm.menuPage == 2), animationWidth = 2, duration = 369, paneContent = {
+                            visibility = (vm.menuPage == 1), animationWidth = 2, duration = 369, paneContent = {
                                 // Convert this and make it a scrollable list if more than some amount is present
                                 Column {
                                     Column (
