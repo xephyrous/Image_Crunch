@@ -1,5 +1,6 @@
 package utils.storage
 
+import androidx.compose.ui.graphics.Color
 import java.awt.Dimension
 
 /**
@@ -105,6 +106,41 @@ class LockType<T>(lockVal: T) {
         }
 
         value = newVal
+    }
+}
+
+// Add a new theme object: idk what im doing
+class AppTheme(
+    name: String,
+//    header: Color,
+//    text1: Color,
+//    text2: Color,
+//    textGrey: Color,
+//    icon: Color,
+//    bgGrad1: Color,
+//    bgGrad2: Color,
+//    bgGrad3: Color,
+//    cGrad1: Color,
+//    cGrad2: Color,
+//    button: Color,
+//    fab: Color,
+//    tFOn: Color,
+//    tFOff: Color,
+//    tFbg: Color,
+//    tFCursor: Color,
+//    tFFocus: Color,
+//    tFUFocus: Color,
+//    border: Color,
+) {
+    var themeName = name
+    val colors = arrayOfNulls<Color>(19)
+
+    fun set(position: Int, color: Color) { colors[position] = color }
+
+    fun changeName(name: String) { themeName = name }
+
+    fun getColors(): List<Color> {
+        return if (null in colors) emptyList() else (colors.toList() as List<Color>)
     }
 }
 

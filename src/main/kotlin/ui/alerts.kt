@@ -59,7 +59,7 @@ class AlertBox {
                     borderWidth = borderWidth, borderColor = borderColor,
                     cardContent = {
                         textRow(
-                            rowOffset = 0.dp, displayedText = text, textOffset = 15.dp,
+                            displayedText = text, textOffset = 15.dp,
                             fontSize = 18.sp, font = FontWeight.Normal, themeColor = themeColor, textColor = textColor
                         )
                     }

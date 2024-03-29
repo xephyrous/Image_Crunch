@@ -3,10 +3,9 @@ package ui
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.offset
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.sharp.Add
@@ -30,7 +29,10 @@ import androidx.compose.ui.res.loadImageBitmap
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import utils.app.*
+import utils.app.ImageFileSelection
+import utils.app.SelectOutputPath
+import utils.app.settingsToCSV
+import utils.app.settingsToString
 import utils.images.*
 import utils.storage.*
 import java.awt.Toolkit
@@ -276,7 +278,7 @@ fun App() {
                     themeColor = vm.themeColor, borderWidth = 1.dp,
                     cardContent = {
                         textRow(
-                            rowOffset = 0.dp, displayedText = "Node Generator\nSettings", textOffset = 15.dp,
+                            height = 400.dp, displayedText = "Node Generator\nSettings", textOffset = 15.dp,
                             fontSize = 30.sp, font = FontWeight.SemiBold, themeColor = vm.themeColor, textColor = 3
                         )
                     }
@@ -288,7 +290,7 @@ fun App() {
                     themeColor = vm.themeColor, borderWidth = 1.dp,
                     cardContent = {
                         textRow(
-                            rowOffset = 0.dp, displayedText = "Mask Generator\nSettings", textOffset = 15.dp,
+                            height = 400.dp, displayedText = "Mask Generator\nSettings", textOffset = 15.dp,
                             fontSize = 30.sp, font = FontWeight.SemiBold, themeColor = vm.themeColor, textColor = 3
                         )
                     }
@@ -300,7 +302,7 @@ fun App() {
                     themeColor = vm.themeColor, borderWidth = 1.dp,
                     cardContent = {
                         textRow(
-                            rowOffset = 0.dp, displayedText = "Slice Generator\nSettings", textOffset = 15.dp,
+                            height = 400.dp, displayedText = "Slice Generator\nSettings", textOffset = 15.dp,
                             fontSize = 30.sp, font = FontWeight.SemiBold, themeColor = vm.themeColor, textColor = 3
                         )
                     }
@@ -340,90 +342,131 @@ fun App() {
                         // Main Menu
                         horizontalVisibilityPane(
                             visibility = (vm.menuPage == 0), animationWidth = -2, duration = 369, paneContent = {
-                                buttonRow(
-                                    rowOffset = 0.dp, buttonOffset = 25.dp, width = 250.dp,
-                                    buttonEvent = {
-                                        vm.menuPage = 1
-                                    },
-                                    buttonText = "Export Settings", themeColor = vm.themeColor
-                                )
-                                buttonRow(
-                                    rowOffset = 50.dp, buttonOffset = 25.dp, width = 250.dp,
-                                    buttonEvent = {
-                                        vm.menuPage = 2
-                                    },
-                                    buttonText = "Select Theme", themeColor = vm.themeColor
-                                )
-                                buttonRow(
-                                    rowOffset = 100.dp, buttonOffset = 25.dp, width = 250.dp,
-                                    buttonEvent = {
-                                        helpMenu.ShowHelpMenu()
-                                    },
-                                    buttonText = "GET HELP", themeColor = vm.themeColor
-                                )
+                                Column {
+                                    buttonRow(
+                                        buttonOffset = 25.dp, width = 250.dp,
+                                        buttonEvent = {
+                                            vm.menuPage = 1
+                                        },
+                                        buttonText = "Export Settings", themeColor = vm.themeColor
+                                    )
+                                    buttonRow(
+                                        buttonOffset = 25.dp, width = 250.dp,
+                                        buttonEvent = {
+                                            vm.menuPage = 2
+                                        },
+                                        buttonText = "Select Theme", themeColor = vm.themeColor
+                                    )
+                                    buttonRow(
+                                        buttonOffset = 25.dp, width = 250.dp,
+                                        buttonEvent = {
+                                            helpMenu.ShowHelpMenu()
+                                        },
+                                        buttonText = "GET HELP", themeColor = vm.themeColor
+                                    )
+                                }
                             }
                         )
 
                         // Export Settings
                         horizontalVisibilityPane(
                             visibility = (vm.menuPage == 1), animationWidth = 2, duration = 369, paneContent = {
-                                buttonRow(
-                                    rowOffset = 0.dp, buttonOffset = 25.dp, width = 250.dp,
-                                    buttonEvent = {
-                                        val cb = Toolkit.getDefaultToolkit().systemClipboard
-                                        val s = StringSelection(settingsToString())
-                                        cb.setContents(s, s)
-                                    },
-                                    buttonText = "Export to Clipboard", themeColor = vm.themeColor
-                                )
-                                buttonRow(
-                                    rowOffset = 50.dp, buttonOffset = 25.dp, width = 250.dp,
-                                    buttonEvent = {
-                                        settingsToCSV()
-                                    },
-                                    buttonText = "Export to CSV", themeColor = vm.themeColor
-                                )
-                                buttonRow(
-                                    rowOffset = 100.dp, buttonOffset = 25.dp, width = 250.dp,
-                                    buttonEvent = {
-                                        outputLocation = SelectOutputPath()
-                                    },
-                                    buttonText = "Select Output", themeColor = vm.themeColor
-                                )
+                                Column {
+                                    buttonRow(
+                                        buttonOffset = 25.dp, width = 250.dp,
+                                        buttonEvent = {
+                                            val cb = Toolkit.getDefaultToolkit().systemClipboard
+                                            val s = StringSelection(settingsToString())
+                                            cb.setContents(s, s)
+                                        },
+                                        buttonText = "Export to Clipboard", themeColor = vm.themeColor
+                                    )
+                                    buttonRow(
+                                        buttonOffset = 25.dp, width = 250.dp,
+                                        buttonEvent = {
+                                            settingsToCSV()
+                                        },
+                                        buttonText = "Export to CSV", themeColor = vm.themeColor
+                                    )
+                                    buttonRow(
+                                        buttonOffset = 25.dp, width = 250.dp,
+                                        buttonEvent = {
+                                            outputLocation = SelectOutputPath()
+                                        },
+                                        buttonText = "Select Output", themeColor = vm.themeColor
+                                    )
+                                }
                             }
                         )
 
                         // Theme Selection
                         horizontalVisibilityPane(
                             visibility = (vm.menuPage == 2), animationWidth = 2, duration = 369, paneContent = {
-                                buttonRow(
-                                    rowOffset = 0.dp, buttonOffset = 25.dp, width = 250.dp,
-                                    buttonEvent = {
-                                        vm.themeColor = darkThemes
-                                    },
-                                    buttonText = "Theme: Dark", themeColor = vm.themeColor
-                                )
-                                buttonRow(
-                                    rowOffset = 50.dp, buttonOffset = 25.dp, width = 250.dp,
-                                    buttonEvent = {
-                                        vm.themeColor = lightThemes
-                                    },
-                                    buttonText = "Theme: Light", themeColor = vm.themeColor
-                                )
-                                buttonRow(
-                                    rowOffset = 100.dp, buttonOffset = 25.dp, width = 250.dp,
-                                    buttonEvent = {
-                                        vm.themeColor = celesteThemes
-                                    },
-                                    buttonText = "Theme: Celeste", themeColor = vm.themeColor
-                                )
-                                buttonRow(
-                                    rowOffset = 150.dp, buttonOffset = 25.dp, width = 250.dp,
-                                    buttonEvent = {
-                                        vm.themeColor = aqueousThemes
-                                    },
-                                    buttonText = "Theme: Aqueous", themeColor = vm.themeColor
-                                )
+                                // Convert this and make it a scrollable list if more than some amount is present
+                                Column {
+                                    Column (
+                                        Modifier
+                                            .height(200.dp)
+                                            .verticalScroll(rememberScrollState())
+                                    ) {
+                                        buttonRow(
+                                            buttonOffset = 25.dp, width = 250.dp,
+                                            buttonEvent = {
+                                                vm.themeColor = darkThemes
+                                            },
+                                            buttonText = "Theme: Dark", themeColor = vm.themeColor
+                                        )
+                                        buttonRow(
+                                            buttonOffset = 25.dp, width = 250.dp,
+                                            buttonEvent = {
+                                                vm.themeColor = lightThemes
+                                            },
+                                            buttonText = "Theme: Light", themeColor = vm.themeColor
+                                        )
+                                        buttonRow(
+                                            buttonOffset = 25.dp, width = 250.dp,
+                                            buttonEvent = {
+                                                vm.themeColor = celesteThemes
+                                            },
+                                            buttonText = "Theme: Celeste", themeColor = vm.themeColor
+                                        )
+                                        buttonRow(
+                                            buttonOffset = 25.dp, width = 250.dp,
+                                            buttonEvent = {
+                                                vm.themeColor = aqueousThemes
+                                            },
+                                            buttonText = "Theme: Aqueous", themeColor = vm.themeColor
+                                        )
+                                        buttonRow(
+                                            buttonOffset = 25.dp, width = 250.dp,
+                                            buttonEvent = {
+
+                                            },
+                                            buttonText = "Theme: FILLER", themeColor = vm.themeColor
+                                        )
+                                        buttonRow(
+                                            buttonOffset = 25.dp, width = 250.dp,
+                                            buttonEvent = {
+
+                                            },
+                                            buttonText = "Theme: FILLER", themeColor = vm.themeColor
+                                        )
+                                        buttonRow(
+                                            buttonOffset = 25.dp, width = 250.dp,
+                                            buttonEvent = {
+
+                                            },
+                                            buttonText = "Theme: FILLER", themeColor = vm.themeColor
+                                        )
+                                    }
+                                    buttonRow(
+                                        buttonOffset = 25.dp, width = 250.dp,
+                                        buttonEvent = {
+                                            TODO("Fetch Themes")
+                                        },
+                                        buttonText = "Fetch Themes", themeColor = vm.themeColor
+                                    )
+                                }
                             }
                         )
                     }
@@ -459,76 +502,82 @@ fun App() {
                     menuPages = {
                         horizontalVisibilityPane(
                             visibility = (vm.settingsPage == 0), animationWidth = -2, duration = 369, paneContent = {
-                                buttonRow(
-                                    rowOffset = 0.dp, buttonOffset = 25.dp, width = 250.dp,
-                                    buttonEvent = {
-                                        vm.settingsPage = 1
-                                        vm.configGenerator = true
-                                    },
-                                    buttonText = "Select Generator", themeColor = vm.themeColor
-                                )
-                                buttonRow(
-                                    rowOffset = 50.dp, buttonOffset = 25.dp, width = 250.dp,
-                                    buttonEvent = {
-                                        vm.configSlices = true
-                                    },
-                                    buttonText = "Select Cut Type", themeColor = vm.themeColor
-                                )
-                                buttonRow(
-                                    rowOffset = 100.dp, buttonOffset = 25.dp, width = 250.dp,
-                                    buttonEvent = {
-                                        vm.settingsPage = 2
-                                    },
-                                    buttonText = "Select Output", themeColor = vm.themeColor
-                                )
+                                Column {
+                                    buttonRow(
+                                        buttonOffset = 25.dp, width = 250.dp,
+                                        buttonEvent = {
+                                            vm.settingsPage = 1
+                                            vm.configGenerator = true
+                                        },
+                                        buttonText = "Select Generator", themeColor = vm.themeColor
+                                    )
+                                    buttonRow(
+                                        buttonOffset = 25.dp, width = 250.dp,
+                                        buttonEvent = {
+                                            vm.configSlices = true
+                                        },
+                                        buttonText = "Select Cut Type", themeColor = vm.themeColor
+                                    )
+                                    buttonRow(
+                                        buttonOffset = 25.dp, width = 250.dp,
+                                        buttonEvent = {
+                                            vm.settingsPage = 2
+                                        },
+                                        buttonText = "Select Output", themeColor = vm.themeColor
+                                    )
+                                }
                             }
                         )
 
                         // Generator Type Selection
                         horizontalVisibilityPane(
                             visibility = (vm.settingsPage == 1), animationWidth = 2, duration = 369, paneContent = {
-                                buttonRow(
-                                    rowOffset = 0.dp, buttonOffset = 25.dp, width = 250.dp,
-                                    buttonEvent = {
-                                        generatorType.set(GeneratorType.SQUARE)
-                                        vm.selectedGenerator = 1
-                                    },
-                                    buttonText = "Square Generator", themeColor = vm.themeColor
-                                )
-                                buttonRow(
-                                    rowOffset = 50.dp, buttonOffset = 25.dp, width = 250.dp,
-                                    buttonEvent = {
+                                Column {
+                                    buttonRow(
+                                        buttonOffset = 25.dp, width = 250.dp,
+                                        buttonEvent = {
+                                            generatorType.set(GeneratorType.SQUARE)
+                                            vm.selectedGenerator = 1
+                                        },
+                                        buttonText = "Square Generator", themeColor = vm.themeColor
+                                    )
+                                    buttonRow(
+                                        buttonOffset = 25.dp, width = 250.dp,
+                                        buttonEvent = {
 
-                                    },
-                                    buttonText = "Does Not Exist",  themeColor = vm.themeColor
-                                )
-                                buttonRow(
-                                    rowOffset = 100.dp, buttonOffset = 25.dp, width = 250.dp,
-                                    buttonEvent = {
+                                        },
+                                        buttonText = "Does Not Exist",  themeColor = vm.themeColor
+                                    )
+                                    buttonRow(
+                                        buttonOffset = 25.dp, width = 250.dp,
+                                        buttonEvent = {
 
-                                    },
-                                    buttonText = "Does Not Exist", themeColor = vm.themeColor
-                                )
-                                buttonRow(
-                                    rowOffset = 150.dp, buttonOffset = 25.dp, width = 250.dp,
-                                    buttonEvent = {
+                                        },
+                                        buttonText = "Does Not Exist", themeColor = vm.themeColor
+                                    )
+                                    buttonRow(
+                                        buttonOffset = 25.dp, width = 250.dp,
+                                        buttonEvent = {
 
-                                    },
-                                    buttonText = "Does Not Exist", themeColor = vm.themeColor
-                                )
+                                        },
+                                        buttonText = "Does Not Exist", themeColor = vm.themeColor
+                                    )
+                                }
                             }
                         )
 
                         horizontalVisibilityPane(
                             visibility = (vm.settingsPage == 2), animationWidth = 2, duration = 369, paneContent = {
-                                buttonRow(
-                                    rowOffset = 0.dp, buttonOffset = 25.dp, width = 250.dp,
-                                    buttonEvent = {
-                                        outputLocation = SelectOutputPath()
-                                        alertsHandler.DisplayAlert("Output Location set to: $outputLocation")
-                                    },
-                                    buttonText = "Select Output Location", themeColor = vm.themeColor
-                                )
+                                Column {
+                                    buttonRow(
+                                        buttonOffset = 25.dp, width = 250.dp,
+                                        buttonEvent = {
+                                            outputLocation = SelectOutputPath()
+                                            alertsHandler.DisplayAlert("Output Location set to: $outputLocation")
+                                        },
+                                        buttonText = "Select Output Location", themeColor = vm.themeColor
+                                    )
+                                }
                             }
                         )
                     }
