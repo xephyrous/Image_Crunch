@@ -28,9 +28,13 @@ import androidx.compose.ui.unit.sp
 /**
  * Creates a row containing a button
  *
- * @param rowOffset The Y offset for the row
- * @param buttonOffset The X offset for the button
- * @param width The width of the button
+ * @param height The height of the element
+ * @param width The width of the element
+ * @param buttonHeight The height of the button within the element
+ * @param buttonWidth The width of the button within the element
+ * @param fontSize The default font size of the element
+ * @param xScale The horizontal scaling multiplier of the elements
+ * @param yScale The vertical scaling multiplier of the elements
  * @param buttonEvent The function to run when the button is clicked
  * @param buttonText The text of the button
  * @param themeColor A list of theme colors to use for styling the button
@@ -68,7 +72,10 @@ fun buttonElement(
 /**
  * Creates a row containing a text element
  *
- * @param rowOffset The Y offset of the row in dot points (Dp)
+ * @param height The height of the element box
+ * @param width The width of the element box
+ * @param xScale The horizontal scaling multiplier of the elements
+ * @param yScale The vertical scaling multiplier of the elements
  * @param displayedText The text to be displayed
  * @param textOffset The Y offset of the text in dot points (Dp)
  * @param fontSize The font size
@@ -210,12 +217,15 @@ fun createCard(
 /**
  * Creates a menu GUI object
  *
- * @param menuOffset The X offset of the menu in dot points (Dp)
- * @param titleOffset The Y offset of the menu title in dot points (Dp)
- * @param mainOffset The Y offset of the menu in dot points (Dp)
- * @param returnOffset The Y offset of the return button in dot points (Dp)
- * @param menuWidth The width of the menu in dot points (Dp)
- * @param mainHeight The height of the main menu in dot points (Dp) Titles are static 50
+ * @param xOffset The horizontal offset of the menu object (Dp)
+ * @param yOffset The vertical offset of the menu object (Dp)
+ * @param width The normal size of the menu (Dp)
+ * @param height The size of the main menu area (Dp)
+ * @param titleSize The standard size of the title bar (Dp)
+ * @param gapSize The size of the gap between the menu objects (Dp)
+ * @param xScale The horizontal scaling multiplier of the elements
+ * @param yScale The vertical scaling multiplier of the elements
+ * @param page The menu page handler
  * @param elevation The elevation of the menu in dot points (Dp)
  * @param menuTitle The title of the menu
  * @param returnTitle The return button text

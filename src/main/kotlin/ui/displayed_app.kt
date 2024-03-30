@@ -38,6 +38,7 @@ import java.io.File
 
 val alertsHandler = AlertBox()
 val helpMenu = HelpMenu()
+val themeSwitcher = ThemeSwitcher()
 
 /**
  * The main application
@@ -167,18 +168,12 @@ fun App() {
                             squareRows.lock()
                             squareColumns.lock()
                             generatorType.lock()
-
-                            //TODO : Update this to use runImagePipeline
-                            /*
-                            nodes.set(generateNodes(generatorType.value()))
                             nodes.lock()
-
-                            mask.set(generateCuts(generatorType.value()))
                             mask.lock()
 
-                            slices.set(generateMasks(generatorType.value()))
+                            slices.set(runImagePipeline(generatorType.value()))
+
                             slices.lock()
-                            */
 
                             for (i in slices.value()!!.indices) {
                                 maskToImage(loadedImage.value()!!, slices.value()!![i], "Output-${i}")
@@ -191,17 +186,21 @@ fun App() {
                             generatorType.unlock()
                             nodes.unlock()
                             mask.unlock()
+                            slices.unlock()
                         }
                     },
-                    text = { Text("Run", color = vm.themeColor[2]) },
+                    text = { Text("Run", color = vm.themeColor[2], fontSize = 16.sp*vm.xScale.coerceAtMost(vm.yScale)) },
                     icon = {
                         Icon(
                             Icons.Sharp.PlayArrow, "Run",
-                            tint = vm.themeColor[4]
+                            tint = vm.themeColor[4],
+                            modifier = Modifier.size(25.dp*vm.xScale.coerceAtMost(vm.yScale), 25.dp*vm.xScale.coerceAtMost(vm.yScale))
                         )
                     },
                     backgroundColor = vm.themeColor[11],
-                    modifier = Modifier.offset(0.dp, (((-100).dp - fabOffset)*vm.yScale))
+                    modifier = Modifier
+                        .offset(0.dp, (((-100).dp - fabOffset)*vm.yScale))
+                        .size(width = 100.dp*vm.xScale, height = 50.dp*vm.yScale)
                 )
             },
         ) {
@@ -374,28 +373,36 @@ fun App() {
                                         buttonElement(
                                             xScale = vm.xScale, yScale = vm.yScale,
                                             buttonEvent = {
-                                                vm.themeColor = darkThemes
+                                                themeSwitcher.initiateChange(
+                                                    vm.themeColor, darkThemes, vm
+                                                )
                                             },
                                             buttonText = "Theme: Dark", themeColor = vm.themeColor
                                         )
                                         buttonElement(
                                             xScale = vm.xScale, yScale = vm.yScale,
                                             buttonEvent = {
-                                                vm.themeColor = lightThemes
+                                                themeSwitcher.initiateChange(
+                                                    vm.themeColor, lightThemes, vm
+                                                )
                                             },
                                             buttonText = "Theme: Light", themeColor = vm.themeColor
                                         )
                                         buttonElement(
                                             xScale = vm.xScale, yScale = vm.yScale,
                                             buttonEvent = {
-                                                vm.themeColor = celesteThemes
+                                                themeSwitcher.initiateChange(
+                                                    vm.themeColor, celesteThemes, vm
+                                                )
                                             },
                                             buttonText = "Theme: Celeste", themeColor = vm.themeColor
                                         )
                                         buttonElement(
                                             xScale = vm.xScale, yScale = vm.yScale,
                                             buttonEvent = {
-                                                vm.themeColor = aqueousThemes
+                                                themeSwitcher.initiateChange(
+                                                    vm.themeColor, aqueousThemes, vm
+                                                )
                                             },
                                             buttonText = "Theme: Aqueous", themeColor = vm.themeColor
                                         )
@@ -566,6 +573,11 @@ fun App() {
 
         helpMenu.CreateHelpMenu(
             screenWidth = vm.screenWidth, screenHeight = vm.screenHeight, xScale = vm.xScale, yScale = vm.yScale, themeColor = vm.themeColor
+        )
+
+        themeSwitcher.createSwitcher(
+            screenWidth = vm.screenWidth, screenHeight = vm.screenHeight, xScale = vm.xScale, yScale = vm.yScale,
+            vm = vm, themeColor = vm.themeColor
         )
 
         /* TODO : Migrate from isFirstLaunch() to value checking from config parser
