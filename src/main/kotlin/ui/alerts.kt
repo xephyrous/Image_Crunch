@@ -8,6 +8,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
@@ -62,7 +64,7 @@ class AlertBox {
                     borderWidth = borderWidth, borderColor = borderColor,
                     cardContent = {
                         textElement(
-                            displayedText = text, textOffset = 15.dp, xScale = xScale, yScale = yScale,
+                            displayedText = text, textOffset = 15.dp, width = screenWidth-65.dp, xScale = xScale, yScale = yScale,
                             fontSize = 18.sp, font = FontWeight.Normal, themeColor = themeColor, textColor = textColor
                         )
                     }
@@ -74,7 +76,7 @@ class AlertBox {
                     themeColor = themeColor, cardGrad1 = cardGrad1, cardGrad2 = cardGrad2,
                     borderWidth = borderWidth, borderColor = borderColor,
                     cardContent = {
-                        IconButton(onClick = { displayed = false }) {
+                        IconButton(onClick = { displayed = false }, modifier = Modifier.align(Alignment.Center)) {
                             Icon(
                                 imageVector = Icons.Sharp.Close,
                                 contentDescription = "Close Button",

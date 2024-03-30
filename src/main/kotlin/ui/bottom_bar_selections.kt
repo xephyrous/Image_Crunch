@@ -1,9 +1,6 @@
 package ui
 
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.offset
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -185,38 +182,33 @@ fun bottomBar(vm: ViewModel) {
                 themeColor = vm.themeColor, borderWidth = 1.dp,
                 cardContent = {
                     var sliderPosition by remember { mutableStateOf(cutNoise.value()) }
-                    Row() {
-                        Text(
-                            "Cut Noise", color = vm.themeColor[2],
-                            modifier = Modifier.fillMaxSize().offset(y= 5.dp),
-                            fontSize = 40.sp, textAlign = TextAlign.Center, fontWeight = FontWeight.Normal
+                    Column {
+                        textElement(
+                            width = vm.screenWidth/3, displayedText = "Cut Noise", xScale = vm.xScale, yScale = vm.yScale,
+                            fontSize = 40.sp, textOffset = 5.dp, themeColor = vm.themeColor
                         )
-                    }
-                    Row (
-                        modifier = Modifier.offset(y = 50.dp)
-                    ) {
-                        Slider(
-                            value = sliderPosition,
-                            onValueChange = {
-                                sliderPosition = it
-                                cutNoise.set(it)
-                                println(it)
-                            },
-                            colors = SliderDefaults.colors(
-                                thumbColor = vm.themeColor[14],
-                                activeTrackColor = vm.themeColor[13], // TODO: make these colors separate later
-                                inactiveTrackColor = vm.themeColor[12],
-                            ),
-                            modifier = Modifier.size(width = vm.screenWidth/3-30.dp, 40.dp).offset(x = 15.dp)
-                        )
-                    }
-                    Row(
-                        modifier = Modifier.offset(y = 90.dp)
-                    ) {
-                        Text(
-                            "Current Noise: $sliderPosition", color = vm.themeColor[2],
-                            modifier = Modifier.fillMaxSize().offset(y= 5.dp),
-                            fontSize = 30.sp, textAlign = TextAlign.Center, fontWeight = FontWeight.Normal
+                        Row (
+                            modifier = Modifier.height(40.dp*vm.yScale)
+                        ) {
+                            Slider(
+                                value = sliderPosition,
+                                onValueChange = {
+                                    sliderPosition = it
+                                    cutNoise.set(it)
+                                    println(it)
+                                },
+                                colors = SliderDefaults.colors(
+                                    thumbColor = vm.themeColor[14],
+                                    activeTrackColor = vm.themeColor[13], // TODO: make these colors separate later
+                                    inactiveTrackColor = vm.themeColor[12],
+                                ),
+                                modifier = Modifier.size(width = (vm.screenWidth/3-30.dp)*vm.xScale, 40.dp*vm.yScale).offset(x = 15.dp*vm.xScale)
+                            )
+                        }
+                        textElement(
+                            width = vm.screenWidth/3, displayedText = "Current Noise: $sliderPosition",
+                            xScale = vm.xScale, yScale = vm.yScale,
+                            fontSize = 30.sp, textOffset = 5.dp, themeColor = vm.themeColor
                         )
                     }
                 }

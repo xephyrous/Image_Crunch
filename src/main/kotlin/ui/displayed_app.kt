@@ -33,6 +33,8 @@ import utils.app.ImageFileSelection
 import utils.app.SelectOutputPath
 import utils.images.*
 import utils.storage.*
+import java.awt.Desktop
+import java.io.File
 
 val alertsHandler = AlertBox()
 val helpMenu = HelpMenu()
@@ -266,9 +268,9 @@ fun App() {
                     themeColor = vm.themeColor, borderWidth = 1.dp,
                     cardContent = {
                         textElement(
-                            height = 400.dp, displayedText = "Node Generator\nSettings", textOffset = (15.dp),
+                            height = 400.dp, width = vm.screenWidth/3, displayedText = "Node Generator\nSettings", textOffset = (15.dp),
                             xScale = vm.xScale, yScale = vm.yScale,
-                            fontSize = 30.sp, font = FontWeight.SemiBold, themeColor = vm.themeColor, textColor = 3
+                            fontSize = 38.sp, font = FontWeight.SemiBold, themeColor = vm.themeColor, textColor = 3
                         )
                     }
                 )
@@ -280,9 +282,9 @@ fun App() {
                     themeColor = vm.themeColor, borderWidth = 1.dp,
                     cardContent = {
                         textElement(
-                            height = 400.dp, displayedText = "Mask Generator\nSettings", textOffset = 15.dp,
+                            height = 400.dp, width = vm.screenWidth/3, displayedText = "Mask Generator\nSettings", textOffset = 15.dp,
                             xScale = vm.xScale, yScale = vm.yScale,
-                            fontSize = 30.sp, font = FontWeight.SemiBold, themeColor = vm.themeColor, textColor = 3
+                            fontSize = 38.sp, font = FontWeight.SemiBold, themeColor = vm.themeColor, textColor = 3
                         )
                     }
                 )
@@ -294,9 +296,9 @@ fun App() {
                     themeColor = vm.themeColor, borderWidth = 1.dp,
                     cardContent = {
                         textElement(
-                            height = 400.dp, displayedText = "Slice Generator\nSettings",
+                            height = 400.dp, width = vm.screenWidth/3, displayedText = "Slice Generator\nSettings",
                             xScale = vm.xScale, yScale = vm.yScale, textOffset = 15.dp,
-                            fontSize = 30.sp, font = FontWeight.SemiBold, themeColor = vm.themeColor, textColor = 3
+                            fontSize = 38.sp, font = FontWeight.SemiBold, themeColor = vm.themeColor, textColor = 3
                         )
                     }
                 )
@@ -532,9 +534,24 @@ fun App() {
                                         xScale = vm.xScale, yScale = vm.yScale,
                                         buttonEvent = {
                                             outputLocation = SelectOutputPath()
-                                            alertsHandler.DisplayAlert("Output Location set to: $outputLocation")
+                                            if (outputLocation == null) {
+                                                alertsHandler.DisplayAlert("No Location Selected")
+                                            } else {
+                                                alertsHandler.DisplayAlert("Output Location set to: $outputLocation")
+                                            }
                                         },
                                         buttonText = "Select Output Location", themeColor = vm.themeColor
+                                    )
+                                    buttonElement(
+                                        xScale = vm.xScale, yScale = vm.yScale,
+                                        buttonEvent = {
+                                            if (outputLocation != null) {
+                                                Desktop.getDesktop().open(File(outputLocation!!))
+                                            } else {
+                                                alertsHandler.DisplayAlert("No output location selected")
+                                            }
+                                        },
+                                        buttonText = "Open In File Explorer", themeColor = vm.themeColor
                                     )
                                 }
                             }
@@ -543,12 +560,12 @@ fun App() {
                 )
             }
             alertsHandler.CreateAlert(
-                screenWidth = vm.screenWidth*vm.xScale, screenHeight = vm.screenHeight*vm.yScale, xScale = vm.xScale, yScale = vm.yScale, themeColor = vm.themeColor
+                screenWidth = vm.screenWidth, screenHeight = vm.screenHeight, xScale = vm.xScale, yScale = vm.yScale, themeColor = vm.themeColor
             )
         }
 
         helpMenu.CreateHelpMenu(
-            screenWidth = vm.screenWidth*vm.xScale, screenHeight = vm.screenHeight*vm.yScale, xScale = vm.xScale, yScale = vm.yScale, themeColor = vm.themeColor
+            screenWidth = vm.screenWidth, screenHeight = vm.screenHeight, xScale = vm.xScale, yScale = vm.yScale, themeColor = vm.themeColor
         )
 
         /* TODO : Migrate from isFirstLaunch() to value checking from config parser

@@ -25,9 +25,6 @@ import androidx.compose.ui.unit.sp
 // Set of functions to make composable easier
 // Passes inputs in a more user-friendly way when designing app
 
-// CHANGE ROW CODE TO NOT BE ROWS OR SMTH :D
-// basically make this a bit more expandable by rewriting it to make blocks that can be inserted into main handler, rather than a row
-
 /**
  * Creates a row containing a button
  *
@@ -46,6 +43,7 @@ fun buttonElement(
     width: Dp = 300.dp,
     buttonHeight: Dp = 40.dp,
     buttonWidth: Dp = 250.dp,
+    fontSize: TextUnit = 18.sp,
     xScale: Float,
     yScale: Float,
     buttonEvent: () -> Unit,
@@ -62,7 +60,7 @@ fun buttonElement(
             modifier = Modifier.size(height = buttonHeight*yScale, width = buttonWidth*xScale).align(alignment = Alignment.Center),
             colors = ButtonDefaults.buttonColors(backgroundColor = themeColor[buttonColor])
         ) {
-            Text(buttonText, color = themeColor[textColor])
+            Text(buttonText, color = themeColor[textColor], fontSize = fontSize*xScale.coerceAtMost(yScale))
         }
     }
 }
@@ -191,13 +189,7 @@ fun createCard(
     cardContent: @Composable BoxScope.()-> Unit
 ) {
     Card(
-        modifier = Modifier.offset(xOffset*xScale, yOffset*yScale).size(width*xScale, height*yScale).background(
-            Brush.linearGradient(
-                colors = listOf(themeColor[cardGrad1], themeColor[cardGrad2]),
-                start = Offset(0f, 0f),
-                end = Offset(Float.POSITIVE_INFINITY, 0f),
-                tileMode = TileMode.Clamp
-            )),
+        modifier = Modifier.offset(xOffset*xScale, yOffset*yScale).size(width*xScale, height*yScale),
         elevation = elevation,
         border = BorderStroke(borderWidth, themeColor[borderColor]),
         content = {
@@ -289,17 +281,17 @@ fun createMenu(
         themeColor = themeColor, cardGrad1 = cardGrad1, cardGrad2 = cardGrad2,
         borderWidth = borderWidth, borderColor = borderColor,
         cardContent = {
-            IconButton(onClick = closeOperation) {
+            IconButton(onClick = closeOperation, modifier = Modifier.align(Alignment.Center)) {
                 Icon(
                     imageVector = Icons.Sharp.Close,
                     contentDescription = "Close Button",
-                    tint = themeColor[iconColor]
+                    tint = themeColor[iconColor],
                 )
             }
         }
     )
     createCard(
-        xOffset = xOffset, yOffset = (if (page==0) height else height+titleSize+(gapSize*2)),
+        xOffset = xOffset, yOffset = (if (page==0) yOffset + height else yOffset+height+titleSize+(gapSize*2)),
         width = width, height = titleSize,
         xScale = xScale, yScale = yScale, elevation = elevation,
         themeColor = themeColor, cardGrad1 = cardGrad1, cardGrad2 = cardGrad2,

@@ -55,7 +55,7 @@ class ViewModel {
 
     // Internal variables
     var settingsPage by mutableStateOf(0)
-    var settingsLines by mutableStateOf( listOf(3, 4, 1) )
+    var settingsLines by mutableStateOf( listOf(3, 4, 2) )
 
     var configGenerator by mutableStateOf(false)
     var configMasks by mutableStateOf(false)
