@@ -10,9 +10,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.runBlocking
 import java.io.File
 
 /*
@@ -29,8 +32,6 @@ Hola from the code desk,
 
 Please if possible make some checker that returns a list of theme objects
 I will use that to determine the selections for the theme page
-
-Also in development: Theme confirmation window :D
  */
 
 /**
@@ -52,6 +53,8 @@ class ThemeSwitcher {
 
     var displayed by mutableStateOf(false)
 
+    var countdown by mutableStateOf(15)
+
     @Composable
     fun createSwitcher(
         screenWidth: Dp,
@@ -69,8 +72,12 @@ class ThemeSwitcher {
     ) {
         AnimatedVisibility(
             visible = displayed,
-            enter = scaleIn(),
-            exit = scaleOut(),
+            enter = scaleIn(
+                transformOrigin = TransformOrigin.Center
+            ),
+            exit = scaleOut(
+                transformOrigin = TransformOrigin.Center
+            ),
         ){
             createCard(
                 xOffset = screenWidth/4, yOffset = screenHeight/4, width = screenWidth/2, height = screenHeight/2,
@@ -79,7 +86,7 @@ class ThemeSwitcher {
                 cardContent = {
                     Column {
                         textElement(
-                            height = 350.dp, width = screenWidth/2, xScale = xScale, yScale = yScale,
+                            height = 325.dp, width = screenWidth/2, xScale = xScale, yScale = yScale,
                             displayedText = "CONFIRM THEME CHANGE?\n\nYou can always change this back later in the main menu",
                             textOffset = 40.dp, fontSize = 40.sp,
                             themeColor = themeColor, textColor = textColor
@@ -95,7 +102,7 @@ class ThemeSwitcher {
                             )
                             textElement(
                                 height = 50.dp, width = 300.dp, xScale = xScale, yScale = yScale,
-                                displayedText = "filla text until countdown is made :D", textOffset = 10.dp, fontSize = 16.sp,
+                                displayedText = "Reverting Change in: $countdown", textOffset = 10.dp, fontSize = 16.sp,
                                 themeColor = themeColor, textColor = textColor
                             )
                             buttonElement(
@@ -122,6 +129,7 @@ class ThemeSwitcher {
         newTheme = newColor
         currentTheme = currentColor
         vm.themeColor = newColor
+        startCountdown(vm)
     }
 
     fun confirmChange(
@@ -144,5 +152,22 @@ class ThemeSwitcher {
         newTheme = null
 
         displayed = false
+    }
+
+    fun startCountdown(
+        vm: ViewModel
+    ) {
+        Thread(kotlinx.coroutines.Runnable {
+            countdown = 15
+            while (countdown > 0 && displayed) {
+                runBlocking {
+                    delay(1000)
+                }
+                countdown--
+            }
+            if (displayed) {
+                rejectChange(vm)
+            }
+        }).start()
     }
 }

@@ -363,13 +363,13 @@ fun App() {
                         // Theme Selection
                         horizontalVisibilityPane(
                             visibility = (vm.menuPage == 1), animationWidth = 2, duration = 369, paneContent = {
-                                // Convert this and make it a scrollable list if more than some amount is present
                                 Column {
                                     Column (
                                         Modifier
                                             .height(200.dp*vm.yScale)
                                             .verticalScroll(rememberScrollState())
                                     ) {
+                                        // TODO: REWORK THIS INTO A ADDED LIST OR SMTH HOWEVER THE FETCH WORKS IDK
                                         buttonElement(
                                             xScale = vm.xScale, yScale = vm.yScale,
                                             buttonEvent = {
