@@ -187,8 +187,8 @@ fun bottomBar(vm: ViewModel) {
                             width = vm.screenWidth/3, displayedText = "Cut Noise", xScale = vm.xScale, yScale = vm.yScale,
                             fontSize = 40.sp, textOffset = 5.dp, themeColor = vm.themeColor
                         )
-                        Row (
-                            modifier = Modifier.height(40.dp*vm.yScale)
+                        Box (
+                            modifier = Modifier.size(width = vm.screenWidth/3*vm.xScale, height = 40.dp*vm.yScale)
                         ) {
                             Slider(
                                 value = sliderPosition,
