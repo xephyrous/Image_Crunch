@@ -2,6 +2,7 @@ package utils.storage
 
 import androidx.compose.ui.graphics.Color
 import java.awt.Dimension
+import kotlin.properties.Delegates
 
 /**
  * An image as a byte mask
@@ -224,4 +225,27 @@ class ImageMaskArray() {
      * Returns the first mask in the array
      */
     fun first() : Mask { return masks[0] }
+}
+
+/**
+ * Empty class for theme data to be parsed into
+ *
+ * @property name The name of the theme
+ * @property icon The icon color
+ * @property textColors Map of colors for all text variations
+ * @property backgroundColors Map of colors for all background variations
+ */
+class ThemeData {
+    lateinit var name: String
+    var icon by Delegates.notNull<Long>()
+    lateinit var textColors: Map<String, Long>
+    lateinit var backgroundColors: Map<String, Long>
+}
+
+class DecoratedError(type: String, message: String) : Throwable(message) {
+    init {
+        print("\u001b[31m")
+        println("\u001b[1m【\u001B[0m\u001b[31m ${type.uppercase()}-ERROR : $message \u001B[1m】\u001B[0m")
+        print("\u001b[0m")
+    }
 }
