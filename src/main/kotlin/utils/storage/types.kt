@@ -3,6 +3,7 @@ package utils.storage
 import androidx.compose.ui.graphics.Color
 import java.awt.Dimension
 import kotlin.properties.Delegates
+import kotlin.reflect.KClass
 
 /**
  * An image as a byte mask
@@ -153,19 +154,21 @@ inline fun <reified T> String.convert(): T {
         Double::class -> toDouble()
         Int::class -> toInt()
         Boolean::class -> toBoolean()
-        else -> error("Converter unavailable for ${T::class}")
+        Long::class -> toLong()
+        else -> throw Exception("Converter unavailable for ${T::class}")
     } as T
 }
 
 /**
  * Converts a string to a given type based on a type parameter
  */
-inline fun <reified T> String.convertT(typeParam: T): T {
-    return when(typeParam!!::class){
+inline fun <reified T> String.convertT(typeParam: KClass<*>): T {
+    return when(typeParam){
         Double::class -> toDouble()
         Int::class -> toInt()
         Boolean::class -> toBoolean()
-        else -> error("Converter unavailable for ${T::class}")
+        Long::class -> toLong()
+        else -> throw Exception("Converter unavailable for ${T::class}")
     } as T
 }
 

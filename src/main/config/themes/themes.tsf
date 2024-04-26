@@ -1,0 +1,18 @@
+String name: "Dark Theme"
+
+NamedMap textColors: Long {
+    header: 4281019696,
+    text1: 4290757063,
+    text2: 4290757063,
+    textGrey: 4290757063
+}
+
+Long icon: 4286217861
+
+String bitch: "suck it nerd"
+
+NamedMap backgroundColors: Long {
+    bgGrad1: 4280690734,
+    bgGrad2: 4280690734,
+    bgGrad3: 4280690734
+}

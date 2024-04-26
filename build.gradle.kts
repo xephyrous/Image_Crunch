@@ -15,6 +15,7 @@ repositories {
     maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
     maven("https://dl.bintray.com/kotlin/dokka")
     maven("https://maven.pkg.jetbrains.space/public/p/kotlinx-html/maven")
+    maven("https://mvnrepository.com/artifact/org.jetbrains.kotlin/kotlin-reflect")
 }
 
 dependencies {
@@ -22,6 +23,7 @@ dependencies {
     implementation(compose.ui)
     implementation(compose.material)
     implementation(compose.material3)
+    implementation(kotlin("reflect"))
 }
 
 compose.desktop {
