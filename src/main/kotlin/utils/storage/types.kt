@@ -2,7 +2,7 @@ package utils.storage
 
 import androidx.compose.ui.graphics.Color
 import java.awt.Dimension
-import kotlin.properties.Delegates
+import kotlin.IllegalArgumentException
 import kotlin.reflect.KClass
 
 /**
@@ -147,47 +147,12 @@ class AppTheme(
 }
 
 /**
- * Converts a string to a given type based on a detected inline type
- */
-inline fun <reified T> String.convert(): T {
-    return when(T::class){
-        Double::class -> toDouble()
-        Int::class -> toInt()
-        Boolean::class -> toBoolean()
-        Long::class -> toLong()
-        else -> throw Exception("Converter unavailable for ${T::class}")
-    } as T
-}
-
-/**
- * Converts a string to a given type based on a type parameter
- */
-inline fun <reified T> String.convertT(typeParam: KClass<*>): T {
-    return when(typeParam){
-        Double::class -> toDouble()
-        Int::class -> toInt()
-        Boolean::class -> toBoolean()
-        Long::class -> toLong()
-        else -> throw Exception("Converter unavailable for ${T::class}")
-    } as T
-}
-
-/**
- * TODO : Create for parsing .meow files (lord please rename this atrocious file extension 🙏)
- * Holds a variable name and type along with casting functions (I think (Forgot why I made this 😁))
- */
-class TypedValue(name: String, type: String) {
-
-}
-
-/**
  * Represents an array of masks with modification functions
  *
  * @property masks An array of all masks
  */
 class ImageMaskArray() {
     var masks = ArrayList<Mask>()
-
 
     /**
      * Adds a mask to the array
@@ -231,6 +196,46 @@ class ImageMaskArray() {
 }
 
 /**
+ * Casts from Any to designated type
+ *
+ * @param value The value to be cast
+ * @param targetType The target type to cast to
+ *
+ * @return The inputted value cast to the target type
+ */
+fun anyCast(value: Any, targetType: KClass<*>): Any {
+    return when(targetType) {
+        String::class -> value as String
+        Boolean::class -> value as Boolean
+        Int::class -> value as Int
+        Short::class -> value as Short
+        Long::class -> value as Long
+        Double::class -> value as Double
+        Char::class -> value as Char
+        else -> throw IllegalArgumentException("Unsupported type conversion : ${targetType.simpleName}")
+    }
+}
+
+/**
+ * Uhh Michelle?
+ */
+fun mapCast(list: ArrayList<Pair<String, Any>>, targetType: KClass<*>): Any {
+    return when(targetType) {
+        Map::class -> {
+            val buildMap: MutableMap<String, Any> = mutableMapOf()
+            list.forEach {  buildMap[it.first] = anyCast(it.second, targetType)  }
+            buildMap
+        }
+        HashMap::class -> {
+            val buildMap: HashMap<String, Any> = hashMapOf()
+            list.forEach {  buildMap[it.first] = anyCast(it.second, targetType)  }
+            buildMap
+        }
+        else -> throw IllegalArgumentException("Unsupported type conversion : ${targetType.simpleName}")
+    }
+}
+
+/**
  * Empty class for theme data to be parsed into
  *
  * @property name The name of the theme
@@ -239,16 +244,28 @@ class ImageMaskArray() {
  * @property backgroundColors Map of colors for all background variations
  */
 class ThemeData {
-    lateinit var name: String
-    var icon by Delegates.notNull<Long>()
-    lateinit var textColors: Map<String, Long>
-    lateinit var backgroundColors: Map<String, Long>
+    var name: String = ""
+        private set
+    var icon: Long = 0
+        private set
+    var textColors: Map<String, Long> = mapOf()
+        private set
+    var backgroundColors: Map<String, Long> = mapOf()
+        private set
 }
 
 class DecoratedError(type: String, message: String) : Throwable(message) {
     init {
         print("\u001b[31m")
-        println("\u001b[1m【\u001B[0m\u001b[31m ${type.uppercase()}-ERROR : $message \u001B[1m】\u001B[0m")
+        println("\u001b[1m[\u001B[0m\u001b[31m ${type.uppercase()}-ERROR : $message \u001B[1m]\u001B[0m")
+        print("\u001b[0m")
+    }
+}
+
+class DecoratedWarning(type: String, message: String) : Exception(message) {
+    init {
+        print("\u001b[31m")
+        println("\u001b[1m[\u001B[0m\u001b[31m ${type.uppercase()}-WARNING : $message \u001B[1m]\u001B[0m")
         print("\u001b[0m")
     }
 }

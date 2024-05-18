@@ -9,8 +9,6 @@ NamedMap textColors: Long {
 
 Long icon: 4286217861
 
-String bitch: "suck it nerd"
-
 NamedMap backgroundColors: Long {
     bgGrad1: 4280690734,
     bgGrad2: 4280690734,

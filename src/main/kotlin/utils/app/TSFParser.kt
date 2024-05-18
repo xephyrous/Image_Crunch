@@ -1,13 +1,14 @@
 package utils.app
 
 import utils.storage.DecoratedError
-import utils.storage.convertT
+import utils.storage.DecoratedWarning
+import utils.storage.anyCast
+import utils.storage.mapCast
 import java.io.BufferedReader
 import java.io.File
 import java.io.FileReader
 import kotlin.reflect.KClass
-import kotlin.reflect.KMutableProperty
-import kotlin.system.exitProcess
+import kotlin.reflect.KMutableProperty1
 
 /**
  * The level of error strictness during parsing
@@ -46,7 +47,8 @@ private val keywords: Map<String, KClass<*>> = mapOf(
     "Char" to Char::class,
     "NamedMap" to Map::class,
     "NamedHMap" to HashMap::class,
-    "Group" to Object::class
+    "Group" to Object::class // Forgot what the kotlin equivalency or implementation of Group is (；′⌒`)
+                             // Maybe it represents a class?
 )
 
 /**
@@ -125,9 +127,9 @@ class TSFParser <T> (
             classMap[it.name] = Pair(Nothing::class, it.returnType)
         }
 
-        /* TSFParseLevel.entries.forEach {
-            parseCallbackFunctions[it.ordinal] = {}
-        } */
+        TSFParseLevel.entries.forEach {
+            parseCallbackFunctions.add(it.ordinal) {}
+        }
     }
 
     /**
@@ -140,8 +142,8 @@ class TSFParser <T> (
         val reader = BufferedReader(FileReader(configFile))
         var line: String?
         val splitLine: MutableList<String> = MutableList(0) { "" }
-        var storedVars: MutableMap<String, Pair<KClass<*>, String>> = mutableMapOf() // Name, Type, Value
-        var storedGroups: MutableMap<String, ArrayList<Pair<String, String>>> = mutableMapOf() // All groups
+        var storedVars: MutableMap<String, Any> = mutableMapOf() // Name, Type, Value
+        var storedGroups: MutableMap<String, ArrayList<Pair<String, Any>>> = mutableMapOf() // All groups
 
         var currLine = 1
         var currPos = 1
@@ -162,10 +164,10 @@ class TSFParser <T> (
         var currName: String? = null
 
         var outerType: String? = null
-        var currType: KClass<*>? = null
-        var subType: KClass<*>? = null
+        var currType: String? = null
+        var subType: String? = null
 
-        var groupVars: ArrayList<Pair<String, String>> = ArrayList()
+        var groupVars: ArrayList<Pair<String, Any>> = ArrayList()
 
         var currVal: String? = null
         var token: String
@@ -174,19 +176,21 @@ class TSFParser <T> (
         var i: Int = 0
         while(i < splitLine.size) {
             token = splitLine[i]
+            println("[$token]")
 
             if(currName != null && currType != null && currVal != null) { fullSet = true }
 
             try {
                 // Match type
                 if(inGroup) { throw Exception() }
-                if(currType != null && subType == null) {
-                    subType = keywords[token]
+                if(currType != null && subType == null && currName != null) {
+                    subType = token
                     if(subType == null) { throw Exception() }
                     i++
                     continue
                 }
-                currType = keywords[token]
+                if (keywords[token] == null) { throw Exception() }
+                currType = token
                 if(currType == null) { throw Exception() }
                 outerType = token
 
@@ -194,13 +198,15 @@ class TSFParser <T> (
                 continue
             } catch(_: Exception) { }
 
+            print(" = PAST = ")
+
             when(token) {
                 ":" -> {
                     if (inGroup) {
                         try {
                             //Optimally this would attempt to convert, but currently the converting functions do not have enough information for type inferencing
                             token = splitLine[i + 1]
-                            groupVars.add(Pair(groupVars.last().first, token))
+                            groupVars.add(Pair(groupVars.last().first, anyCast(token, Class.forName(currType) as KClass<*>)))
                             ++i
                         } catch(RAHH: Exception) {
                             RAHH.printStackTrace()
@@ -226,6 +232,7 @@ class TSFParser <T> (
                     inGroup = true
                 }
                 "}" -> {
+                    println("Group $currName")
                     inGroup = false
                     storedGroups[currName!!] = groupVars
 
@@ -251,6 +258,17 @@ class TSFParser <T> (
                     // Set variable in map & reset temp variables
                     if(fullSet) {
                         storedVars[currName!!] = Pair(currType!!, currVal!!)
+
+                        when(currType) {
+                            "String" -> storedVars[currName] = Pair(currType, currVal)
+                            "Boolean" -> storedVars[currName] = Pair(currType, currVal.toBoolean())
+                            "Int" -> storedVars[currName] = Pair(currType, currVal.toInt())
+                            "Short" -> storedVars[currName] = Pair(currType, currVal.toShort())
+                            "Long" -> storedVars[currName] = Pair(currType, currVal.toLong())
+                            "Double" -> storedVars[currName] = Pair(currType, currVal.toDouble())
+                            "Char" -> storedVars[currName] = Pair(currType, currVal[0])
+                            "Map", "HashMap" -> storedGroups[currName] = groupVars
+                        }
 
                         currName = null
                         currVal = null
@@ -312,8 +330,7 @@ class TSFParser <T> (
                     } else if (currName != null && currType == null) {
                         // Set type
                         try {
-                            currType = keywords[token]
-                            if (currType == null) { throw Exception() }
+                            currType = token
                             outerType = token
                         } catch (_: Exception) {
                             throw DecoratedError("TSF", "Invalid type $token'! [$configFile] | Line $currLine, Character $currPos")
@@ -329,7 +346,7 @@ class TSFParser <T> (
                 // Set subtype
                 try {
                     if (keywords[token] == null) { throw Exception() }
-                    subType = keywords[token]
+                    subType = token
                 } catch (_: Exception) { }
                 // womp womp
             }
@@ -338,43 +355,57 @@ class TSFParser <T> (
             i++
         }
 
-        var match = false
-        try{
-            classMap.forEach { (key, value) ->
-                match = false
-                print("[${key}] : ")
+        var errStr = ""
+        var _break = false
 
-                _class!!::class.members.forEach {
-                    if(it.name == key) {
-                        // (it as KMutableProperty<*>).setter.call(_class, value.second.toString().convertT(value.first))
-                        match = true
+        while (!_break) {
+            try {
+                classMap.forEach { (key, value) ->
+                    try {
+                        // Attempt to find and each variable
+                        val member = _class!!::class.java.getDeclaredField(key)
+                        val property = _class!!::class.members
+                            .filterIsInstance<KMutableProperty1<T, Any?>>()
+                            .find { it.name == key }
+
+                        member.isAccessible = true
+
+                        if(keywordFlags[value.first.simpleName]?.and(TSFKeywordFlag.COLLECTION.ordinal) != 0) {
+                            try {
+                                val parameter = storedGroups[key] as ArrayList<Pair<String, Any>>
+                                member.set(_class, mapCast(parameter, property?.returnType?.classifier as KClass<*>))
+                            } catch(e: Exception) {
+                                throw DecoratedError("TSF", "Group name mismatch in parsing! [$key]")
+                            }
+
+                            return@forEach
+                        }
+
+                        member.set(_class, anyCast(value.second, property?.returnType?.classifier as KClass<*>))
+                    } catch (e: Exception) {
+                        errStr = key
+                        e.printStackTrace()
+                        throw Exception()
                     }
                 }
 
-                if(!match) {
-                    throw DecoratedError(
-                        "TSF", "HAHA YOU FUCKED UP DUMB BITCH"
-                    )
-                }
+                _break = true
+            } catch (_: Exception) {
+                when (parseLevel) {
+                    // Handles errors in parsing according to parse level, calls a callback set by user if defined
+                    TSFParseLevel.STRICT -> {
+                        parseCallbackFunctions[TSFParseLevel.STRICT.ordinal]()
+                        throw DecoratedError("TSF", "Non-Matching Variable in TSF file! [$errStr]")
+                    }
 
-                println("")
-            }
-        } catch(_: Exception) {
-            // Handles errors in parsing according to parse level, calls a callback set by user if defined
-            when(parseLevel) {
-                TSFParseLevel.STRICT -> {
-                    parseCallbackFunctions[TSFParseLevel.STRICT.ordinal]()
-                    throw DecoratedError("TSF", "Non-Matching Variable in TSF file! [$currName]")
-                    exitProcess(-1)
-                }
+                    TSFParseLevel.WARNING -> {
+                        parseCallbackFunctions[TSFParseLevel.WARNING.ordinal]()
+                        throw DecoratedWarning("TSF", "Non-Matching Variable in TSF file! [$errStr]")
+                    }
 
-                TSFParseLevel.WARNING -> {
-                    parseCallbackFunctions[TSFParseLevel.WARNING.ordinal]()
-                    throw DecoratedError("TSF", "Non-Matching Variable in TSF file! [$currName]")
-                }
-
-                TSFParseLevel.LENIENT -> {
-                    parseCallbackFunctions[TSFParseLevel.LENIENT.ordinal]()
+                    TSFParseLevel.LENIENT -> {
+                        parseCallbackFunctions[TSFParseLevel.LENIENT.ordinal]()
+                    }
                 }
             }
         }
