@@ -212,15 +212,15 @@ fun anyCast(value: Any, targetType: KClass<*>): Any {
         Long::class -> value as Long
         Double::class -> value as Double
         Char::class -> value as Char
-        else -> throw IllegalArgumentException("Unsupported type conversion : ${targetType.simpleName}")
+        else -> throw IllegalArgumentException("Unsupported anyCast type conversion : ${targetType.simpleName}")
     }
 }
 
 /**
- * Uhh Michelle?
+ * Casts an ArrayList of name / value pairs to a designated map collection type
  */
-fun mapCast(list: ArrayList<Pair<String, Any>>, targetType: KClass<*>): Any {
-    return when(targetType) {
+fun mapCast(list: ArrayList<Pair<String, Any>>, mapType: KClass<*>, targetType: KClass<*>): Any {
+    return when(mapType) {
         Map::class -> {
             val buildMap: MutableMap<String, Any> = mutableMapOf()
             list.forEach {  buildMap[it.first] = anyCast(it.second, targetType)  }
@@ -231,7 +231,7 @@ fun mapCast(list: ArrayList<Pair<String, Any>>, targetType: KClass<*>): Any {
             list.forEach {  buildMap[it.first] = anyCast(it.second, targetType)  }
             buildMap
         }
-        else -> throw IllegalArgumentException("Unsupported type conversion : ${targetType.simpleName}")
+        else -> throw IllegalArgumentException("Unsupported mapCast type conversion : ${targetType.simpleName}")
     }
 }
 
@@ -245,13 +245,9 @@ fun mapCast(list: ArrayList<Pair<String, Any>>, targetType: KClass<*>): Any {
  */
 class ThemeData {
     var name: String = ""
-        private set
     var icon: Long = 0
-        private set
     var textColors: Map<String, Long> = mapOf()
-        private set
     var backgroundColors: Map<String, Long> = mapOf()
-        private set
 }
 
 class DecoratedError(type: String, message: String) : Throwable(message) {

@@ -1,12 +1,14 @@
 package utils.app
 
-import utils.storage.DecoratedError
-import utils.storage.DecoratedWarning
-import utils.storage.anyCast
-import utils.storage.mapCast
+import androidx.compose.runtime.key
+import utils.storage.*
 import java.io.BufferedReader
 import java.io.File
 import java.io.FileReader
+import java.util.*
+import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
+import kotlin.math.sign
 import kotlin.reflect.KClass
 import kotlin.reflect.KMutableProperty1
 
@@ -34,7 +36,15 @@ private enum class TSFKeywordFlag(val value: Int) {
 }
 
 /**
- * A map of .tsf keywords and their kotlin equivalents
+ * A map of kotlin types with differing tsf names
+ */
+private val keywordConversions: Map<String, String> = mapOf(
+    "Map" to "NamedMap",
+    "HashMap" to "NamedHMap"
+)
+
+/**
+ * A map of .tsf keywords and their kotlin class equivalents
  */
 private val keywords: Map<String, KClass<*>> = mapOf(
     "Object" to Object::class,
@@ -47,8 +57,6 @@ private val keywords: Map<String, KClass<*>> = mapOf(
     "Char" to Char::class,
     "NamedMap" to Map::class,
     "NamedHMap" to HashMap::class,
-    "Group" to Object::class // Forgot what the kotlin equivalency or implementation of Group is (；′⌒`)
-                             // Maybe it represents a class?
 )
 
 /**
@@ -97,7 +105,7 @@ class TSFParser <T> (
     private var parseLevel: TSFParseLevel = TSFParseLevel.STRICT
 ) {
     private val parseCallbackFunctions: ArrayList<() -> Unit> = ArrayList(TSFParseLevel.entries.count())
-    private val classMap: HashMap<String, Pair<KClass<*>, Any>> = hashMapOf()
+    private val classMap: HashMap<String, String> = hashMapOf()
 
     /**
      * Sets the callback function for a level of parsing error
@@ -121,10 +129,16 @@ class TSFParser <T> (
             throw DecoratedError("TSF", "Invalid file extension!\nExpected: .tsf | Received: .${configFile.extension}")
         }
 
-        // Add class member details to classMap
+        // Add class member names to classMap
         _class!!::class.members.forEach {
             if(parseMask.contains(it.name)) { return@forEach }
-            classMap[it.name] = Pair(Nothing::class, it.returnType)
+
+            // Coerce the member's return type to be a simple name
+            // (Remove collection type specifications and kotlin class jargon)
+            classMap[it.name] = "^[^<]*".toRegex().findAll(
+                it.returnType.toString()
+                .replace("\\bkotlin(?:\\.[^.A-Z<>]*)*\\.".toRegex(), "")
+            ).first().value
         }
 
         TSFParseLevel.entries.forEach {
@@ -132,8 +146,29 @@ class TSFParser <T> (
         }
     }
 
+    private fun reservedKeywordCheck(token: String, line: Int) {
+        if(keywords.contains(token)) {
+            throw DecoratedError("TSF", "Reserved keyword '${token}' used on line $line [$configFile]")
+        }
+    }
+
+    private fun keywordConversionCheck(keyword: String) : String {
+        try {
+            val converted = keywordConversions[keyword]
+            if(converted != null) { return converted  }
+        } catch(e: Exception) {
+            return keyword
+        }
+
+        return keyword
+    }
+
     /**
      * Parses class members into a designated class
+     *
+     * TODO : Add support for empty declaration and late assignment (optional)
+     * TODO : Replace linePos with a line matching function
+     * TODO : Create variable-input function for easy syntax checking (like reservedKeyWordCheck())
      *
      * @return An instance of the initialized class
      */
@@ -141,223 +176,156 @@ class TSFParser <T> (
         // Parse in from file
         val reader = BufferedReader(FileReader(configFile))
         var line: String?
-        val splitLine: MutableList<String> = MutableList(0) { "" }
-        var storedVars: MutableMap<String, Any> = mutableMapOf() // Name, Type, Value
-        var storedGroups: MutableMap<String, ArrayList<Pair<String, Any>>> = mutableMapOf() // All groups
+        val splitLine: MutableList<Array<String>> = MutableList(0) { arrayOf("") }
+        var flattenedFile: String = ""
 
-        var currLine = 1
-        var currPos = 1
+        var storedVars: MutableMap<String, Pair<String, Any>> = mutableMapOf() // Name, Type, Value
+        var storedGroups: MutableMap<String, Pair<Pair<KClass<*>, String>, ArrayList<Pair<String, Any>>>> = mutableMapOf() // Name, (Group Type, Member Type), Group Values (Name, Value)
+        var groupData: ArrayList<Pair<String, Any>> = arrayListOf()
 
-        while(reader.readLine().also { line = it } != null) {
+        var linePos = 1
+
+        while (reader.readLine().also { line = it } != null) {
+            // Remove all inline comments
+            line = line!!.replace("//.*".toRegex(), "");
+
             // Trim input and separate tokens
             line = line!!.trim()
             specialChars.forEach { line = line!!.replace(it, " $it ") }
+
+            // Replace spaces in string literals with temporary token
+            line = Regex("\".+\"").replace(line!!) { result ->
+                result.value.replace(" ", "__SPACE__")
+            }
+
+            // Flatten whitespace
             line = line!!.replace("\\s+".toRegex(), " ")
 
-            // Tokenize line
-            splitLine.addAll(line!!.split(" "))
+            // Append line to flattened file
+            flattenedFile += line + "__NEWLINE__"
         }
 
-        var fullSet = false
+        // Remove all multi-line comments
+        flattenedFile = flattenedFile.replace("\\/\\*(?:(?!\\*/|\\/\\*)[\\s\\S]*?\\*\\/)".toRegex(), "")
+
+        // Replace temporary tokens with newlines, flatten newlines, and split into lines
+        flattenedFile = flattenedFile.replace("__NEWLINE__", "\n")
+        flattenedFile = flattenedFile.replace("(\\r?\\n){2,}".toRegex(), "\n")
+        val tempSplit = flattenedFile.split("\n")
+
+        // Replace temporary tokens with spaces and tokenize line
+        for(currLine in tempSplit) {
+            splitLine.add(currLine.split(" ").map { it.replace("__SPACE__", " ") }.toTypedArray())
+        }
+        var _type = ""
+        var _mType = ""
+        var _name = ""
         var inGroup = false
 
-        var currName: String? = null
-
-        var outerType: String? = null
-        var currType: String? = null
-        var subType: String? = null
-
-        var groupVars: ArrayList<Pair<String, Any>> = ArrayList()
-
-        var currVal: String? = null
-        var token: String
-
-        // Parse tokens
-        var i: Int = 0
-        while(i < splitLine.size) {
-            token = splitLine[i]
-            println("[$token]")
-
-            if(currName != null && currType != null && currVal != null) { fullSet = true }
-
-            try {
-                // Match type
-                if(inGroup) { throw Exception() }
-                if(currType != null && subType == null && currName != null) {
-                    subType = token
-                    if(subType == null) { throw Exception() }
-                    i++
-                    continue
-                }
-                if (keywords[token] == null) { throw Exception() }
-                currType = token
-                if(currType == null) { throw Exception() }
-                outerType = token
-
-                i++
-                continue
-            } catch(_: Exception) { }
-
-            print(" = PAST = ")
-
-            when(token) {
-                ":" -> {
-                    if (inGroup) {
-                        try {
-                            //Optimally this would attempt to convert, but currently the converting functions do not have enough information for type inferencing
-                            token = splitLine[i + 1]
-                            groupVars.add(Pair(groupVars.last().first, anyCast(token, Class.forName(currType) as KClass<*>)))
-                            ++i
-                        } catch(RAHH: Exception) {
-                            RAHH.printStackTrace()
-                            throw DecoratedError("TSF", "Invalid data type for value '${splitLine[i + 1]}' in $currType! [$configFile] | Line $currLine, Character $currPos")
-                        }
-                    } else {
-                        // Validate syntax (Undeclared type or name)
-                        if (currType == null || currName == null) {
-                            throw DecoratedError(
-                                "TSF",
-                                "Unexpected token '$token' following ':' in file [$configFile] | Line $currLine, Character $currPos"
-                            )
-                        }
-                    }
-                }
-                "{" -> {
-                    if(currType != null && currName != null && subType == null) {
-                        throw DecoratedError(
-                            "TSF",
-                            "Missing subtype for type '$currType'! [$configFile] | Line $currLine, Character $currPos"
-                        )
-                    }
-                    inGroup = true
-                }
-                "}" -> {
-                    println("Group $currName")
-                    inGroup = false
-                    storedGroups[currName!!] = groupVars
-
-                    currName = null
-                    currVal = null
-                    currType = null
-                    outerType = null
-                    subType = null
-
-                    groupVars = ArrayList()
-                    currLine++
-                }
-                "," -> {
-                    // Validate syntax ("," outside of group definition)
+        // Parse file
+        splitLine.forEach { currLine ->
+            // Check for valid type
+            if (keywords.keys.contains(currLine[0]) || inGroup) {
+                // [Collection type]
+                if (keywordFlags[currLine[0]]?.and(TSFKeywordFlag.COLLECTION.value) != 0 || inGroup) {
+                    // Collection declaration checks
                     if(!inGroup) {
-                        throw DecoratedError(
-                            "TSF",
-                            "Unexpected character ',' in file [$configFile] | Line $currLine, Character $currPos"
-                        )
+                        _type = currLine[0]
+
+                        reservedKeywordCheck(currLine[1], linePos)
+                        _name = currLine[1]
+
+                        if (currLine[2] != ":") {
+                            throw DecoratedError("TSF", "Illegal character '${currLine[2]}' on line $linePos [$configFile]")
+                        }
+
+                        if(!keywords.contains(currLine[3])) {
+                            throw DecoratedError("TSF", "Invalid type in collection '$_name' on line $linePos [$configFile]")
+                        }
+                        _mType = currLine[3]
+
+                        if(currLine[4] != "{") {
+                            throw DecoratedError("TSF", "Missing collection definition on line $linePos [$configFile]")
+                        }
+
+                        inGroup = true
+                        return@forEach
                     }
+
+                    // Store group data and escape group
+                    if(currLine.contains("}")) {
+                        when(_mType) {
+                            "String" -> storedGroups[_name] = Pair(Pair(String::class, _mType), ArrayList(groupData))
+                            "Boolean" -> storedGroups[_name] = Pair(Pair(Boolean::class, _mType), ArrayList(groupData))
+                            "Int" -> storedGroups[_name] = Pair(Pair(Int::class, _mType), ArrayList(groupData))
+                            "Short" -> storedGroups[_name] = Pair(Pair(Short::class, _mType), ArrayList(groupData))
+                            "Long" -> storedGroups[_name] = Pair(Pair(Long::class, _mType), ArrayList(groupData))
+                            "Char" -> storedGroups[_name] = Pair(Pair(Char::class, _mType), ArrayList(groupData))
+                            "Double" -> storedGroups[_name] = Pair(Pair(Double::class, _mType), ArrayList(groupData))
+                        }
+                        groupData.clear()
+                        inGroup = false
+                        return@forEach
+                    }
+
+                    // Collect next group member
+                    reservedKeywordCheck(currLine[0], linePos)
+
+                    if (currLine[1] != ":") {
+                        throw DecoratedError("TSF", "Illegal character '${currLine[2]}' in collection '$_name' on line $linePos [$configFile]")
+                    }
+
+                    // Store value
+                    try {
+                        when(_mType) {
+                            "String" -> groupData.add(Pair(currLine[0], currLine[2]))
+                            "Boolean" -> groupData.add(Pair(currLine[0], currLine[2].toBoolean()))
+                            "Int" -> groupData.add(Pair(currLine[0], currLine[2].toInt()))
+                            "Short" -> groupData.add(Pair(currLine[0], currLine[2].toShort()))
+                            "Long" -> groupData.add(Pair(currLine[0], currLine[2].toLong()))
+                            "Double" -> groupData.add(Pair(currLine[0], currLine[2].toDouble()))
+                            "Char" -> groupData.add(Pair(currLine[0], currLine[2][0]))
+                        }
+                    } catch (e: Exception) {
+                        throw DecoratedError("TSF", "Failed to cast variable '$_name' to type '$_type' on line $linePos [$configFile]")
+                    }
+
+                    return@forEach
                 }
-                "\n", "\r", "" -> {
-                    // Set variable in map & reset temp variables
-                    if(fullSet) {
-                        storedVars[currName!!] = Pair(currType!!, currVal!!)
 
-                        when(currType) {
-                            "String" -> storedVars[currName] = Pair(currType, currVal)
-                            "Boolean" -> storedVars[currName] = Pair(currType, currVal.toBoolean())
-                            "Int" -> storedVars[currName] = Pair(currType, currVal.toInt())
-                            "Short" -> storedVars[currName] = Pair(currType, currVal.toShort())
-                            "Long" -> storedVars[currName] = Pair(currType, currVal.toLong())
-                            "Double" -> storedVars[currName] = Pair(currType, currVal.toDouble())
-                            "Char" -> storedVars[currName] = Pair(currType, currVal[0])
-                            "Map", "HashMap" -> storedGroups[currName] = groupVars
-                        }
+                // [Primitive type]
+                _type = currLine[0]
 
-                        currName = null
-                        currVal = null
-                        currType = null
-                        outerType = null
-                        subType = null
+                reservedKeywordCheck(currLine[1], linePos)
+                _name = currLine[1]
 
-                        groupVars = ArrayList()
-
-                        fullSet = false
-                    }
-
-                    currLine++
+                if (currLine[2] != ":") {
+                    throw DecoratedError("TSF", "Illegal character '${currLine[2]}' on line $linePos [$configFile]")
                 }
-                else -> {
-                    if(inGroup) {
-                        groupVars += Pair(token, "")
-                        ++i
-                        continue
-                    }
 
-                    // Set string value
-                    if(token.isNotEmpty() && token[0] == '"') {
-                        var tempToken: String = token
-
-                        while(tempToken.last() != '"') {
-                            ++i
-                            tempToken += splitLine[i]
-                        }
-
-                        currVal = tempToken.substring(1, tempToken.length - 1)
-                        continue
-                    }
-
-                    // Validate & set name
-                    if (currType != null && currName == null) {
-                        if(token[0].isDigit()) {
-                            throw DecoratedError(
-                                "TSF",
-                                "Illegal starting character '${token[0]}' in variable name! [$configFile] | Line $currLine, Character $currPos"
-                            )
-                        }
-
-                        var innerPos = 0
-                        token.forEach {
-                            if(
-                                !it.isLetter() && !it.isDigit() &&
-                                it.toString().toInt() != 32
-                              ) {
-                                throw DecoratedError(
-                                    "TSF",
-                                    "Unexpected character '$it' in variable name! [$configFile] | Line $currLine, Character ${currPos + innerPos}"
-                                )
-                            }
-                            innerPos++
-                        }
-
-                        currName = token
-                    } else if (currName != null && currType == null) {
-                        // Set type
-                        try {
-                            currType = token
-                            outerType = token
-                        } catch (_: Exception) {
-                            throw DecoratedError("TSF", "Invalid type $token'! [$configFile] | Line $currLine, Character $currPos")
-                        }
-                    } else if(currName != null && currVal == null) {
-                        // Set value
-                        currVal = token
-                    }
-                }
-            }
-
-            if(subType == null && currType != null && (keywordFlags[outerType]?.and(TSFKeywordFlag.TYPED.value) != 0)) {
-                // Set subtype
+                // Build type/value pair
                 try {
-                    if (keywords[token] == null) { throw Exception() }
-                    subType = token
-                } catch (_: Exception) { }
-                // womp womp
-            }
+                    when(_type) {
+                        "String" -> storedVars[_name] = Pair("String", currLine[3])
+                        "Boolean" -> storedVars[_name] = Pair("Boolean", currLine[3].toBoolean())
+                        "Int" -> storedVars[_name] = Pair("Int", currLine[3].toInt())
+                        "Short" -> storedVars[_name] = Pair("Short", currLine[3].toShort())
+                        "Long" -> storedVars[_name] = Pair("Long", currLine[3].toLong())
+                        "Double" -> storedVars[_name] = Pair("Double", currLine[3].toDouble())
+                        "Char" -> storedVars[_name] = Pair("Char", currLine[3][0])
+                    }
+                } catch (e: Exception) {
+                    throw DecoratedError("TSF", "Failed to cast variable '$_name' to type '$_type' on line $linePos [$configFile]")
+                }
 
-            currPos += token.length
-            i++
+                linePos++
+            }
         }
 
         var errStr = ""
         var _break = false
 
+        // Set class instance data
         while (!_break) {
             try {
                 classMap.forEach { (key, value) ->
@@ -370,18 +338,27 @@ class TSFParser <T> (
 
                         member.isAccessible = true
 
-                        if(keywordFlags[value.first.simpleName]?.and(TSFKeywordFlag.COLLECTION.ordinal) != 0) {
+                        // [Collection type]
+                        if(keywordFlags[value]?.and(TSFKeywordFlag.COLLECTION.ordinal) != 0) {
                             try {
-                                val parameter = storedGroups[key] as ArrayList<Pair<String, Any>>
-                                member.set(_class, mapCast(parameter, property?.returnType?.classifier as KClass<*>))
+                                val parameter = storedGroups[key]
+                                member.set(_class,
+                                    mapCast(
+                                        parameter!!.second,
+                                        property?.returnType?.classifier as KClass<*>,
+                                        parameter.first.first
+                                    ),
+                                )
                             } catch(e: Exception) {
+                                e.printStackTrace()
                                 throw DecoratedError("TSF", "Group name mismatch in parsing! [$key]")
                             }
 
                             return@forEach
                         }
 
-                        member.set(_class, anyCast(value.second, property?.returnType?.classifier as KClass<*>))
+                        // [Primitive type]
+                        member.set(_class, anyCast(storedVars[key]!!.second, property?.returnType?.classifier as KClass<*>))
                     } catch (e: Exception) {
                         errStr = key
                         e.printStackTrace()
