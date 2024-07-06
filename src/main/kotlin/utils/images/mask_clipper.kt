@@ -1,7 +1,7 @@
 package utils.images
 
 import utils.storage.Mask
-import utils.storage.outputLocation
+import utils.storage.Global.outputLocation
 import java.awt.Dimension
 import java.awt.image.BufferedImage
 import java.io.ByteArrayInputStream

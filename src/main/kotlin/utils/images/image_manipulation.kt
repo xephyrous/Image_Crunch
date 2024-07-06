@@ -17,7 +17,7 @@ fun runImagePipeline(genType: GeneratorType): ArrayList<Mask>? {
     when(genType) {
         GeneratorType.NONE -> TODO("literally nothing")
         GeneratorType.SQUARE -> {
-            nodes.set(generateNodes(GeneratorType.SQUARE))
+            Global.nodes.set(generateNodes(GeneratorType.SQUARE))
             return generateMasks(GeneratorType.SQUARE)
         }
         else -> {
@@ -35,9 +35,9 @@ fun runImagePipeline(genType: GeneratorType): ArrayList<Mask>? {
  */
 fun generateNodes(genType: GeneratorType) : ArrayList<PositionNode> {
     return when (genType) {
-        GeneratorType.SQUARE -> squareNodeGenerator(squareRows.value(), squareColumns.value())
+        GeneratorType.SQUARE -> squareNodeGenerator(Global.squareRows.value(), Global.squareColumns.value())
         else -> {
-            squareNodeGenerator(squareRows.value(), squareColumns.value())
+            squareNodeGenerator(Global.squareRows.value(), Global.squareColumns.value())
         }
     }
 }
@@ -67,9 +67,9 @@ private fun generateCuts(genType: GeneratorType) : Mask? {
  */
 private fun generateMasks(genType: GeneratorType) : ArrayList<Mask> {
     return when (genType) {
-        GeneratorType.SQUARE -> squareMaskGenerator(nodes.value()!!)
+        GeneratorType.SQUARE -> squareMaskGenerator(Global.nodes.value()!!)
         else -> {
-            squareMaskGenerator(nodes.value()!!)
+            squareMaskGenerator(Global.nodes.value()!!)
         }
     }
 }

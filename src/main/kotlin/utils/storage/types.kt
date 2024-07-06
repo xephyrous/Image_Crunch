@@ -111,41 +111,6 @@ class LockType<T>(lockVal: T) {
     }
 }
 
-// Add a new theme object: idk what im doing
-class AppTheme(
-    name: String,
-//    header: Color,
-//    text1: Color,
-//    text2: Color,
-//    textGrey: Color,
-//    icon: Color,
-//    bgGrad1: Color,
-//    bgGrad2: Color,
-//    bgGrad3: Color,
-//    cGrad1: Color,
-//    cGrad2: Color,
-//    button: Color,
-//    fab: Color,
-//    tFOn: Color,
-//    tFOff: Color,
-//    tFbg: Color,
-//    tFCursor: Color,
-//    tFFocus: Color,
-//    tFUFocus: Color,
-//    border: Color,
-) {
-    var themeName = name
-    val colors = arrayOfNulls<Color>(19)
-
-    fun set(position: Int, color: Color) { colors[position] = color }
-
-    fun changeName(name: String) { themeName = name }
-
-    fun getColors(): List<Color> {
-        return if (null in colors) emptyList() else (colors.toList() as List<Color>)
-    }
-}
-
 /**
  * Represents an array of masks with modification functions
  *
@@ -243,25 +208,33 @@ fun mapCast(list: ArrayList<Pair<String, Any>>, mapType: KClass<*>, targetType: 
  * @property textColors Map of colors for all text variations
  * @property backgroundColors Map of colors for all background variations
  */
-class ThemeData {
-    var name: String = ""
+
+class ThemeData(var name: String) {
     var icon: Long = 0
+    var header: Long = 0
+    var button: Long = 0
+    var border: Long = 0
+    var fab: Long = 0
+    var card: Map<String, Long> = mapOf()
     var textColors: Map<String, Long> = mapOf()
     var backgroundColors: Map<String, Long> = mapOf()
+    var tF: Map<String, Long> = mapOf()
 }
 
-class DecoratedError(type: String, message: String) : Throwable(message) {
+open class DecoratedError(type: String, message: String) : Throwable(message) {
     init {
         print("\u001b[31m")
-        println("\u001b[1m[\u001B[0m\u001b[31m ${type.uppercase()}-ERROR : $message \u001B[1m]\u001B[0m")
+        println("\u001b[1m[\u001B[0m\u001b[31m ${type.uppercase().replace(" ", "-")}-ERROR : $message \u001B[1m]\u001B[0m")
         print("\u001b[0m")
     }
 }
 
-class DecoratedWarning(type: String, message: String) : Exception(message) {
+open class DecoratedWarning(type: String, message: String) : Exception(message) {
     init {
         print("\u001b[31m")
         println("\u001b[1m[\u001B[0m\u001b[31m ${type.uppercase()}-WARNING : $message \u001B[1m]\u001B[0m")
         print("\u001b[0m")
     }
 }
+
+class InvalidTSFFile(message: String) : DecoratedError("TSF", message)

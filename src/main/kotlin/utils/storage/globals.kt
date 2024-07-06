@@ -11,19 +11,23 @@ import java.awt.image.BufferedImage
 /**
  * Loaded image details
  */
-var loadedImageSize: LockType<Dimension?> = LockType(null)
-var loadedImage: LockType<BufferedImage?> = LockType(null)
 
-var outputLocation: String? = null
+object Global {
+    var loadedImageSize: LockType<Dimension?> = LockType(null)
+    var loadedImage: LockType<BufferedImage?> = LockType(null)
 
-var generatorType: LockType<GeneratorType> = LockType(GeneratorType.SQUARE)
-var nodes: LockType<ArrayList<PositionNode>?> = LockType(null)
-var mask: LockType<Mask?> = LockType(null)
-var slices: LockType<ArrayList<Mask>?> = LockType(null)
+    var outputLocation: String? = null
 
-// Square Gen Settings
-var squareRows: LockType<Int> = LockType(5)
-var squareColumns: LockType<Int> = LockType(5)
+    var generatorType: LockType<GeneratorType> = LockType(GeneratorType.SQUARE)
+    var nodes: LockType<ArrayList<PositionNode>?> = LockType(null)
+    var mask: LockType<Mask?> = LockType(null)
+    var slices: LockType<ArrayList<Mask>?> = LockType(null)
 
-// Cut Noise
-var cutNoise: LockType<Float> = LockType(0.0F)
+    // Square Gen Settings
+    var squareRows: LockType<Int> = LockType(5)
+    var squareColumns: LockType<Int> = LockType(5)
+
+    // Cut Noise
+    var cutNoise: LockType<Float> = LockType(0.0F)
+}
+

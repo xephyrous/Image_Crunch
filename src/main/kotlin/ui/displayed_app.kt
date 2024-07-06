@@ -31,6 +31,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import utils.app.ImageFileSelection
 import utils.app.SelectOutputPath
+import utils.app.getThemes
 import utils.images.*
 import utils.storage.*
 import java.awt.Desktop
@@ -78,8 +79,8 @@ fun App() {
                             val tempImage = ImageFileSelection()
                             if (tempImage != null) {
                                 vm.displayedImage = fileToBufferedImage(tempImage)
-                                loadedImage.set(fileToBufferedImage(tempImage))
-                                loadedImageSize.set(getDim(vm.displayedImage!!))
+                                Global.loadedImage.set(fileToBufferedImage(tempImage))
+                                Global.loadedImageSize.set(getDim(vm.displayedImage!!))
                             }
                             if (vm.displayedImage != null) {
                                 vm.displayedNodes = createNodeMask(
@@ -158,35 +159,35 @@ fun App() {
             floatingActionButton = {
                 ExtendedFloatingActionButton(
                     onClick = {
-                        if (loadedImage.value() == null) {
+                        if (Global.loadedImage.value() == null) {
                             alertsHandler.DisplayAlert("Please select an image", 3002)
-                        } else if (outputLocation == null) {
+                        } else if (Global.outputLocation == null) {
                             alertsHandler.DisplayAlert("Please select an output location", 3001)
                         } else {
-                            loadedImage.lock()
-                            loadedImageSize.lock()
-                            squareRows.lock()
-                            squareColumns.lock()
-                            generatorType.lock()
-                            nodes.lock()
-                            mask.lock()
+                            Global.loadedImage.lock()
+                            Global.loadedImageSize.lock()
+                            Global.squareRows.lock()
+                            Global.squareColumns.lock()
+                            Global.generatorType.lock()
+                            Global.nodes.lock()
+                            Global.mask.lock()
 
-                            slices.set(runImagePipeline(generatorType.value()))
+                            Global.slices.set(runImagePipeline(Global.generatorType.value()))
 
-                            slices.lock()
+                            Global.slices.lock()
 
-                            for (i in slices.value()!!.indices) {
-                                maskToImage(loadedImage.value()!!, slices.value()!![i], "Output-${i}")
+                            for (i in Global.slices.value()!!.indices) {
+                                maskToImage(Global.loadedImage.value()!!, Global.slices.value()!![i], "Output-${i}")
                             }
 
-                            loadedImage.unlock()
-                            loadedImageSize.unlock()
-                            squareRows.unlock()
-                            squareColumns.unlock()
-                            generatorType.unlock()
-                            nodes.unlock()
-                            mask.unlock()
-                            slices.unlock()
+                            Global.loadedImage.unlock()
+                            Global.loadedImageSize.unlock()
+                            Global.squareRows.unlock()
+                            Global.squareColumns.unlock()
+                            Global.generatorType.unlock()
+                            Global.nodes.unlock()
+                            Global.mask.unlock()
+                            Global.slices.unlock()
                         }
                     },
                     text = { Text("Run", color = vm.themeColor[2], fontSize = 16.sp*vm.xScale.coerceAtMost(vm.yScale)) },
@@ -431,7 +432,7 @@ fun App() {
                                     buttonElement(
                                         xScale = vm.xScale, yScale = vm.yScale,
                                         buttonEvent = {
-                                            TODO("Fetch Themes")
+                                            // TODO : Utilize getThemes()
                                         },
                                         buttonText = "Fetch Themes", themeColor = vm.themeColor
                                     )
@@ -504,7 +505,7 @@ fun App() {
                                     buttonElement(
                                         xScale = vm.xScale, yScale = vm.yScale,
                                         buttonEvent = {
-                                            generatorType.set(GeneratorType.SQUARE)
+                                            Global.generatorType.set(GeneratorType.SQUARE)
                                             vm.selectedGenerator = 1
                                         },
                                         buttonText = "Square Generator", themeColor = vm.themeColor
@@ -540,11 +541,11 @@ fun App() {
                                     buttonElement(
                                         xScale = vm.xScale, yScale = vm.yScale,
                                         buttonEvent = {
-                                            outputLocation = SelectOutputPath()
-                                            if (outputLocation == null) {
+                                            Global.outputLocation = SelectOutputPath()
+                                            if (Global.outputLocation == null) {
                                                 alertsHandler.DisplayAlert("No Location Selected")
                                             } else {
-                                                alertsHandler.DisplayAlert("Output Location set to: $outputLocation")
+                                                alertsHandler.DisplayAlert("Output Location set to: ${Global.outputLocation}")
                                             }
                                         },
                                         buttonText = "Select Output Location", themeColor = vm.themeColor
@@ -552,8 +553,8 @@ fun App() {
                                     buttonElement(
                                         xScale = vm.xScale, yScale = vm.yScale,
                                         buttonEvent = {
-                                            if (outputLocation != null) {
-                                                Desktop.getDesktop().open(File(outputLocation!!))
+                                            if (Global.outputLocation != null) {
+                                                Desktop.getDesktop().open(File(Global.outputLocation!!))
                                             } else {
                                                 alertsHandler.DisplayAlert("No output location selected")
                                             }

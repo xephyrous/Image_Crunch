@@ -122,11 +122,11 @@ class TSFParser <T> (
     init {
         // Check file validity
         if(!configFile.exists() || !configFile.canRead()) {
-            throw DecoratedError("TSF", "File $configFile does not exist or is unreadable!")
+            throw InvalidTSFFile("File $configFile does not exist or is unreadable!")
         }
 
         if(configFile.extension != "tsf") {
-            throw DecoratedError("TSF", "Invalid file extension!\nExpected: .tsf | Received: .${configFile.extension}")
+            throw InvalidTSFFile("Invalid file extension!\nExpected: .tsf | Received: .${configFile.extension}")
         }
 
         // Add class member names to classMap
@@ -148,7 +148,7 @@ class TSFParser <T> (
 
     private fun reservedKeywordCheck(token: String, line: Int) {
         if(keywords.contains(token)) {
-            throw DecoratedError("TSF", "Reserved keyword '${token}' used on line $line [$configFile]")
+            throw InvalidTSFFile("Reserved keyword '${token}' used on line $line [$configFile]")
         }
     }
 
@@ -236,16 +236,16 @@ class TSFParser <T> (
                         _name = currLine[1]
 
                         if (currLine[2] != ":") {
-                            throw DecoratedError("TSF", "Illegal character '${currLine[2]}' on line $linePos [$configFile]")
+                            throw InvalidTSFFile("Illegal character '${currLine[2]}' on line $linePos [$configFile]")
                         }
 
                         if(!keywords.contains(currLine[3])) {
-                            throw DecoratedError("TSF", "Invalid type in collection '$_name' on line $linePos [$configFile]")
+                            throw InvalidTSFFile("Invalid type in collection '$_name' on line $linePos [$configFile]")
                         }
                         _mType = currLine[3]
 
                         if(currLine[4] != "{") {
-                            throw DecoratedError("TSF", "Missing collection definition on line $linePos [$configFile]")
+                            throw InvalidTSFFile("Missing collection definition on line $linePos [$configFile]")
                         }
 
                         inGroup = true
@@ -272,7 +272,7 @@ class TSFParser <T> (
                     reservedKeywordCheck(currLine[0], linePos)
 
                     if (currLine[1] != ":") {
-                        throw DecoratedError("TSF", "Illegal character '${currLine[2]}' in collection '$_name' on line $linePos [$configFile]")
+                        throw InvalidTSFFile("Illegal character '${currLine[2]}' in collection '$_name' on line $linePos [$configFile]")
                     }
 
                     // Store value
@@ -287,7 +287,7 @@ class TSFParser <T> (
                             "Char" -> groupData.add(Pair(currLine[0], currLine[2][0]))
                         }
                     } catch (e: Exception) {
-                        throw DecoratedError("TSF", "Failed to cast variable '$_name' to type '$_type' on line $linePos [$configFile]")
+                        throw InvalidTSFFile("Failed to cast variable '$_name' to type '$_type' on line $linePos [$configFile]")
                     }
 
                     return@forEach
@@ -300,7 +300,7 @@ class TSFParser <T> (
                 _name = currLine[1]
 
                 if (currLine[2] != ":") {
-                    throw DecoratedError("TSF", "Illegal character '${currLine[2]}' on line $linePos [$configFile]")
+                    throw InvalidTSFFile("Illegal character '${currLine[2]}' on line $linePos [$configFile]")
                 }
 
                 // Build type/value pair
@@ -315,7 +315,7 @@ class TSFParser <T> (
                         "Char" -> storedVars[_name] = Pair("Char", currLine[3][0])
                     }
                 } catch (e: Exception) {
-                    throw DecoratedError("TSF", "Failed to cast variable '$_name' to type '$_type' on line $linePos [$configFile]")
+                    throw InvalidTSFFile("Failed to cast variable '$_name' to type '$_type' on line $linePos [$configFile]")
                 }
 
                 linePos++
@@ -351,7 +351,7 @@ class TSFParser <T> (
                                 )
                             } catch(e: Exception) {
                                 e.printStackTrace()
-                                throw DecoratedError("TSF", "Group name mismatch in parsing! [$key]")
+                                throw InvalidTSFFile("Group name mismatch in parsing! [$key]")
                             }
 
                             return@forEach
@@ -372,7 +372,7 @@ class TSFParser <T> (
                     // Handles errors in parsing according to parse level, calls a callback set by user if defined
                     TSFParseLevel.STRICT -> {
                         parseCallbackFunctions[TSFParseLevel.STRICT.ordinal]()
-                        throw DecoratedError("TSF", "Non-Matching Variable in TSF file! [$errStr]")
+                        throw InvalidTSFFile("Non-Matching Variable in TSF file! [$errStr]")
                     }
 
                     TSFParseLevel.WARNING -> {

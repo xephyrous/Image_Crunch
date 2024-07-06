@@ -18,9 +18,9 @@ import utils.images.bufferedImageToOutputStream
 import utils.images.createNodeMask
 import utils.images.generateNodes
 import utils.storage.GeneratorType
-import utils.storage.cutNoise
-import utils.storage.squareColumns
-import utils.storage.squareRows
+import utils.storage.Global.cutNoise
+import utils.storage.Global.squareColumns
+import utils.storage.Global.squareRows
 
 /**
  * Updates the node mask for the displayed image

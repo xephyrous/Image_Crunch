@@ -1,7 +1,7 @@
 package utils.images
 
 import utils.storage.PositionNode
-import utils.storage.loadedImageSize
+import utils.storage.Global.loadedImageSize
 import kotlin.math.ceil
 
 // Node Generation Functions must be (list: ParameterList) -> ArrayList<PositionNode>

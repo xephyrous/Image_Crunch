@@ -1,7 +1,7 @@
 package utils.images
 
 import utils.storage.PositionNode
-import utils.storage.loadedImageSize
+import utils.storage.Global.loadedImageSize
 import java.awt.BasicStroke
 import java.awt.Color
 import java.awt.Graphics2D
