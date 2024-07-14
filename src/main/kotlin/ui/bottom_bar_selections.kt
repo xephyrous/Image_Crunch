@@ -59,6 +59,7 @@ fun bottomBar(vm: ViewModel) {
                 themeColor = vm.themeColor, borderWidth = 1.dp,
                 cardContent = {
                     // card content i GUESS
+                    // TODO: fix this to be not trash (i'm talking to you future aidan...)
                     verticalVisibilityPane(
                         visibility = vm.selectedGenerator == 1, animationHeight = 2, duration = 369, paneContent = {
                             var sRT by mutableStateOf(squareRows.value().toString())
@@ -71,7 +72,7 @@ fun bottomBar(vm: ViewModel) {
                                 )
                             }
                             Row(
-                                modifier = Modifier.offset(y = 50.dp)
+                                modifier = Modifier.offset(y = 40.dp*vm.yScale)
                             ) {
                                 TextField(
                                     value = sRT,
@@ -91,7 +92,8 @@ fun bottomBar(vm: ViewModel) {
                                         focusedIndicatorColor = vm.themeColor[12],
                                         unfocusedIndicatorColor = vm.themeColor[13]
                                     ),
-                                    modifier = Modifier.size((vm.screenWidth/3)-10.dp, 50.dp).offset(5.dp, 5.dp)
+                                    modifier = Modifier.size(((vm.screenWidth/3)-10.dp)*vm.xScale, 50.dp*vm.yScale)
+                                        .offset(5.dp*vm.xScale, 5.dp*vm.yScale)
                                         .onKeyEvent {
                                             // THERE IS NO GOD
                                             if (it.key == Key.Enter) {
@@ -111,7 +113,7 @@ fun bottomBar(vm: ViewModel) {
                                 )
                             }
                             Row(
-                                modifier = Modifier.offset(y = 110.dp)
+                                modifier = Modifier.offset(y = 100.dp*vm.yScale)
                             ) {
                                 Text(
                                     "Number of Columns:", color = vm.themeColor[2],
@@ -120,7 +122,7 @@ fun bottomBar(vm: ViewModel) {
                                 )
                             }
                             Row(
-                                modifier = Modifier.offset(y = 160.dp)
+                                modifier = Modifier.offset(y = 140.dp*vm.yScale)
                             ) {
                                 TextField(
                                     value = sCT,
@@ -138,7 +140,8 @@ fun bottomBar(vm: ViewModel) {
                                         focusedIndicatorColor = vm.themeColor[12],
                                         unfocusedIndicatorColor = vm.themeColor[13]
                                     ),
-                                    modifier = Modifier.size((vm.screenWidth/3)-10.dp, 50.dp).offset(5.dp, 5.dp)
+                                    modifier = Modifier.size(((vm.screenWidth/3)-10.dp)*vm.xScale, 50.dp*vm.yScale)
+                                        .offset(5.dp*vm.xScale, 5.dp*vm.yScale)
                                         .onKeyEvent {
                                             if (it.key == Key.Enter) {
                                                 if(squareColumns.value() > 0 && vm.displayedImage != null) {
