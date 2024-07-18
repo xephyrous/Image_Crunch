@@ -221,6 +221,10 @@ class ThemeData(var name: String) {
     var tF: Map<String, Long> = mapOf()
 }
 
+class ConfigData() {
+
+}
+
 open class DecoratedError(type: String, message: String) : Throwable(message) {
     init {
         print("\u001b[31m")

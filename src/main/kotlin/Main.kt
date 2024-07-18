@@ -2,11 +2,11 @@
  * @author Alexander Yauchler
  * @author Aidan Mao
  *
- * Project Timeline : 1/17/2024 -> TBD (4/1/2024)
+ * Project Timeline : 1/17/2024 -> TBD (7/18/2024)
  *
- * This software is under the MIT License
+ * This software is licensed under the MIT License
  *
- * Written by Alexander Yauchler and Aidan Mao
+ * Written by Aidan Mao and Alexander Yauchler
  * Freshmen in Computer Science at Purdue University Fort Wayne
  *
  * Project direction by Dr. Chen
@@ -19,14 +19,12 @@ import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
 import ui.App
-import utils.images.runImagePipeline
-import utils.storage.GeneratorType
-import utils.storage.loadedImageSize
-import java.awt.Dimension
+import utils.app.getConfigData
+import utils.app.getThemes
 
 fun main() = application {
-    // parseConfigData()
-    // parseThemeData()
+    val config = getConfigData()
+    val themes = getThemes()
 
     val state = rememberWindowState(
         size = DpSize(1200.dp, 800.dp),
