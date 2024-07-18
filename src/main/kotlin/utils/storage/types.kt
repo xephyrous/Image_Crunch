@@ -218,7 +218,7 @@ class ThemeData(var name: String) {
     var card: Map<String, Long> = mapOf()
     var textColors: Map<String, Long> = mapOf()
     var backgroundColors: Map<String, Long> = mapOf()
-    var tF: Map<String, Long> = mapOf()
+    var textFields: Map<String, Long> = mapOf()
 }
 
 class ConfigData() {

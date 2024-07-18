@@ -19,7 +19,7 @@ NamedMap backgroundColors: Long {
     bgGrad3: 4280690734
 }
 
-NamedMap tF: Long {
+NamedMap textFields: Long {
     tFOn: 4280690734,
     tFOff: 4280690734,
     tFbg: 4280690734,
