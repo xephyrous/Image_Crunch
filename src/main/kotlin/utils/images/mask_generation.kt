@@ -24,8 +24,8 @@ fun squareMaskGenerator(
     var addMask: Mask
     var tempBits: ImageMask
 
-    val rows = Global.squareRows.value()
-    val columns = Global.squareColumns.value()
+    val rows = Global.squareRows.value
+    val columns = Global.squareColumns.value
 
     for(i in 0 .. nodes.size) {
         if(currRow == rows) { break }

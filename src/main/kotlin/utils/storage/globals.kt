@@ -7,11 +7,6 @@ import java.awt.image.BufferedImage
  * All global variables are stored as LockType<T> to prevent possible race conditions
  * with a user changing settings during generation
  */
-
-/**
- * Loaded image details
- */
-
 object Global {
     var loadedImageSize: LockType<Dimension?> = LockType(null)
     var loadedImage: LockType<BufferedImage?> = LockType(null)
@@ -30,4 +25,3 @@ object Global {
     // Cut Noise
     var cutNoise: LockType<Float> = LockType(0.0F)
 }
-

@@ -22,7 +22,7 @@ fun createNodeMask(
     nodeSize: Int = 10,
 ): BufferedImage {
     // Create Output
-    val img = BufferedImage(loadedImageSize.value()!!.width, loadedImageSize.value()!!.height, BufferedImage.TYPE_INT_ARGB)
+    val img = BufferedImage(loadedImageSize.value!!.width, loadedImageSize.value!!.height, BufferedImage.TYPE_INT_ARGB)
     val gpx: Graphics2D = img.graphics as Graphics2D
 
     gpx.color = nodeColor

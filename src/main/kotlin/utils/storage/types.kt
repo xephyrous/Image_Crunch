@@ -67,7 +67,24 @@ class Mask(val size: Dimension) {
  * @property holdVal Any queued value
  */
 class LockType<T>(lockVal: T) {
-    private var value: T = lockVal
+    var value: T = lockVal
+        get() {
+            if(holdVal != null && !locked) {
+                value = holdVal!!
+                holdVal = null
+            }
+
+            return field
+        }
+        set(newVal) {
+            if (locked) {
+                holdVal = newVal
+                return
+            }
+
+            field = newVal
+        }
+
     private var locked: Boolean = false
     private var holdVal: T? = null
 
@@ -85,79 +102,6 @@ class LockType<T>(lockVal: T) {
      * Unlocks the property, it can be modified
      */
     fun unlock() { locked = false }
-
-    /**
-     * Returns the value of the data, updates the data if there is a value queued
-     */
-    fun value() : T {
-        if(holdVal != null && !locked) {
-            value = holdVal!!
-            holdVal = null
-        }
-
-        return value
-    }
-
-    /**
-     * Sets the value of the data, if locked it queues the value in [holdVal]
-     */
-    fun set(newVal: T) {
-        if(locked) {
-            holdVal = newVal
-            return
-        }
-
-        value = newVal
-    }
-}
-
-/**
- * Represents an array of masks with modification functions
- *
- * @property masks An array of all masks
- */
-class ImageMaskArray() {
-    var masks = ArrayList<Mask>()
-
-    /**
-     * Adds a mask to the array
-     */
-    fun add(m: Mask) { masks.add(m) }
-
-    /**
-     * Removes a mask from the array by
-     */
-    fun remove(m: Mask) { masks.remove(m) }
-
-    /**
-     * Removes a mask from the array at a given index
-     */
-    fun remove(idx: Int) { masks.removeAt(idx) }
-
-    /**
-     * Removes the last mask in the array
-     */
-    fun removeLast() { masks.remove(masks.last()) }
-
-    /**
-     * Removes the first mask in the array
-     */
-    fun removeFirst() { masks.remove(masks[0]) }
-
-    /**
-     * Returns the mask at a given index
-     */
-    fun get(idx: Int) : Mask { return masks[idx] }
-
-    /**
-     * Returns the last mask in the array
-     */
-    fun last() : Mask { return masks.last() }
-
-    /**
-     * Returns the first mask in the array
-     */
-    fun first() : Mask { return masks[0] }
 }
 
 /**

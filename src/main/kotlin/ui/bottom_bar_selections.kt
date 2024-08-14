@@ -62,8 +62,8 @@ fun bottomBar(vm: ViewModel) {
                     // TODO: fix this to be not trash (i'm talking to you future aidan...)
                     verticalVisibilityPane(
                         visibility = vm.selectedGenerator == 1, animationHeight = 2, duration = 369, paneContent = {
-                            var sRT by mutableStateOf(squareRows.value().toString())
-                            var sCT by mutableStateOf(squareColumns.value().toString())
+                            var sRT by mutableStateOf(squareRows.value.toString())
+                            var sCT by mutableStateOf(squareColumns.value.toString())
                             Row() {
                                 Text(
                                     "Number of Rows:", color = vm.themeColor[2],
@@ -80,7 +80,7 @@ fun bottomBar(vm: ViewModel) {
                                         if(it.length < 5 && (it.matches(numbersOnly) || it.isEmpty())) {
                                             sRT = it
                                             if(sRT.isNotEmpty()) {
-                                                squareRows.set(sRT.toInt())
+                                                squareRows.value = sRT.toInt()
                                             }
                                         }
                                     },
@@ -97,7 +97,7 @@ fun bottomBar(vm: ViewModel) {
                                         .onKeyEvent {
                                             // THERE IS NO GOD
                                             if (it.key == Key.Enter) {
-                                                if(squareRows.value() > 0 && vm.displayedImage != null) {
+                                                if(squareRows.value > 0 && vm.displayedImage != null) {
                                                     updateMask(vm, GeneratorType.SQUARE)
                                                 }
                                             }
@@ -105,7 +105,7 @@ fun bottomBar(vm: ViewModel) {
                                         }
                                         .onFocusChanged {
                                             if (!it.isFocused) {
-                                                if(squareRows.value() > 0 && vm.displayedImage != null) {
+                                                if(squareRows.value > 0 && vm.displayedImage != null) {
                                                     updateMask(vm, GeneratorType.SQUARE)
                                                 }
                                             }
@@ -129,7 +129,7 @@ fun bottomBar(vm: ViewModel) {
                                     onValueChange = {
                                         if(it.length < 5 && (it.matches(numbersOnly) || it.isEmpty())) {
                                             sCT = it
-                                            if(sCT.isNotEmpty()) squareColumns.set(sCT.toInt())
+                                            if(sCT.isNotEmpty()) squareColumns.value = sCT.toInt()
                                         }
                                     },
                                     colors = TextFieldDefaults.textFieldColors(
@@ -144,7 +144,7 @@ fun bottomBar(vm: ViewModel) {
                                         .offset(5.dp*vm.xScale, 5.dp*vm.yScale)
                                         .onKeyEvent {
                                             if (it.key == Key.Enter) {
-                                                if(squareColumns.value() > 0 && vm.displayedImage != null) {
+                                                if(squareColumns.value > 0 && vm.displayedImage != null) {
                                                     updateMask(vm, GeneratorType.SQUARE)
                                                 }
                                             }
@@ -152,7 +152,7 @@ fun bottomBar(vm: ViewModel) {
                                         }
                                         .onFocusChanged {
                                             if (!it.isFocused) {
-                                                if(squareColumns.value() > 0 && vm.displayedImage != null) {
+                                                if(squareColumns.value > 0 && vm.displayedImage != null) {
                                                     updateMask(vm, GeneratorType.SQUARE)
                                                 }
                                             }
@@ -184,7 +184,7 @@ fun bottomBar(vm: ViewModel) {
                 width = vm.screenWidth/3, height = 400.dp, elevation = 5.dp,
                 themeColor = vm.themeColor, borderWidth = 1.dp,
                 cardContent = {
-                    var sliderPosition by remember { mutableStateOf(cutNoise.value()) }
+                    var sliderPosition by remember { mutableStateOf(cutNoise.value) }
                     Column {
                         textElement(
                             width = vm.screenWidth/3, displayedText = "Cut Noise", xScale = vm.xScale, yScale = vm.yScale,
@@ -197,7 +197,7 @@ fun bottomBar(vm: ViewModel) {
                                 value = sliderPosition,
                                 onValueChange = {
                                     sliderPosition = it
-                                    cutNoise.set(it)
+                                    cutNoise.value = it
                                     println(it)
                                 },
                                 colors = SliderDefaults.colors(

@@ -79,8 +79,8 @@ fun App() {
                             val tempImage = ImageFileSelection()
                             if (tempImage != null) {
                                 vm.displayedImage = fileToBufferedImage(tempImage)
-                                Global.loadedImage.set(fileToBufferedImage(tempImage))
-                                Global.loadedImageSize.set(getDim(vm.displayedImage!!))
+                                Global.loadedImage.value = fileToBufferedImage(tempImage)
+                                Global.loadedImageSize.value = getDim(vm.displayedImage!!)
                             }
                             if (vm.displayedImage != null) {
                                 vm.displayedNodes = createNodeMask(
@@ -159,7 +159,7 @@ fun App() {
             floatingActionButton = {
                 ExtendedFloatingActionButton(
                     onClick = {
-                        if (Global.loadedImage.value() == null) {
+                        if (Global.loadedImage.value == null) {
                             alertsHandler.DisplayAlert("Please select an image", 3002)
                         } else if (Global.outputLocation == null) {
                             alertsHandler.DisplayAlert("Please select an output location", 3001)
@@ -172,12 +172,12 @@ fun App() {
                             Global.nodes.lock()
                             Global.mask.lock()
 
-                            Global.slices.set(runImagePipeline(Global.generatorType.value()))
+                            Global.slices.value = runImagePipeline(Global.generatorType.value)
 
                             Global.slices.lock()
 
-                            for (i in Global.slices.value()!!.indices) {
-                                maskToImage(Global.loadedImage.value()!!, Global.slices.value()!![i], "Output-${i}")
+                            for (i in Global.slices.value!!.indices) {
+                                maskToImage(Global.loadedImage.value!!, Global.slices.value!![i], "Output-${i}")
                             }
 
                             Global.loadedImage.unlock()
@@ -505,7 +505,7 @@ fun App() {
                                     buttonElement(
                                         xScale = vm.xScale, yScale = vm.yScale,
                                         buttonEvent = {
-                                            Global.generatorType.set(GeneratorType.SQUARE)
+                                            Global.generatorType.value = GeneratorType.SQUARE
                                             vm.selectedGenerator = 1
                                         },
                                         buttonText = "Square Generator", themeColor = vm.themeColor
