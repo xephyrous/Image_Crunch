@@ -1,14 +1,8 @@
 package utils.storage
 
-import androidx.compose.ui.graphics.Color
 import java.awt.Dimension
 import kotlin.IllegalArgumentException
 import kotlin.reflect.KClass
-
-/**
- * An image as a byte mask
- */
-typealias ImageMask = Array<Array<Byte>>
 
 /**
  * A single position on an image
@@ -91,17 +85,23 @@ class LockType<T>(lockVal: T) {
     /**
      * Returns if the value is locked
      */
-    fun locked() : Boolean { return locked }
+    fun locked(): Boolean {
+        return locked
+    }
 
     /**
      * Locks the value, it cannot be modified
      */
-    fun lock() { locked = true }
+    fun lock() {
+        locked = true
+    }
 
     /**
      * Unlocks the property, it can be modified
      */
-    fun unlock() { locked = false }
+    fun unlock() {
+        locked = false
+    }
 }
 
 /**
@@ -129,17 +129,19 @@ fun anyCast(value: Any, targetType: KClass<*>): Any {
  * Casts an ArrayList of name / value pairs to a designated map collection type
  */
 fun mapCast(list: ArrayList<Pair<String, Any>>, mapType: KClass<*>, targetType: KClass<*>): Any {
-    return when(mapType) {
+    return when (mapType) {
         Map::class -> {
             val buildMap: MutableMap<String, Any> = mutableMapOf()
-            list.forEach {  buildMap[it.first] = anyCast(it.second, targetType)  }
+            list.forEach { buildMap[it.first] = anyCast(it.second, targetType) }
             buildMap
         }
+
         HashMap::class -> {
             val buildMap: HashMap<String, Any> = hashMapOf()
-            list.forEach {  buildMap[it.first] = anyCast(it.second, targetType)  }
+            list.forEach { buildMap[it.first] = anyCast(it.second, targetType) }
             buildMap
         }
+
         else -> throw IllegalArgumentException("Unsupported mapCast type conversion : ${targetType.simpleName}")
     }
 }
@@ -152,7 +154,6 @@ fun mapCast(list: ArrayList<Pair<String, Any>>, mapType: KClass<*>, targetType: 
  * @property textColors Map of colors for all text variations
  * @property backgroundColors Map of colors for all background variations
  */
-
 class ThemeData(var name: String) {
     var icon: Long = 0
     var header: Long = 0
@@ -165,18 +166,36 @@ class ThemeData(var name: String) {
     var textFields: Map<String, Long> = mapOf()
 }
 
+/**
+ * TODO : Document Config Data
+ *  & Finish it
+ */
 class ConfigData() {
 
 }
 
-open class DecoratedError(type: String, message: String) : Throwable(message) {
+/**
+ * TODO : Document DecoratedError
+ */
+open class DecoratedError(type: String, message: String, code: Int? = null) : Throwable(message) {
     init {
-        print("\u001b[31m")
-        println("\u001b[1m[\u001B[0m\u001b[31m ${type.uppercase().replace(" ", "-")}-ERROR : $message \u001B[1m]\u001B[0m")
-        print("\u001b[0m")
+        print(
+            "\n\u001b[31m\u001b[1m[\u001b[0m\u001b[31m ${
+                type.uppercase().replace(" ", "-")
+            }-ERROR : $message \u001b[1m]"
+        )
+
+        if (code != null) {
+            print(" <Code $code>")
+        }
+
+        print("\u001b[0m\n\n")
     }
 }
 
+/**
+ * TODO : Document DecoratedWarning
+ */
 open class DecoratedWarning(type: String, message: String) : Exception(message) {
     init {
         print("\u001b[31m")
@@ -185,4 +204,7 @@ open class DecoratedWarning(type: String, message: String) : Exception(message) 
     }
 }
 
+/**
+ * TODO : Document InvalidTSFile()
+ */
 class InvalidTSFFile(message: String) : DecoratedError("TSF", message)

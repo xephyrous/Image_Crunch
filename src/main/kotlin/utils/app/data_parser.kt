@@ -12,7 +12,7 @@ import java.nio.file.Paths
 /**
  * Collects themes from the default (or specified) folder path.
  */
-fun getThemes(startPath: String = "\\src\\main\\config\\themes\\") : ArrayList<ThemeData> {
+fun getThemes(startPath: String = "\\config\\themes\\"): ArrayList<ThemeData> {
     val themes: ArrayList<ThemeData> = arrayListOf()
     val dir = File(Paths.get("").toAbsolutePath().toString() + startPath)
 
@@ -40,7 +40,7 @@ fun getThemes(startPath: String = "\\src\\main\\config\\themes\\") : ArrayList<T
  *  - Later on I'll add support for loading multiple to select from for more customization,
  *  but this will be simpler for the time being.
  */
-fun getConfigData(startPath: String = "\\src\\main\\config\\") : ConfigData {
+fun getConfigData(startPath: String = "\\config\\"): ConfigData {
     var config: ConfigData = ConfigData()
     val dir = File(Paths.get("").toAbsolutePath().toString() + startPath)
 

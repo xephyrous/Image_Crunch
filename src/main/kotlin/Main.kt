@@ -21,10 +21,12 @@ import androidx.compose.ui.window.rememberWindowState
 import ui.App
 import utils.app.getConfigData
 import utils.app.getThemes
+import utils.storage.ConfigData
+import utils.storage.ThemeData
 
 fun main() = application {
-    val config = getConfigData()
-    val themes = getThemes()
+    val config: ConfigData = getConfigData()
+    val themes: ArrayList<ThemeData> = getThemes()
 
     val state = rememberWindowState(
         size = DpSize(1200.dp, 800.dp),
