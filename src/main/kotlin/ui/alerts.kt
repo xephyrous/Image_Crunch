@@ -15,9 +15,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import kotlinx.coroutines.Runnable
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.*
 import java.util.*
 import kotlin.concurrent.timerTask
 
@@ -81,14 +79,35 @@ object AlertBox {
         displayedText: String,
         displayTime: Long = 3000
     ) {
-        Thread(Runnable {
-            runBlocking {
-                WaitForCondition(50000, 100)
+        CoroutineScope(Dispatchers.Main).launch {
+            // Use a suspend function for waiting condition
+            waitForCondition(50000, 100)
+
+            // Update the UI
+            this@AlertBox.text = displayedText
+            this@AlertBox.displayed = true
+
+            // Schedule hiding the alert after a delay
+            withContext(Dispatchers.IO) {
+                Timer().schedule(timerTask {
+                    // Switch back to the main thread to update the UI
+                    CoroutineScope(Dispatchers.Main).launch {
+                        this@AlertBox.displayed = false
+                    }
+                }, displayTime)
             }
-            this.text = displayedText
-            this.displayed = true
-            Timer().schedule(timerTask { displayed = false }, displayTime)
-        }).start()
+        }
+    }
+
+    /**
+     * Suspend function for waiting condition
+     * TODO : Document function
+     */
+    private suspend fun waitForCondition(maxDelay: Long, checkPeriod: Long): Boolean {
+        if (maxDelay < 0) return false
+        if (!this@AlertBox.displayed) return true
+        delay(checkPeriod)
+        return waitForCondition(maxDelay - checkPeriod, checkPeriod)
     }
 
     /**
