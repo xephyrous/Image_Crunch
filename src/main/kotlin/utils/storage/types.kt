@@ -1,7 +1,15 @@
 package utils.storage
 
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
+import ui.ThemeSwitcher
+import ui.buttonElement
+import utils.storage.GeneratorType.*
 import java.awt.Dimension
-import kotlin.IllegalArgumentException
 import kotlin.reflect.KClass
 
 /**
@@ -167,9 +175,30 @@ class ThemeData(var name: String) {
 }
 
 /**
- * TODO : Document Config Data
- *  & Finish it
+ * Theme Switching Button type
+ *
  */
+class ThemeButton(tD: ThemeData) {
+    var themeData = tD
+    var height by mutableStateOf(50.dp)
+
+    @Composable
+    fun themeButton(
+    ) {
+        buttonElement(
+            buttonText = themeData.name,
+            height = height,
+            buttonEvent = {
+                ThemeSwitcher.initiateChange(this.themeData)
+            }
+        )
+    }
+
+    fun setButtonHeight(height: Dp) {
+        this.height = height
+    }
+}
+
 class ConfigData() {
 
 }

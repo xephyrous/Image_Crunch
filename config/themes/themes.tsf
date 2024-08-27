@@ -1,13 +1,12 @@
 String name: "Dark Theme"
 
 Long icon: 4286217861
-Long header: 4286217861
+Long header: 4281019696
 Long button: 4286217861
 Long border: 4280690734
 Long fab: 4280690734
 
 NamedMap textColors: Long {
-    header: 4281019696,
     text1: 4290757063,
     text2: 4290757063,
     textGrey: 4290757063

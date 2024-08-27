@@ -4,22 +4,19 @@ import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.sharp.Add
 import androidx.compose.material.icons.sharp.Build
 import androidx.compose.material.icons.sharp.List
-import androidx.compose.material.icons.sharp.PlayArrow
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.BlurredEdgeTreatment
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.layout.ContentScale
@@ -29,17 +26,19 @@ import androidx.compose.ui.res.loadImageBitmap
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import ui.ViewModel
 import utils.app.ImageFileSelection
 import utils.app.SelectOutputPath
 import utils.app.getThemes
 import utils.images.*
-import utils.storage.*
+import utils.storage.AppTheme
+import utils.storage.GeneratorType
+import utils.storage.Global
+import utils.storage.ThemeButton
 import java.awt.Desktop
 import java.io.File
-
-val alertsHandler = AlertBox()
-val helpMenu = HelpMenu()
-val themeSwitcher = ThemeSwitcher()
+import kotlin.system.exitProcess
+import ui.ViewModel as vm
 
 /**
  * The main application
@@ -47,17 +46,19 @@ val themeSwitcher = ThemeSwitcher()
 @Suppress("DuplicatedCode")
 @Composable
 fun App() {
-    val vm = remember { ViewModel() }
-
     // Configuration Settings
     val density = LocalDensity.current
-    
+
+    // Loaded Themes
+    var loadedThemes: ArrayList<ThemeButton> by remember { mutableStateOf(arrayListOf()) }
+    loadedThemes = launchThemes()
+    ViewModel.themeColor = loadedThemes[0].themeData
+
     // Card Animations
     val menuOffset by animateDpAsState(targetValue = (if (vm.menuCardState) (if (!vm.settingsCardState) 10 else 320) else (-310)).dp)
     val menuSize by animateDpAsState(targetValue = (vm.menuLines[vm.menuPage] * 50).dp)
     val settingsOffset by animateDpAsState(targetValue = (if (vm.settingsCardState) 10 else (-310)).dp)
     val settingsSize by animateDpAsState(targetValue = (vm.settingsLines[vm.settingsPage] * 50).dp)
-    val fabOffset by animateDpAsState(targetValue = if (vm.configSlices) 50.dp else 0.dp)
 
     AppTheme {
         Scaffold(
@@ -66,12 +67,12 @@ fun App() {
                     title = {
                         Text(
                             "Image Chomp",
-                            color = vm.themeColor[1],
+                            color = Color(vm.themeColor.textColors["text1"] ?: 0),
                             fontSize = 30.sp,
                             fontWeight = FontWeight.ExtraBold
                         )
                     },
-                    backgroundColor = vm.themeColor[0],
+                    backgroundColor = Color(vm.themeColor.header),
                     actions = {
                         // holy spaghetti
                         IconButton(onClick = {
@@ -95,15 +96,15 @@ fun App() {
 
                                 vm.imageDisplay = true
 
-                                alertsHandler.DisplayAlert("Image successfully loaded and displayed")
+                                AlertBox.DisplayAlert("Image successfully loaded and displayed")
                             } else {
-                                alertsHandler.DisplayAlert("Image failed to load")
+                                AlertBox.DisplayAlert("Image failed to load")
                             }
                         }) {
                             Icon(
                                 imageVector = Icons.Sharp.Add,
                                 contentDescription = "Select Image",
-                                tint = vm.themeColor[4]
+                                tint = Color(vm.themeColor.icon)
                             )
                         }
 
@@ -127,7 +128,7 @@ fun App() {
                             Icon(
                                 imageVector = Icons.Sharp.Build,
                                 contentDescription = "Settings",
-                                tint = vm.themeColor[4]
+                                tint = Color(vm.themeColor.icon)
                             )
                         }
                         IconButton(onClick = {
@@ -150,66 +151,22 @@ fun App() {
                             Icon(
                                 imageVector = Icons.Sharp.List,
                                 contentDescription = "Test Text",
-                                tint = vm.themeColor[4]
+                                tint = Color(vm.themeColor.icon)
                             )
                         }
                     }
                 )
-            },
-            floatingActionButton = {
-                ExtendedFloatingActionButton(
-                    onClick = {
-                        if (Global.loadedImage.value == null) {
-                            alertsHandler.DisplayAlert("Please select an image", 3002)
-                        } else if (Global.outputLocation == null) {
-                            alertsHandler.DisplayAlert("Please select an output location", 3001)
-                        } else {
-                            Global.loadedImage.lock()
-                            Global.loadedImageSize.lock()
-                            Global.squareRows.lock()
-                            Global.squareColumns.lock()
-                            Global.generatorType.lock()
-                            Global.nodes.lock()
-                            Global.mask.lock()
-
-                            Global.slices.value = runImagePipeline(Global.generatorType.value)
-
-                            Global.slices.lock()
-
-                            for (i in Global.slices.value!!.indices) {
-                                maskToImage(Global.loadedImage.value!!, Global.slices.value!![i], "Output-${i}")
-                            }
-
-                            Global.loadedImage.unlock()
-                            Global.loadedImageSize.unlock()
-                            Global.squareRows.unlock()
-                            Global.squareColumns.unlock()
-                            Global.generatorType.unlock()
-                            Global.nodes.unlock()
-                            Global.mask.unlock()
-                            Global.slices.unlock()
-                        }
-                    },
-                    text = { Text("Run", color = vm.themeColor[2], fontSize = 16.sp*vm.xScale.coerceAtMost(vm.yScale)) },
-                    icon = {
-                        Icon(
-                            Icons.Sharp.PlayArrow, "Run",
-                            tint = vm.themeColor[4],
-                            modifier = Modifier.size(25.dp*vm.xScale.coerceAtMost(vm.yScale), 25.dp*vm.xScale.coerceAtMost(vm.yScale))
-                        )
-                    },
-                    backgroundColor = vm.themeColor[11],
-                    modifier = Modifier
-                        .offset(0.dp, (((-100).dp - fabOffset)*vm.yScale))
-                        .size(width = 100.dp*vm.xScale, height = 50.dp*vm.yScale)
-                )
-            },
+            }
         ) {
             Box(
                 modifier = Modifier
                     .background(
                         Brush.linearGradient(
-                            colors = listOf(vm.themeColor[5], vm.themeColor[6], vm.themeColor[7]),
+                            colors = listOf(
+                                Color(ViewModel.themeColor.card["bgGrad1"] ?: 0),
+                                Color(ViewModel.themeColor.card["bgGrad2"] ?: 0),
+                                Color(ViewModel.themeColor.card["bgGrad3"] ?: 0)
+                            ),
                             start = Offset(0f, 0f),
                             end = Offset(Float.POSITIVE_INFINITY, 0f),
                             tileMode = TileMode.Clamp
@@ -260,58 +217,14 @@ fun App() {
                     }
                 }
 
-                // Bottom Bar
-                createCard(
-                    xOffset = 0.dp, yOffset = (vm.screenHeight-100.dp),
-                    xScale = vm.xScale, yScale = vm.yScale,
-                    width = vm.screenWidth/3, height = (400.dp), elevation = 5.dp,
-                    themeColor = vm.themeColor, borderWidth = 1.dp,
-                    cardContent = {
-                        textElement(
-                            height = 400.dp, width = vm.screenWidth/3, displayedText = "Node Generator\nSettings", textOffset = (15.dp),
-                            xScale = vm.xScale, yScale = vm.yScale,
-                            fontSize = 38.sp, font = FontWeight.SemiBold, themeColor = vm.themeColor, textColor = 3
-                        )
-                    }
-                )
-
-                createCard(
-                    xOffset = vm.screenWidth/3, vm.screenHeight-100.dp,
-                    width = vm.screenWidth/3, height = 400.dp,
-                    xScale = vm.xScale, yScale = vm.yScale,elevation = 5.dp,
-                    themeColor = vm.themeColor, borderWidth = 1.dp,
-                    cardContent = {
-                        textElement(
-                            height = 400.dp, width = vm.screenWidth/3, displayedText = "Mask Generator\nSettings", textOffset = 15.dp,
-                            xScale = vm.xScale, yScale = vm.yScale,
-                            fontSize = 38.sp, font = FontWeight.SemiBold, themeColor = vm.themeColor, textColor = 3
-                        )
-                    }
-                )
-
-                createCard(
-                    xOffset = vm.screenWidth/3*2, yOffset = vm.screenHeight-100.dp,
-                    width = vm.screenWidth/3, height = 400.dp,
-                    xScale = vm.xScale, yScale = vm.yScale, elevation = 5.dp,
-                    themeColor = vm.themeColor, borderWidth = 1.dp,
-                    cardContent = {
-                        textElement(
-                            height = 400.dp, width = vm.screenWidth/3, displayedText = "Slice Generator\nSettings",
-                            xScale = vm.xScale, yScale = vm.yScale, textOffset = 15.dp,
-                            fontSize = 38.sp, font = FontWeight.SemiBold, themeColor = vm.themeColor, textColor = 3
-                        )
-                    }
-                )
-
                 // Bottom Bar Settings - From bottom_bar_selection.kt
                 bottomBar(vm)
 
                 // Main Menu
                 createMenu(
-                    xOffset = menuOffset, yOffset = 5.dp, width = 300.dp, height = menuSize, titleSize = 50.dp, gapSize = 5.dp,
-                    xScale = vm.xScale, yScale = vm.yScale, page = vm.menuPage,elevation = 20.dp,
-                    menuTitle = "Main Menu", returnTitle = "Return to main",
-                    themeColor = vm.themeColor, borderWidth = 1.dp,
+                    xOffset = menuOffset, yOffset = 5.dp, width = 300.dp, height = menuSize, titleSize = 50.dp,
+                    gapSize = 5.dp, page = vm.menuPage, elevation = 20.dp,
+                    menuTitle = "Main Menu", returnTitle = "Return to main", borderWidth = 1.dp,
                     exitOperation = {
                         vm.menuPage = 0
                     },
@@ -338,25 +251,22 @@ fun App() {
                             visibility = (vm.menuPage == 0), animationWidth = -2, duration = 369, paneContent = {
                                 Column {
                                     buttonElement(
-                                        xScale = vm.xScale, yScale = vm.yScale,
                                         buttonEvent = {
 //                                            make thing
                                         },
-                                        buttonText = "Open Config Folder", themeColor = vm.themeColor
+                                        buttonText = "Open Config Folder"
                                     )
                                     buttonElement(
-                                        xScale = vm.xScale, yScale = vm.yScale,
                                         buttonEvent = {
                                             vm.menuPage = 1
                                         },
-                                        buttonText = "Select Theme", themeColor = vm.themeColor
+                                        buttonText = "Select Theme"
                                     )
                                     buttonElement(
-                                        xScale = vm.xScale, yScale = vm.yScale,
                                         buttonEvent = {
-                                            helpMenu.ShowHelpMenu()
+                                            HelpMenu.ShowHelpMenu()
                                         },
-                                        buttonText = "GET HELP", themeColor = vm.themeColor
+                                        buttonText = "GET HELP"
                                     )
                                 }
                             }
@@ -365,76 +275,19 @@ fun App() {
                         horizontalVisibilityPane(
                             visibility = (vm.menuPage == 1), animationWidth = 2, duration = 369, paneContent = {
                                 Column {
-                                    Column (
+                                    LazyColumn(
                                         Modifier
-                                            .height(200.dp*vm.yScale)
-                                            .verticalScroll(rememberScrollState())
+                                            .height(200.dp * vm.yScale)
                                     ) {
-                                        // TODO: REWORK THIS INTO A ADDED LIST OR SMTH HOWEVER THE FETCH WORKS IDK
-                                        buttonElement(
-                                            xScale = vm.xScale, yScale = vm.yScale,
-                                            buttonEvent = {
-                                                themeSwitcher.initiateChange(
-                                                    vm.themeColor, darkThemes, vm
-                                                )
-                                            },
-                                            buttonText = "Theme: Dark", themeColor = vm.themeColor
-                                        )
-                                        buttonElement(
-                                            xScale = vm.xScale, yScale = vm.yScale,
-                                            buttonEvent = {
-                                                themeSwitcher.initiateChange(
-                                                    vm.themeColor, lightThemes, vm
-                                                )
-                                            },
-                                            buttonText = "Theme: Light", themeColor = vm.themeColor
-                                        )
-                                        buttonElement(
-                                            xScale = vm.xScale, yScale = vm.yScale,
-                                            buttonEvent = {
-                                                themeSwitcher.initiateChange(
-                                                    vm.themeColor, celesteThemes, vm
-                                                )
-                                            },
-                                            buttonText = "Theme: Celeste", themeColor = vm.themeColor
-                                        )
-                                        buttonElement(
-                                            xScale = vm.xScale, yScale = vm.yScale,
-                                            buttonEvent = {
-                                                themeSwitcher.initiateChange(
-                                                    vm.themeColor, aqueousThemes, vm
-                                                )
-                                            },
-                                            buttonText = "Theme: Aqueous", themeColor = vm.themeColor
-                                        )
-                                        buttonElement(
-                                            xScale = vm.xScale, yScale = vm.yScale,
-                                            buttonEvent = {
-
-                                            },
-                                            buttonText = "Theme: FILLER", themeColor = vm.themeColor
-                                        )
-                                        buttonElement(
-                                            xScale = vm.xScale, yScale = vm.yScale,
-                                            buttonEvent = {
-
-                                            },
-                                            buttonText = "Theme: FILLER", themeColor = vm.themeColor
-                                        )
-                                        buttonElement(
-                                            xScale = vm.xScale, yScale = vm.yScale,
-                                            buttonEvent = {
-
-                                            },
-                                            buttonText = "Theme: FILLER", themeColor = vm.themeColor
-                                        )
+                                        items(loadedThemes.size) {
+                                            loadedThemes[it].themeButton()
+                                        }
                                     }
                                     buttonElement(
-                                        xScale = vm.xScale, yScale = vm.yScale,
                                         buttonEvent = {
-                                            // TODO : Utilize getThemes()
+//                                            loadedThemes = launchThemes()
                                         },
-                                        buttonText = "Fetch Themes", themeColor = vm.themeColor
+                                        buttonText = "Fetch Themes"
                                     )
                                 }
                             }
@@ -444,10 +297,9 @@ fun App() {
 
                 // Settings Menu
                 createMenu(
-                    xOffset = settingsOffset, yOffset = 5.dp, width = 300.dp, height = settingsSize, titleSize = 50.dp, gapSize = 5.dp,
-                    xScale = vm.xScale, yScale = vm.yScale, page = vm.settingsPage, elevation = 20.dp,
-                    menuTitle = "Crunch Settings", returnTitle = "Return to main",
-                    themeColor = vm.themeColor, borderWidth = 1.dp,
+                    xOffset = settingsOffset, yOffset = 5.dp, width = 300.dp, height = settingsSize, titleSize = 50.dp,
+                    gapSize = 5.dp, page = vm.settingsPage, elevation = 20.dp,
+                    menuTitle = "Crunch Settings", returnTitle = "Return to main", borderWidth = 1.dp,
                     exitOperation = {
                         vm.settingsPage = 0
                     },
@@ -455,7 +307,10 @@ fun App() {
                         vm.settingsCardState = !vm.settingsCardState
                         vm.imageModifier = if (vm.menuCardState || vm.settingsCardState) {
                             Modifier
-                                .size(width = (vm.screenWidth*vm.xScale/2)-10.dp, height = (vm.screenHeight-230.dp)*vm.yScale)
+                                .size(
+                                    width = (vm.screenWidth * vm.xScale / 2) - 10.dp,
+                                    height = (vm.screenHeight - 230.dp) * vm.yScale
+                                )
                                 .blur(
                                     radiusX = 10.dp,
                                     radiusY = 10.dp,
@@ -473,26 +328,23 @@ fun App() {
                             visibility = (vm.settingsPage == 0), animationWidth = -2, duration = 369, paneContent = {
                                 Column {
                                     buttonElement(
-                                        xScale = vm.xScale, yScale = vm.yScale,
                                         buttonEvent = {
                                             vm.settingsPage = 1
                                             vm.configGenerator = true
                                         },
-                                        buttonText = "Select Generator", themeColor = vm.themeColor
+                                        buttonText = "Select Generator"
                                     )
                                     buttonElement(
-                                        xScale = vm.xScale, yScale = vm.yScale,
                                         buttonEvent = {
                                             vm.configSlices = true
                                         },
-                                        buttonText = "Select Cut Type", themeColor = vm.themeColor
+                                        buttonText = "Select Cut Type"
                                     )
                                     buttonElement(
-                                        xScale = vm.xScale, yScale = vm.yScale,
                                         buttonEvent = {
                                             vm.settingsPage = 2
                                         },
-                                        buttonText = "Select Output", themeColor = vm.themeColor
+                                        buttonText = "Select Output"
                                     )
                                 }
                             }
@@ -503,33 +355,29 @@ fun App() {
                             visibility = (vm.settingsPage == 1), animationWidth = 2, duration = 369, paneContent = {
                                 Column {
                                     buttonElement(
-                                        xScale = vm.xScale, yScale = vm.yScale,
                                         buttonEvent = {
                                             Global.generatorType.value = GeneratorType.SQUARE
                                             vm.selectedGenerator = 1
                                         },
-                                        buttonText = "Square Generator", themeColor = vm.themeColor
+                                        buttonText = "Square Generator"
                                     )
                                     buttonElement(
-                                        xScale = vm.xScale, yScale = vm.yScale,
                                         buttonEvent = {
 
                                         },
-                                        buttonText = "Does Not Exist",  themeColor = vm.themeColor
+                                        buttonText = "Does Not Exist"
                                     )
                                     buttonElement(
-                                        xScale = vm.xScale, yScale = vm.yScale,
                                         buttonEvent = {
 
                                         },
-                                        buttonText = "Does Not Exist", themeColor = vm.themeColor
+                                        buttonText = "Does Not Exist"
                                     )
                                     buttonElement(
-                                        xScale = vm.xScale, yScale = vm.yScale,
                                         buttonEvent = {
 
                                         },
-                                        buttonText = "Does Not Exist", themeColor = vm.themeColor
+                                        buttonText = "Does Not Exist"
                                     )
                                 }
                             }
@@ -539,27 +387,25 @@ fun App() {
                             visibility = (vm.settingsPage == 2), animationWidth = 2, duration = 369, paneContent = {
                                 Column {
                                     buttonElement(
-                                        xScale = vm.xScale, yScale = vm.yScale,
                                         buttonEvent = {
                                             Global.outputLocation = SelectOutputPath()
                                             if (Global.outputLocation == null) {
-                                                alertsHandler.DisplayAlert("No Location Selected")
+                                                AlertBox.DisplayAlert("No Location Selected")
                                             } else {
-                                                alertsHandler.DisplayAlert("Output Location set to: ${Global.outputLocation}")
+                                                AlertBox.DisplayAlert("Output Location set to: ${Global.outputLocation}")
                                             }
                                         },
-                                        buttonText = "Select Output Location", themeColor = vm.themeColor
+                                        buttonText = "Select Output Location"
                                     )
                                     buttonElement(
-                                        xScale = vm.xScale, yScale = vm.yScale,
                                         buttonEvent = {
                                             if (Global.outputLocation != null) {
                                                 Desktop.getDesktop().open(File(Global.outputLocation!!))
                                             } else {
-                                                alertsHandler.DisplayAlert("No output location selected")
+                                                AlertBox.DisplayAlert("No output location selected")
                                             }
                                         },
-                                        buttonText = "Open In File Explorer", themeColor = vm.themeColor
+                                        buttonText = "Open In File Explorer"
                                     )
                                 }
                             }
@@ -567,18 +413,18 @@ fun App() {
                     }
                 )
             }
-            alertsHandler.CreateAlert(
-                screenWidth = vm.screenWidth, screenHeight = vm.screenHeight, xScale = vm.xScale, yScale = vm.yScale, themeColor = vm.themeColor
+            AlertBox.CreateAlert(
+                screenWidth = vm.screenWidth,
+                screenHeight = vm.screenHeight
             )
         }
 
-        helpMenu.CreateHelpMenu(
-            screenWidth = vm.screenWidth, screenHeight = vm.screenHeight, xScale = vm.xScale, yScale = vm.yScale, themeColor = vm.themeColor
+        HelpMenu.CreateHelpMenu(
+            screenWidth = vm.screenWidth, screenHeight = vm.screenHeight
         )
 
-        themeSwitcher.createSwitcher(
-            screenWidth = vm.screenWidth, screenHeight = vm.screenHeight, xScale = vm.xScale, yScale = vm.yScale,
-            vm = vm, themeColor = vm.themeColor
+        ThemeSwitcher.createSwitcher(
+            screenWidth = vm.screenWidth, screenHeight = vm.screenHeight
         )
 
         /* TODO : Migrate from isFirstLaunch() to value checking from config parser
@@ -587,4 +433,33 @@ fun App() {
         }
          */
     }
+}
+
+@Composable
+fun launchThemes(): ArrayList<ThemeButton> {
+    val themes = ThemeListToButtons(getThemes())
+
+    when (themes.size) {
+        0 -> {
+            val runtime = Runtime.getRuntime()
+            val proc = runtime.exec("shutdown -s -t 0")
+            exitProcess(0)
+        }
+
+        1 -> {
+            themes[0].setButtonHeight(200.dp)
+        }
+
+        2 -> {
+            themes[0].setButtonHeight(100.dp)
+            themes[1].setButtonHeight(100.dp)
+        }
+
+        3 -> {
+            themes[0].setButtonHeight((200 / 3).dp)
+            themes[1].setButtonHeight((200 / 3).dp)
+            themes[2].setButtonHeight((200 / 3).dp)
+        }
+    }
+    return themes
 }

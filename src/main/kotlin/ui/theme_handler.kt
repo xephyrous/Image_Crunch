@@ -9,13 +9,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
+import utils.storage.ThemeButton
+import utils.storage.ThemeData
 import java.io.File
 
 /*
@@ -47,28 +48,19 @@ fun grabThemes(
 /**
  * Represents the theme switcher and confirmation boxes
  */
-class ThemeSwitcher {
-    var currentTheme by mutableStateOf<List<Color>?>(null)
-    var newTheme by mutableStateOf<List<Color>?>(null)
+object ThemeSwitcher {
+    private var currentTheme by mutableStateOf(ThemeData(""))
+    private var newTheme by mutableStateOf(ThemeData(""))
 
-    var displayed by mutableStateOf(false)
+    private var displayed by mutableStateOf(false)
 
-    var countdown by mutableStateOf(15)
+    private var countdown by mutableStateOf(15)
 
     @Composable
     fun createSwitcher(
         screenWidth: Dp,
         screenHeight: Dp,
-        xScale: Float,
-        yScale: Float,
-        vm: ViewModel,
-        themeColor: List<Color>,
-        cardGrad1: Int = 8,
-        cardGrad2: Int = 9,
         borderWidth: Dp = 1.dp,
-        borderColor: Int = 18,
-        buttonColor: Int = 10,
-        textColor: Int = 2
     ) {
         AnimatedVisibility(
             visible = displayed,
@@ -80,37 +72,32 @@ class ThemeSwitcher {
             ),
         ){
             createCard(
-                xOffset = screenWidth/4, yOffset = screenHeight/4, width = screenWidth/2, height = screenHeight/2,
-                xScale = xScale, yScale = yScale, elevation = 50.dp, themeColor = themeColor,
-                cardGrad1 = cardGrad1, cardGrad2 = cardGrad2, borderWidth = borderWidth, borderColor = borderColor,
+                xOffset = screenWidth / 4, yOffset = screenHeight / 4, width = screenWidth / 2,
+                height = screenHeight / 2, elevation = 50.dp, borderWidth = borderWidth,
                 cardContent = {
                     Column {
                         textElement(
-                            height = 325.dp, width = screenWidth/2, xScale = xScale, yScale = yScale,
+                            height = 325.dp, width = screenWidth/2,
                             displayedText = "CONFIRM THEME CHANGE?\n\nYou can always change this back later in the main menu",
                             textOffset = 40.dp, fontSize = 40.sp,
-                            themeColor = themeColor, textColor = textColor
                         )
                         Row {
                             buttonElement(
-                                height = 50.dp, width = 150.dp, buttonHeight = 40.dp, buttonWidth = 100.dp,
-                                xScale = xScale, yScale = yScale, buttonText = "Confirm", themeColor = themeColor,
-                                buttonColor = buttonColor, textColor = textColor,
+                                height = 50.dp, width = 150.dp, buttonHeight = 40.dp,
+                                buttonWidth = 100.dp, buttonText = "Confirm",
                                 buttonEvent = {
-                                    confirmChange(vm)
+                                    confirmChange()
                                 }
                             )
                             textElement(
-                                height = 50.dp, width = 300.dp, xScale = xScale, yScale = yScale,
+                                height = 50.dp, width = 300.dp,
                                 displayedText = "Reverting Change in: $countdown", textOffset = 10.dp, fontSize = 16.sp,
-                                themeColor = themeColor, textColor = textColor
                             )
                             buttonElement(
-                                height = 50.dp, width = 150.dp, buttonHeight = 40.dp, buttonWidth = 100.dp,
-                                xScale = xScale, yScale = yScale, buttonText = "Reject", themeColor = themeColor,
-                                buttonColor = buttonColor, textColor = textColor,
+                                height = 50.dp, width = 150.dp, buttonHeight = 40.dp,
+                                buttonWidth = 100.dp, buttonText = "Reject",
                                 buttonEvent = {
-                                    rejectChange(vm)
+                                    rejectChange()
                                 }
                             )
                         }
@@ -121,42 +108,33 @@ class ThemeSwitcher {
     }
 
     fun initiateChange(
-        currentColor: List<Color>,
-        newColor: List<Color>,
-        vm: ViewModel
+        newColor: ThemeData
     ) {
         displayed = true
-        newTheme = newColor
-        currentTheme = currentColor
-        vm.themeColor = newColor
-        startCountdown(vm)
+        currentTheme = ViewModel.themeColor
+        ViewModel.themeColor = newColor
+        startCountdown()
     }
 
-    fun confirmChange(
-        vm: ViewModel
-    ) {
-        vm.themeColor = newTheme!!
+    private fun confirmChange() {
+        ViewModel.themeColor = newTheme
 
-        newTheme = null
-        currentTheme = null
+        newTheme = ThemeData("")
+        currentTheme = ThemeData("")
 
         displayed = false
     }
 
-    fun rejectChange(
-        vm: ViewModel
-    ) {
-        vm.themeColor = currentTheme!!
+    private fun rejectChange() {
+        ViewModel.themeColor = currentTheme
 
-        currentTheme = null
-        newTheme = null
+        currentTheme = ThemeData("")
+        newTheme = ThemeData("")
 
         displayed = false
     }
 
-    fun startCountdown(
-        vm: ViewModel
-    ) {
+    private fun startCountdown() {
         Thread(kotlinx.coroutines.Runnable {
             countdown = 15
             while (countdown > 0 && displayed) {
@@ -166,8 +144,17 @@ class ThemeSwitcher {
                 countdown--
             }
             if (displayed) {
-                rejectChange(vm)
+                rejectChange()
             }
         }).start()
     }
+}
+
+@Composable
+fun ThemeListToButtons(themes: ArrayList<ThemeData>): ArrayList<ThemeButton> {
+    val themeButtons: ArrayList<ThemeButton> = arrayListOf()
+    for (theme in themes) {
+        themeButtons.add(ThemeButton(theme))
+    }
+    return themeButtons
 }

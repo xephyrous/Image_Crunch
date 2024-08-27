@@ -48,23 +48,23 @@ fun buttonElement(
     buttonHeight: Dp = 40.dp,
     buttonWidth: Dp = 250.dp,
     fontSize: TextUnit = 18.sp,
-    xScale: Float,
-    yScale: Float,
     buttonEvent: () -> Unit,
     buttonText: String,
-    themeColor: List<Color>,
-    buttonColor: Int = 10,
-    textColor: Int = 2,
 ){
     Box(
-        modifier = Modifier.size(height = height*yScale, width = width*xScale)
+        modifier = Modifier.size(height = height * ViewModel.yScale, width = width * ViewModel.xScale)
     ) {
         Button(
             onClick = buttonEvent,
-            modifier = Modifier.size(height = buttonHeight*yScale, width = buttonWidth*xScale).align(alignment = Alignment.Center),
-            colors = ButtonDefaults.buttonColors(backgroundColor = themeColor[buttonColor])
+            modifier = Modifier.size(height = buttonHeight * ViewModel.yScale, width = buttonWidth * ViewModel.xScale)
+                .align(alignment = Alignment.Center),
+            colors = ButtonDefaults.buttonColors(backgroundColor = Color(ViewModel.themeColor.button))
         ) {
-            Text(buttonText, color = themeColor[textColor], fontSize = fontSize*xScale.coerceAtMost(yScale))
+            Text(
+                buttonText,
+                color = Color(ViewModel.themeColor.textColors["text2"] ?: 0),
+                fontSize = fontSize * ViewModel.xScale.coerceAtMost(ViewModel.yScale)
+            )
         }
     }
 }
@@ -87,23 +87,20 @@ fun buttonElement(
 fun textElement(
     height: Dp = 50.dp,
     width: Dp = 300.dp,
-    xScale: Float,
-    yScale: Float,
     displayedText: String,
     textOffset: Dp,
     fontSize: TextUnit,
     font: FontWeight = FontWeight.Normal,
-    themeColor: List<Color>,
-    textColor: Int = 1
 ){
     Box(
-        modifier = Modifier.size(height = height*yScale, width = width*xScale)
+        modifier = Modifier.size(height = height * ViewModel.yScale, width = width * ViewModel.xScale)
     ) {
         Text(
             text = displayedText,
-            color = themeColor[textColor],
-            modifier = Modifier.fillMaxSize().offset(y = (textOffset)*yScale).align(alignment = Alignment.Center),
-            fontSize = fontSize*xScale.coerceAtMost(yScale),
+            color = Color(ViewModel.themeColor.textColors["text1"] ?: 0),
+            modifier = Modifier.fillMaxSize().offset(y = (textOffset) * ViewModel.yScale)
+                .align(alignment = Alignment.Center),
+            fontSize = fontSize * ViewModel.xScale.coerceAtMost(ViewModel.yScale),
             textAlign = TextAlign.Center,
             fontWeight = font
         )
@@ -185,25 +182,23 @@ fun createCard(
     yOffset: Dp,
     width: Dp,
     height: Dp,
-    xScale: Float,
-    yScale: Float,
     elevation: Dp,
-    themeColor: List<Color>,
-    cardGrad1: Int = 8, // Card color
-    cardGrad2: Int = 9,
     borderWidth: Dp = 1.dp,
-    borderColor: Int = 18,
-    cardContent: @Composable BoxScope.()-> Unit
+    cardContent: @Composable BoxScope.() -> Unit
 ) {
     Card(
-        modifier = Modifier.offset(xOffset*xScale, yOffset*yScale).size(width*xScale, height*yScale),
+        modifier = Modifier.offset(xOffset * ViewModel.xScale, yOffset * ViewModel.yScale)
+            .size(width * ViewModel.xScale, height * ViewModel.yScale),
         elevation = elevation,
-        border = BorderStroke(borderWidth, themeColor[borderColor]),
+        border = BorderStroke(borderWidth, Color(ViewModel.themeColor.border)),
         content = {
             Box(
                 modifier = Modifier.background(
                     Brush.linearGradient(
-                        colors = listOf(themeColor[cardGrad1], themeColor[cardGrad2]),
+                        colors = listOf(
+                            Color(ViewModel.themeColor.card["cGrad1"] ?: 0),
+                            Color(ViewModel.themeColor.card["cGrad2"] ?: 0)
+                        ),
                         start = Offset(0f, 0f),
                         end = Offset(Float.POSITIVE_INFINITY, 0f),
                         tileMode = TileMode.Clamp
@@ -250,77 +245,51 @@ fun createMenu(
     height: Dp,
     titleSize: Dp,
     gapSize: Dp,
-    xScale: Float,
-    yScale: Float,
     page: Int,
     elevation: Dp, // Elevation
     menuTitle: String, // Title
     returnTitle: String, // Return button text
-    themeColor: List<Color>, // Theme colors
-    cardGrad1: Int = 8, // Card color
-    cardGrad2: Int = 9,
     borderWidth: Dp = 1.dp,
-    borderColor: Int = 18,
-    buttonColor: Int = 10, // Button Color
-    titleColor: Int = 1, // Title color
-    textColor: Int = 2, // button text color
-    iconColor: Int = 4,
     exitOperation: () -> Unit, // the exit button
     closeOperation: () -> Unit,
-    menuPages: @Composable BoxScope.()-> Unit // the main menu pages
+    menuPages: @Composable BoxScope.() -> Unit // the main menu pages
 ) {
     createCard(
-        xOffset = xOffset, yOffset = yOffset,
-        width = width-titleSize-gapSize, height = titleSize,
-        xScale = xScale, yScale = yScale, elevation = elevation,
-        themeColor = themeColor, cardGrad1 = cardGrad1, cardGrad2 = cardGrad2,
-        borderWidth = borderWidth, borderColor = borderColor,
+        xOffset = xOffset, yOffset = yOffset, width = width - titleSize - gapSize,
+        height = titleSize, elevation = elevation, borderWidth = borderWidth,
         cardContent = {
             textElement(
                 displayedText = menuTitle, textOffset = 10.dp,
-                xScale = xScale, yScale = yScale,
                 fontSize = 30.sp, font = FontWeight.Normal,
-                themeColor = themeColor, textColor = titleColor
             )
         }
     )
     createCard(
-        xOffset = xOffset+(width-titleSize), yOffset = yOffset,
-        width = titleSize, height = titleSize,
-        xScale = xScale, yScale = yScale, elevation = elevation,
-        themeColor = themeColor, cardGrad1 = cardGrad1, cardGrad2 = cardGrad2,
-        borderWidth = borderWidth, borderColor = borderColor,
+        xOffset = xOffset + (width - titleSize), yOffset = yOffset, width = titleSize,
+        height = titleSize, elevation = elevation, borderWidth = borderWidth,
         cardContent = {
             IconButton(onClick = closeOperation, modifier = Modifier.align(Alignment.Center)) {
                 Icon(
                     imageVector = Icons.Sharp.Close,
                     contentDescription = "Close Button",
-                    tint = themeColor[iconColor],
+                    tint = Color(ViewModel.themeColor.icon),
                 )
             }
         }
     )
     createCard(
-        xOffset = xOffset, yOffset = (if (page==0) yOffset + height else yOffset+height+titleSize+(gapSize*2)),
-        width = width, height = titleSize,
-        xScale = xScale, yScale = yScale, elevation = elevation,
-        themeColor = themeColor, cardGrad1 = cardGrad1, cardGrad2 = cardGrad2,
-        borderWidth = borderWidth, borderColor = borderColor,
+        xOffset = xOffset,
+        yOffset = (if (page == 0) yOffset + height else yOffset + height + titleSize + (gapSize * 2)),
+        width = width, height = titleSize, elevation = elevation, borderWidth = borderWidth,
         cardContent = {
             buttonElement(
-                xScale = xScale, yScale = yScale,
-                buttonEvent = exitOperation,
-                buttonText = returnTitle, themeColor = themeColor,
-                buttonColor = buttonColor, textColor = textColor
+                buttonEvent = exitOperation, buttonText = returnTitle
             )
         }
     )
     createCard(
-        xOffset = xOffset, yOffset = yOffset+gapSize+titleSize,
-        width = width, height = height,
-        xScale = xScale, yScale = yScale, elevation = elevation,
-        themeColor = themeColor, cardGrad1 = cardGrad1, cardGrad2 = cardGrad2,
-        borderWidth = borderWidth, borderColor = borderColor,
+        xOffset = xOffset, yOffset = yOffset + gapSize + titleSize,
+        width = width, height = height, elevation = elevation, borderWidth = borderWidth,
         cardContent = menuPages
     )
 }

@@ -24,7 +24,7 @@ import kotlin.concurrent.timerTask
 /**
  * Represents an Alert Box and its interaction functions
  */
-class AlertBox {
+object AlertBox {
     var text: String = ""
     var displayed by mutableStateOf(false)
 
@@ -32,55 +32,36 @@ class AlertBox {
      * Creates an Alert GUI object
      * @param screenWidth The screen width in dot points (Dp)
      * @param screenHeight The screen height in dot points (Dp)
-     * @param themeColor The current theme colors
-     * @param cardGrad1 The first color tof the card gradient
-     * @param cardGrad2 The first color tof the card gradient
      * @param borderWidth The width of the card border
-     * @param borderColor The color of the card border
-     * @param iconColor The color of the card icon
-     * @param textColor The color of the card text
      */
     @Composable
     fun CreateAlert(
         screenWidth: Dp,
         screenHeight: Dp,
-        xScale: Float,
-        yScale: Float,
-        themeColor: List<Color>,
-        cardGrad1: Int = 8,
-        cardGrad2: Int = 9,
         borderWidth: Dp = 1.dp,
-        borderColor: Int = 18,
-        iconColor: Int = 4,
-        textColor: Int = 2
     ) {
         verticalVisibilityPane(
             visibility = displayed, animationHeight = 2, duration = 250, paneContent = {
                 createCard(
-                    xOffset = 5.dp, yOffset = screenHeight-60.dp,
-                    width = screenWidth-65.dp, height = 50.dp,
-                    xScale = xScale, yScale = yScale, elevation = 20.dp,
-                    themeColor = themeColor, cardGrad1 = cardGrad1, cardGrad2 = cardGrad2,
-                    borderWidth = borderWidth, borderColor = borderColor,
+                    xOffset = 5.dp, yOffset = screenHeight - 60.dp, width = screenWidth - 65.dp, height = 50.dp,
+                    elevation = 20.dp, borderWidth = borderWidth,
                     cardContent = {
                         textElement(
-                            displayedText = text, textOffset = 15.dp, width = screenWidth-65.dp, xScale = xScale, yScale = yScale,
-                            fontSize = 18.sp, font = FontWeight.Normal, themeColor = themeColor, textColor = textColor
+                            displayedText = text, textOffset = 15.dp, width = screenWidth - 65.dp,
+                            fontSize = 18.sp, font = FontWeight.Normal
                         )
                     }
                 )
                 createCard(
-                    xOffset = screenWidth-55.dp, yOffset = screenHeight-60.dp,
-                    width = 50.dp, height = 50.dp,
-                    xScale = xScale, yScale = yScale, elevation = 20.dp,
-                    themeColor = themeColor, cardGrad1 = cardGrad1, cardGrad2 = cardGrad2,
-                    borderWidth = borderWidth, borderColor = borderColor,
+                    xOffset = screenWidth - 55.dp, yOffset = screenHeight - 60.dp,
+                    width = 50.dp, height = 50.dp, elevation = 20.dp,
+                    borderWidth = borderWidth,
                     cardContent = {
                         IconButton(onClick = { displayed = false }, modifier = Modifier.align(Alignment.Center)) {
                             Icon(
                                 imageVector = Icons.Sharp.Close,
                                 contentDescription = "Close Button",
-                                tint = themeColor[iconColor]
+                                tint = Color(ViewModel.themeColor.icon)
                             )
                         }
                     }

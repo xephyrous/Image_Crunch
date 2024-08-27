@@ -9,7 +9,29 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.unit.dp
-import utils.storage.aqueousThemes
+import ui.ViewModel.configGenerator
+import ui.ViewModel.configMasks
+import ui.ViewModel.configSlices
+import ui.ViewModel.displayedImage
+import ui.ViewModel.displayedNodes
+import ui.ViewModel.imageBitmapPainter
+import ui.ViewModel.imageDisplay
+import ui.ViewModel.imageInputStream
+import ui.ViewModel.imageModifier
+import ui.ViewModel.menuCardState
+import ui.ViewModel.menuLines
+import ui.ViewModel.menuPage
+import ui.ViewModel.nodeBitmapPainter
+import ui.ViewModel.nodeDisplay
+import ui.ViewModel.nodeInputStream
+import ui.ViewModel.screenHeight
+import ui.ViewModel.screenWidth
+import ui.ViewModel.selectedGenerator
+import ui.ViewModel.settingsCardState
+import ui.ViewModel.settingsLines
+import ui.ViewModel.settingsPage
+import ui.ViewModel.themeColor
+import utils.storage.ThemeData
 import java.awt.image.BufferedImage
 
 /**
@@ -39,9 +61,9 @@ import java.awt.image.BufferedImage
  * @property menuCardState If the menu card animation is running
  * @property settingsCardState If the settings card animation is running
  */
-class ViewModel {
+object ViewModel {
     // Application theme
-    var themeColor by mutableStateOf(aqueousThemes)
+    var themeColor by mutableStateOf(ThemeData(""))
 
     // Image Displays
     var displayedImage by mutableStateOf<BufferedImage?>(null)
@@ -81,6 +103,6 @@ class ViewModel {
     var nodeDisplay by mutableStateOf(true)
 
     // Card Animations
-    var menuCardState by mutableStateOf(false) 
+    var menuCardState by mutableStateOf(false)
     var settingsCardState by mutableStateOf(false)
 }
