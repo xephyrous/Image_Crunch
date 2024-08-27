@@ -19,8 +19,13 @@ import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
 import ui.App
+import ui.ViewModel
+import ui.launchThemes
 
 fun main() = application {
+    ViewModel.loadedThemes = launchThemes()
+    ViewModel.themeColor = ViewModel.loadedThemes[0].exportData()
+
     val state = rememberWindowState(
         size = DpSize(1200.dp, 800.dp),
         position = WindowPosition(150.dp, 150.dp)

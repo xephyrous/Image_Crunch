@@ -17,40 +17,13 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import utils.storage.ThemeButton
 import utils.storage.ThemeData
-import java.io.File
-
-/*
-THEME HANDLER TODO:
-
-Parse thru a folder list of themes
-Convert Theme to a new object
-Confirmation box
-
- */
-
-/*
-Hola from the code desk,
-
-Please if possible make some checker that returns a list of theme objects
-I will use that to determine the selections for the theme page
- */
-
-/**
- * Grabs themes from the dedicated themes folder within config.
- * Returns a list of themes
- */
-fun grabThemes(
-    dirPath: String
-): List<File>? {
-    return File(dirPath).listFiles()?.filter { it.isFile } // i think this works?
-}
 
 /**
  * Represents the theme switcher and confirmation boxes
  */
 object ThemeSwitcher {
-    private var currentTheme by mutableStateOf(ThemeData(""))
-    private var newTheme by mutableStateOf(ThemeData(""))
+    private var currentTheme by mutableStateOf(ThemeButton(ThemeData("")))
+    private var newTheme by mutableStateOf(ThemeButton(ThemeData("")))
 
     private var displayed by mutableStateOf(false)
 
@@ -77,7 +50,7 @@ object ThemeSwitcher {
                 cardContent = {
                     Column {
                         textElement(
-                            height = 325.dp, width = screenWidth/2,
+                            height = 325.dp, width = screenWidth / 2,
                             displayedText = "CONFIRM THEME CHANGE?\n\nYou can always change this back later in the main menu",
                             textOffset = 40.dp, fontSize = 40.sp,
                         )
@@ -111,33 +84,43 @@ object ThemeSwitcher {
         newColor: ThemeData
     ) {
         displayed = true
-        currentTheme = ViewModel.themeColor
-        ViewModel.themeColor = newColor
+        currentTheme = ViewModel.themeBase
+        newTheme = ThemeButton(newColor)
+        println("Current theme: ${currentTheme.name} | New theme: ${newTheme.name}")
+        ViewModel.themeColor = newTheme.exportData()
         startCountdown()
     }
 
     private fun confirmChange() {
-        ViewModel.themeColor = newTheme
+        ViewModel.themeColor = newTheme.exportData()
+        ViewModel.themeBase = newTheme
 
-        newTheme = ThemeData("")
-        currentTheme = ThemeData("")
+        newTheme = ThemeButton(ThemeData(""))
+        currentTheme = ThemeButton(ThemeData(""))
 
         displayed = false
+
+        println("Current theme: ${ViewModel.themeBase.name}")
+        println("Current theme: ${ViewModel.themeColor.name}")
     }
 
     private fun rejectChange() {
-        ViewModel.themeColor = currentTheme
+        ViewModel.themeColor = currentTheme.exportData()
 
-        currentTheme = ThemeData("")
-        newTheme = ThemeData("")
+        currentTheme = ThemeButton(ThemeData(""))
+        newTheme = ThemeButton(ThemeData(""))
 
         displayed = false
+
+        println("Current theme: ${ViewModel.themeBase.name}")
+        println("Current theme: ${ViewModel.themeColor.name}")
     }
 
     private fun startCountdown() {
         Thread(kotlinx.coroutines.Runnable {
             countdown = 15
             while (countdown > 0 && displayed) {
+                println(countdown.toString())
                 runBlocking {
                     delay(1000)
                 }
@@ -150,7 +133,6 @@ object ThemeSwitcher {
     }
 }
 
-@Composable
 fun ThemeListToButtons(themes: ArrayList<ThemeData>): ArrayList<ThemeButton> {
     val themeButtons: ArrayList<ThemeButton> = arrayListOf()
     for (theme in themes) {
@@ -158,3 +140,9 @@ fun ThemeListToButtons(themes: ArrayList<ThemeData>): ArrayList<ThemeButton> {
     }
     return themeButtons
 }
+
+/*         __..--''``---....___   _..._    __
+ /// //_.-'    .-/";  `        ``<._  ``.''_ `. / // /
+///_.-' _..--.'_    \                    `( ) ) // //
+/ (_..-' // (< _     ;_..__               ; `' / ///
+ / // // //  `-._,_)' // / ``--...____..-' /// / */

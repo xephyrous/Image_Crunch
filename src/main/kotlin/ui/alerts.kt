@@ -10,7 +10,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -59,7 +58,7 @@ object AlertBox {
                             Icon(
                                 imageVector = Icons.Sharp.Close,
                                 contentDescription = "Close Button",
-                                tint = Color(ViewModel.themeColor.icon)
+                                tint = ViewModel.themeColor.icon
                             )
                         }
                     }

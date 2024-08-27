@@ -5,7 +5,6 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.sharp.PlayArrow
 import androidx.compose.runtime.*
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.res.loadImageBitmap
 import androidx.compose.ui.unit.dp
@@ -80,7 +79,7 @@ fun bottomBar(vm: ViewModel) {
                 Icon(
                     imageVector = Icons.Sharp.PlayArrow,
                     contentDescription = "Play",
-                    tint = Color(ViewModel.themeColor.icon)
+                    tint = ViewModel.themeColor.icon
                 )
             }
         }

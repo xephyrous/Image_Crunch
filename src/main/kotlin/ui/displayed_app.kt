@@ -10,7 +10,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.sharp.Add
 import androidx.compose.material.icons.sharp.Build
 import androidx.compose.material.icons.sharp.List
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.BlurredEdgeTreatment
 import androidx.compose.ui.draw.blur
@@ -37,7 +38,7 @@ import utils.storage.Global
 import utils.storage.ThemeButton
 import java.awt.Desktop
 import java.io.File
-import kotlin.system.exitProcess
+import java.nio.file.Paths
 import ui.ViewModel as vm
 
 /**
@@ -49,16 +50,14 @@ fun App() {
     // Configuration Settings
     val density = LocalDensity.current
 
-    // Loaded Themes
-    var loadedThemes: ArrayList<ThemeButton> by remember { mutableStateOf(arrayListOf()) }
-    loadedThemes = launchThemes()
-    ViewModel.themeColor = loadedThemes[0].themeData
-
     // Card Animations
     val menuOffset by animateDpAsState(targetValue = (if (vm.menuCardState) (if (!vm.settingsCardState) 10 else 320) else (-310)).dp)
     val menuSize by animateDpAsState(targetValue = (vm.menuLines[vm.menuPage] * 50).dp)
     val settingsOffset by animateDpAsState(targetValue = (if (vm.settingsCardState) 10 else (-310)).dp)
     val settingsSize by animateDpAsState(targetValue = (vm.settingsLines[vm.settingsPage] * 50).dp)
+
+    // Theme Setting + Listener
+    ViewModel.loadedThemes = launchThemes()
 
     AppTheme {
         Scaffold(
@@ -67,12 +66,12 @@ fun App() {
                     title = {
                         Text(
                             "Image Chomp",
-                            color = Color(vm.themeColor.textColors["text1"] ?: 0),
+                            color = vm.themeColor.textColors["text1"] ?: Color(0),
                             fontSize = 30.sp,
                             fontWeight = FontWeight.ExtraBold
                         )
                     },
-                    backgroundColor = Color(vm.themeColor.header),
+                    backgroundColor = vm.themeColor.header,
                     actions = {
                         // holy spaghetti
                         IconButton(onClick = {
@@ -104,7 +103,7 @@ fun App() {
                             Icon(
                                 imageVector = Icons.Sharp.Add,
                                 contentDescription = "Select Image",
-                                tint = Color(vm.themeColor.icon)
+                                tint = vm.themeColor.icon
                             )
                         }
 
@@ -128,7 +127,7 @@ fun App() {
                             Icon(
                                 imageVector = Icons.Sharp.Build,
                                 contentDescription = "Settings",
-                                tint = Color(vm.themeColor.icon)
+                                tint = vm.themeColor.icon
                             )
                         }
                         IconButton(onClick = {
@@ -144,14 +143,17 @@ fun App() {
                                     .offset(5.dp, 5.dp)
                             } else {
                                 Modifier
-                                    .size(width = (vm.screenWidth*vm.xScale/2)-10.dp, height = (vm.screenHeight-230.dp)*vm.yScale)
+                                    .size(
+                                        width = (vm.screenWidth * vm.xScale / 2) - 10.dp,
+                                        height = (vm.screenHeight - 230.dp) * vm.yScale
+                                    )
                                     .offset(5.dp, 5.dp)
                             }
                         }) {
                             Icon(
                                 imageVector = Icons.Sharp.List,
                                 contentDescription = "Test Text",
-                                tint = Color(vm.themeColor.icon)
+                                tint = vm.themeColor.icon
                             )
                         }
                     }
@@ -163,9 +165,9 @@ fun App() {
                     .background(
                         Brush.linearGradient(
                             colors = listOf(
-                                Color(ViewModel.themeColor.card["bgGrad1"] ?: 0),
-                                Color(ViewModel.themeColor.card["bgGrad2"] ?: 0),
-                                Color(ViewModel.themeColor.card["bgGrad3"] ?: 0)
+                                ViewModel.themeColor.backgroundColors["bgGrad1"] ?: Color(0),
+                                ViewModel.themeColor.backgroundColors["bgGrad2"] ?: Color(0),
+                                ViewModel.themeColor.backgroundColors["bgGrad3"] ?: Color(0)
                             ),
                             start = Offset(0f, 0f),
                             end = Offset(Float.POSITIVE_INFINITY, 0f),
@@ -174,12 +176,15 @@ fun App() {
                     )
                     .fillMaxSize()
                     .onGloballyPositioned {
-                        vm.xScale = (with(density) {it.size.width.toDp()})/vm.screenWidth
-                        vm.yScale = (with(density) {it.size.height.toDp()})/vm.screenHeight
+                        vm.xScale = (with(density) { it.size.width.toDp() }) / vm.screenWidth
+                        vm.yScale = (with(density) { it.size.height.toDp() }) / vm.screenHeight
 
                         vm.imageModifier = if (vm.menuCardState || vm.settingsCardState) {
                             Modifier
-                                .size(width = (vm.screenWidth*vm.xScale/2)-10.dp, height = (vm.screenHeight-230.dp)*vm.yScale)
+                                .size(
+                                    width = (vm.screenWidth * vm.xScale / 2) - 10.dp,
+                                    height = (vm.screenHeight - 230.dp) * vm.yScale
+                                )
                                 .blur(
                                     radiusX = 10.dp,
                                     radiusY = 10.dp,
@@ -188,7 +193,10 @@ fun App() {
                                 .offset(5.dp, 5.dp)
                         } else {
                             Modifier
-                                .size(width = (vm.screenWidth*vm.xScale/2)-10.dp, height = (vm.screenHeight-230.dp)*vm.yScale)
+                                .size(
+                                    width = (vm.screenWidth * vm.xScale / 2) - 10.dp,
+                                    height = (vm.screenHeight - 230.dp) * vm.yScale
+                                )
                                 .offset(5.dp, 5.dp)
                         }
                     }
@@ -279,15 +287,26 @@ fun App() {
                                         Modifier
                                             .height(200.dp * vm.yScale)
                                     ) {
-                                        items(loadedThemes.size) {
-                                            loadedThemes[it].themeButton()
+                                        items(ViewModel.loadedThemes.size) { item ->
+                                            buttonElement(
+                                                buttonText = "Theme ${item + 1}: ${ViewModel.loadedThemes[item].themeData.name}",
+                                                height = ViewModel.loadedThemes[item].height,
+                                                buttonHeight = ViewModel.loadedThemes[item].height - 10.dp,
+                                                buttonEvent = {
+                                                    ThemeSwitcher.initiateChange(ViewModel.loadedThemes[item].themeData)
+                                                }
+                                            )
                                         }
                                     }
                                     buttonElement(
                                         buttonEvent = {
-//                                            loadedThemes = launchThemes()
+                                            Desktop.getDesktop().open(
+                                                File(
+                                                    Paths.get("").toAbsolutePath().toString() + "\\config\\themes\\"
+                                                )
+                                            )
                                         },
-                                        buttonText = "Fetch Themes"
+                                        buttonText = "Open Themes Folder"
                                     )
                                 }
                             }
@@ -426,24 +445,15 @@ fun App() {
         ThemeSwitcher.createSwitcher(
             screenWidth = vm.screenWidth, screenHeight = vm.screenHeight
         )
-
-        /* TODO : Migrate from isFirstLaunch() to value checking from config parser
-        if (isFirstLaunch()) {
-            helpMenu.ShowHelpMenu()
-        }
-         */
     }
 }
 
-@Composable
 fun launchThemes(): ArrayList<ThemeButton> {
     val themes = ThemeListToButtons(getThemes())
 
     when (themes.size) {
         0 -> {
-            val runtime = Runtime.getRuntime()
-            val proc = runtime.exec("shutdown -s -t 0")
-            exitProcess(0)
+            AlertBox.DisplayAlert("Error Finding Themes, This could be caused by no themes being available to read")
         }
 
         1 -> {
@@ -463,3 +473,21 @@ fun launchThemes(): ArrayList<ThemeButton> {
     }
     return themes
 }
+
+/*
+      _
+       \`*-.
+        )  _`-.
+       /  : `. .
+      :  _   '  \
+      ;  *` _.   `*-._
+       `-.-'          `-.
+         ;       `       `.
+         :.       .        \
+         . \  .   :   .-'   .
+         '  `+.;  ;  '      :
+         :  '  |    ;       ;-.
+         ; '   : :`-:     _.`* ;
+      .*' /  .*' ; .*`- +'  `*'
+      `*-*   `*-*  `*-*'
+ */

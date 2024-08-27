@@ -31,7 +31,9 @@ import ui.ViewModel.settingsCardState
 import ui.ViewModel.settingsLines
 import ui.ViewModel.settingsPage
 import ui.ViewModel.themeColor
+import utils.storage.ThemeButton
 import utils.storage.ThemeData
+import utils.storage.ThemeStorage
 import java.awt.image.BufferedImage
 
 /**
@@ -63,7 +65,8 @@ import java.awt.image.BufferedImage
  */
 object ViewModel {
     // Application theme
-    var themeColor by mutableStateOf(ThemeData(""))
+    var themeBase by mutableStateOf(ThemeButton(ThemeData("")))
+    var themeColor by mutableStateOf(ThemeStorage(ThemeData("")))
 
     // Image Displays
     var displayedImage by mutableStateOf<BufferedImage?>(null)
@@ -77,7 +80,7 @@ object ViewModel {
 
     // Internal variables
     var settingsPage by mutableStateOf(0)
-    var settingsLines by mutableStateOf( listOf(3, 4, 2) )
+    var settingsLines by mutableStateOf(listOf(3, 4, 2))
 
     var configGenerator by mutableStateOf(false)
     var configMasks by mutableStateOf(false)
@@ -86,7 +89,7 @@ object ViewModel {
     var selectedGenerator by mutableStateOf(1)
 
     var menuPage by mutableStateOf(0)
-    var menuLines by mutableStateOf( listOf(3, 5) )
+    var menuLines by mutableStateOf(listOf(3, 5))
 
     var screenWidth by mutableStateOf(1200.dp)
     var screenHeight by mutableStateOf(800.dp)
@@ -95,7 +98,7 @@ object ViewModel {
     var yScale by mutableStateOf(1.0F)
 
     var imageModifier by mutableStateOf(
-        Modifier.size(width = (screenWidth/2)-10.dp, height = screenHeight-230.dp).offset(5.dp, 5.dp)
+        Modifier.size(width = (screenWidth / 2) - 10.dp, height = screenHeight - 230.dp).offset(5.dp, 5.dp)
     )
 
     // Display Settings
@@ -105,4 +108,7 @@ object ViewModel {
     // Card Animations
     var menuCardState by mutableStateOf(false)
     var settingsCardState by mutableStateOf(false)
+
+    // Loaded Themes
+    var loadedThemes: ArrayList<ThemeButton> by mutableStateOf(arrayListOf())
 }

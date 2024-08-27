@@ -1,13 +1,11 @@
 package utils.storage
 
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import ui.ThemeSwitcher
-import ui.buttonElement
 import utils.storage.GeneratorType.*
 import java.awt.Dimension
 import kotlin.reflect.KClass
@@ -174,28 +172,49 @@ class ThemeData(var name: String) {
     var textFields: Map<String, Long> = mapOf()
 }
 
+class ThemeStorage(tD: ThemeData) {
+    var name by mutableStateOf(tD.name)
+    var icon by mutableStateOf(Color(tD.icon))
+    var header by mutableStateOf(Color(tD.header))
+    var button by mutableStateOf(Color(tD.button))
+    var border by mutableStateOf(Color(tD.border))
+    var fab by mutableStateOf(Color(tD.fab))
+    var card: MutableMap<String, Color> = tD.card.mapValues {
+        Color(it.value)
+    }.toMutableMap()
+    var textColors: MutableMap<String, Color> = tD.textColors.mapValues {
+        Color(it.value)
+    }.toMutableMap()
+    var backgroundColors: MutableMap<String, Color> = tD.backgroundColors.mapValues {
+        Color(it.value)
+    }.toMutableMap()
+    var textFields: MutableMap<String, Color> = tD.textFields.mapValues {
+        Color(it.value)
+    }.toMutableMap()
+}
+
+/*
+ _._     _,-'""`-._
+(,-.`._,'(       |\`-/|
+    `-.-' \ )-`( ,  o o)
+          `-    \`_`"'-
+ */
+
 /**
- * Theme Switching Button type
+ * Theme Switching Button Data Holder
  *
  */
 class ThemeButton(tD: ThemeData) {
+    var name = tD.name
     var themeData = tD
     var height by mutableStateOf(50.dp)
 
-    @Composable
-    fun themeButton(
-    ) {
-        buttonElement(
-            buttonText = themeData.name,
-            height = height,
-            buttonEvent = {
-                ThemeSwitcher.initiateChange(this.themeData)
-            }
-        )
-    }
-
     fun setButtonHeight(height: Dp) {
         this.height = height
+    }
+
+    fun exportData(): ThemeStorage {
+        return ThemeStorage(themeData)
     }
 }
 

@@ -33,13 +33,8 @@ import androidx.compose.ui.unit.sp
  * @param buttonHeight The height of the button within the element
  * @param buttonWidth The width of the button within the element
  * @param fontSize The default font size of the element
- * @param xScale The horizontal scaling multiplier of the elements
- * @param yScale The vertical scaling multiplier of the elements
  * @param buttonEvent The function to run when the button is clicked
  * @param buttonText The text of the button
- * @param themeColor A list of theme colors to use for styling the button
- * @param buttonColor The position of the button color in the [themeColor]
- * @param textColor The position of the text color in the [themeColor]
  */
 @Composable
 fun buttonElement(
@@ -58,11 +53,11 @@ fun buttonElement(
             onClick = buttonEvent,
             modifier = Modifier.size(height = buttonHeight * ViewModel.yScale, width = buttonWidth * ViewModel.xScale)
                 .align(alignment = Alignment.Center),
-            colors = ButtonDefaults.buttonColors(backgroundColor = Color(ViewModel.themeColor.button))
+            colors = ButtonDefaults.buttonColors(backgroundColor = ViewModel.themeColor.button)
         ) {
             Text(
                 buttonText,
-                color = Color(ViewModel.themeColor.textColors["text2"] ?: 0),
+                color = ViewModel.themeColor.textColors["text2"] ?: Color(0),
                 fontSize = fontSize * ViewModel.xScale.coerceAtMost(ViewModel.yScale)
             )
         }
@@ -74,14 +69,10 @@ fun buttonElement(
  *
  * @param height The height of the element box
  * @param width The width of the element box
- * @param xScale The horizontal scaling multiplier of the elements
- * @param yScale The vertical scaling multiplier of the elements
  * @param displayedText The text to be displayed
  * @param textOffset The Y offset of the text in dot points (Dp)
  * @param fontSize The font size
  * @param font The font
- * @param themeColor List of theme colors to use for styling the text
- * @param textColor The position of the text color in the [themeColor]
  */
 @Composable
 fun textElement(
@@ -97,7 +88,7 @@ fun textElement(
     ) {
         Text(
             text = displayedText,
-            color = Color(ViewModel.themeColor.textColors["text1"] ?: 0),
+            color = ViewModel.themeColor.textColors["text1"] ?: Color(0),
             modifier = Modifier.fillMaxSize().offset(y = (textOffset) * ViewModel.yScale)
                 .align(alignment = Alignment.Center),
             fontSize = fontSize * ViewModel.xScale.coerceAtMost(ViewModel.yScale),
@@ -169,11 +160,7 @@ fun verticalVisibilityPane(
  * @param width The width of the card in dot points (Dp)
  * @param height The height of the card in dot points (Dp)
  * @param elevation The elevation of the card in dot points (Dp)
- * @param themeColor A list of theme colors to use for styling the card
- * @param cardGrad1 Position of the start gradient color in the [themeColor]
- * @param cardGrad2 Position of the end gradient color in the [themeColor]
  * @param borderWidth The width of the card border
- * @param borderColor The position of the border color in the [themeColor]
  * @param cardContent The content of the card
  */
 @Composable
@@ -190,14 +177,14 @@ fun createCard(
         modifier = Modifier.offset(xOffset * ViewModel.xScale, yOffset * ViewModel.yScale)
             .size(width * ViewModel.xScale, height * ViewModel.yScale),
         elevation = elevation,
-        border = BorderStroke(borderWidth, Color(ViewModel.themeColor.border)),
+        border = BorderStroke(borderWidth, ViewModel.themeColor.border),
         content = {
             Box(
                 modifier = Modifier.background(
                     Brush.linearGradient(
                         colors = listOf(
-                            Color(ViewModel.themeColor.card["cGrad1"] ?: 0),
-                            Color(ViewModel.themeColor.card["cGrad2"] ?: 0)
+                            ViewModel.themeColor.card["cGrad1"] ?: Color(0),
+                            ViewModel.themeColor.card["cGrad2"] ?: Color(0)
                         ),
                         start = Offset(0f, 0f),
                         end = Offset(Float.POSITIVE_INFINITY, 0f),
@@ -209,6 +196,7 @@ fun createCard(
     )
 }
 
+// TODO: REWORK THIS
 /**
  * Creates a menu GUI object
  *
@@ -218,21 +206,11 @@ fun createCard(
  * @param height The size of the main menu area (Dp)
  * @param titleSize The standard size of the title bar (Dp)
  * @param gapSize The size of the gap between the menu objects (Dp)
- * @param xScale The horizontal scaling multiplier of the elements
- * @param yScale The vertical scaling multiplier of the elements
  * @param page The menu page handler
  * @param elevation The elevation of the menu in dot points (Dp)
  * @param menuTitle The title of the menu
  * @param returnTitle The return button text
- * @param themeColor A list of theme colors to use for styling the menu
- * @param cardGrad1 Position of the start gradient in [themeColor]
- * @param cardGrad2 Position of the end gradient in [themeColor]
  * @param borderWidth The width of the menu border
- * @param borderColor The color of the menu border
- * @param buttonColor The position of the button color in [themeColor]
- * @param titleColor The position of the title color in [themeColor]
- * @param textColor The position of the text color in [themeColor]
- * @param iconColor the position of the icon color in [themeColor]
  * @param exitOperation The function to be run when the exit button is clicked
  * @param closeOperation The function to be run when the menu is closed
  * @param menuPages The GUI objects of the menu pages
@@ -272,7 +250,7 @@ fun createMenu(
                 Icon(
                     imageVector = Icons.Sharp.Close,
                     contentDescription = "Close Button",
-                    tint = Color(ViewModel.themeColor.icon),
+                    tint = ViewModel.themeColor.icon
                 )
             }
         }

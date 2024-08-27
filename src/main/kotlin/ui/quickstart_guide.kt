@@ -78,14 +78,14 @@ object HelpMenu {
                         }
                     },
                 elevation = 15.dp,
-                border = BorderStroke(borderWidth, Color(ViewModel.themeColor.border)),
+                border = BorderStroke(borderWidth, ViewModel.themeColor.border),
             ) {
                 Box(
                     modifier = Modifier.background(
                         Brush.linearGradient(
                             colors = listOf(
-                                Color(ViewModel.themeColor.card["cGrad1"] ?: 0),
-                                Color(ViewModel.themeColor.card["cGrad2"] ?: 0)
+                                ViewModel.themeColor.card["cGrad1"] ?: Color(0),
+                                ViewModel.themeColor.card["cGrad2"] ?: Color(0)
                             ),
                             start = Offset(0f, 0f),
                             end = Offset(Float.POSITIVE_INFINITY, 0f),
@@ -112,14 +112,14 @@ object HelpMenu {
                         }
                     },
                 elevation = 15.dp,
-                border = BorderStroke(borderWidth, Color(ViewModel.themeColor.border)),
+                border = BorderStroke(borderWidth, ViewModel.themeColor.border),
             ) {
                 Box(
                     modifier = Modifier.background(
                         Brush.linearGradient(
                             colors = listOf(
-                                Color(ViewModel.themeColor.card["cGrad1"] ?: 0),
-                                Color(ViewModel.themeColor.card["cGrad2"] ?: 0)
+                                ViewModel.themeColor.card["cGrad1"] ?: Color(0),
+                                ViewModel.themeColor.card["cGrad2"] ?: Color(0)
                             ),
                             start = Offset(0f, 0f),
                             end = Offset(Float.POSITIVE_INFINITY, 0f),
@@ -131,7 +131,7 @@ object HelpMenu {
                         Icon(
                             imageVector = Icons.Sharp.Close,
                             contentDescription = "Close Button",
-                            tint = Color(ViewModel.themeColor.icon)
+                            tint = ViewModel.themeColor.icon
                         )
                     }
                 }
@@ -150,14 +150,14 @@ object HelpMenu {
                         }
                     },
                 elevation = 15.dp,
-                border = BorderStroke(borderWidth, Color(ViewModel.themeColor.border)),
+                border = BorderStroke(borderWidth, ViewModel.themeColor.border),
             ) {
                 Box(
                     modifier = Modifier.background(
                         Brush.linearGradient(
                             colors = listOf(
-                                Color(ViewModel.themeColor.card["cGrad1"] ?: 0),
-                                Color(ViewModel.themeColor.card["cGrad2"] ?: 0)
+                                ViewModel.themeColor.card["cGrad1"] ?: Color(0),
+                                ViewModel.themeColor.card["cGrad2"] ?: Color(0)
                             ),
                             start = Offset(0f, 0f),
                             end = Offset(Float.POSITIVE_INFINITY, 0f),
@@ -270,14 +270,14 @@ object HelpMenu {
                         }
                     },
                 elevation = 15.dp,
-                border = BorderStroke(borderWidth, Color(ViewModel.themeColor.border)),
+                border = BorderStroke(borderWidth, ViewModel.themeColor.border),
             ) {
                 Box(
                     modifier = Modifier.background(
                         Brush.linearGradient(
                             colors = listOf(
-                                Color(ViewModel.themeColor.card["cGrad1"] ?: 0),
-                                Color(ViewModel.themeColor.card["cGrad2"] ?: 0)
+                                ViewModel.themeColor.card["cGrad1"] ?: Color(0),
+                                ViewModel.themeColor.card["cGrad2"] ?: Color(0)
                             ),
                             start = Offset(0f, 0f),
                             end = Offset(Float.POSITIVE_INFINITY, 0f),
@@ -289,7 +289,7 @@ object HelpMenu {
                         Icon(
                             imageVector = Icons.Sharp.KeyboardArrowLeft,
                             contentDescription = "Close Button",
-                            tint = Color(ViewModel.themeColor.icon)
+                            tint = ViewModel.themeColor.icon
                         )
                     }
                 }
@@ -306,14 +306,14 @@ object HelpMenu {
                         }
                     },
                 elevation = 15.dp,
-                border = BorderStroke(borderWidth, Color(ViewModel.themeColor.border)),
+                border = BorderStroke(borderWidth, ViewModel.themeColor.border),
             ) {
                 Box(
                     modifier = Modifier.background(
                         Brush.linearGradient(
                             colors = listOf(
-                                Color(ViewModel.themeColor.card["cGrad1"] ?: 0),
-                                Color(ViewModel.themeColor.card["cGrad2"] ?: 0)
+                                ViewModel.themeColor.card["cGrad1"] ?: Color(0),
+                                ViewModel.themeColor.card["cGrad2"] ?: Color(0)
                             ),
                             start = Offset(0f, 0f),
                             end = Offset(Float.POSITIVE_INFINITY, 0f),
@@ -341,14 +341,14 @@ object HelpMenu {
                         }
                     },
                 elevation = 15.dp,
-                border = BorderStroke(borderWidth, Color(ViewModel.themeColor.border)),
+                border = BorderStroke(borderWidth, ViewModel.themeColor.border),
             ) {
                 Box(
                     modifier = Modifier.background(
                         Brush.linearGradient(
                             colors = listOf(
-                                Color(ViewModel.themeColor.card["cGrad1"] ?: 0),
-                                Color(ViewModel.themeColor.card["cGrad2"] ?: 0)
+                                ViewModel.themeColor.card["cGrad1"] ?: Color(0),
+                                ViewModel.themeColor.card["cGrad2"] ?: Color(0)
                             ),
                             start = Offset(0f, 0f),
                             end = Offset(Float.POSITIVE_INFINITY, 0f),
@@ -360,7 +360,7 @@ object HelpMenu {
                         Icon(
                             imageVector = Icons.Sharp.KeyboardArrowRight,
                             contentDescription = "Close Button",
-                            tint = Color(ViewModel.themeColor.icon)
+                            tint = ViewModel.themeColor.icon
                         )
                     }
                 }

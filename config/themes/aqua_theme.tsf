@@ -1,0 +1,33 @@
+String name: "Aqua Theme"
+
+Long icon: 4284643976
+Long header: 4284991231
+Long button: 4289522422
+Long border: 4278190080
+Long fab: 4289522422
+
+NamedMap textColors: Long {
+    text1: 4278205536,
+    text2: 4278868618,
+    textGrey: 4282559981
+}
+
+NamedMap backgroundColors: Long {
+    bgGrad1: 4286039539,
+    bgGrad2: 4285373109,
+    bgGrad3: 4286032371
+}
+
+NamedMap textFields: Long {
+    tFOn: 4286158724,
+    tFOff: 4282559981,
+    tFbg: 4289592318,
+    tFCursor: 4279725241,
+    tFFocus: 4278950582,
+    tFUnfocus: 4287030004
+}
+
+NamedMap card: Long {
+    cGrad1: 4287618798,
+    cGrad2: 4285974744
+}
