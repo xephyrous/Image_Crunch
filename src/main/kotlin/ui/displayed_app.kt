@@ -1,6 +1,5 @@
 package ui
 
-import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -11,7 +10,6 @@ import androidx.compose.material.icons.sharp.Add
 import androidx.compose.material.icons.sharp.Build
 import androidx.compose.material.icons.sharp.List
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.BlurredEdgeTreatment
 import androidx.compose.ui.draw.blur
@@ -50,11 +48,167 @@ fun App() {
     // Configuration Settings
     val density = LocalDensity.current
 
-    // Card Animations
-    val menuOffset by animateDpAsState(targetValue = (if (vm.menuCardState) (if (!vm.settingsCardState) 10 else 320) else (-310)).dp)
-    val menuSize by animateDpAsState(targetValue = (vm.menuLines[vm.menuPage] * 50).dp)
-    val settingsOffset by animateDpAsState(targetValue = (if (vm.settingsCardState) 10 else (-310)).dp)
-    val settingsSize by animateDpAsState(targetValue = (vm.settingsLines[vm.settingsPage] * 50).dp)
+    // me n u
+    val appMenu = SettingsMenu(
+        listOf(
+            menuButton(
+                pageTitle = "Open Config",
+                buttonEvent = {
+                    Desktop.getDesktop().open(
+                        File(
+                            Paths.get("").toAbsolutePath().toString() + "\\config\\"
+                        )
+                    )
+                }
+            ),
+            menuPage(
+                pageTitle = "Select Theme",
+                pageSize = 5,
+                menuPage = {
+                    Column {
+                        LazyColumn(
+                            Modifier
+                                .height(200.dp * vm.yScale)
+                        ) {
+                            items(ViewModel.loadedThemes.size) { item ->
+                                buttonElement(
+                                    buttonText = "Theme ${item + 1}: ${ViewModel.loadedThemes[item].themeData.name}",
+                                    height = ViewModel.loadedThemes[item].height,
+                                    buttonHeight = ViewModel.loadedThemes[item].height - 10.dp,
+                                    buttonEvent = {
+                                        println(ViewModel.loadedThemes[item].themeData.name)
+                                        println()
+                                        ThemeSwitcher.initiateChange(ViewModel.loadedThemes[item].themeData)
+                                    }
+                                )
+                            }
+                        }
+                        buttonElement(
+                            buttonEvent = {
+                                Desktop.getDesktop().open(
+                                    File(
+                                        Paths.get("").toAbsolutePath().toString() + "\\config\\themes\\"
+                                    )
+                                )
+                            },
+                            buttonText = "Open Themes Folder"
+                        )
+                    }
+                }
+            ),
+            menuPage(
+                pageTitle = "test menu",
+                pageSize = 2,
+                menuPage = {
+                    Column {
+                        buttonElement(
+                            buttonEvent = {
+                                Desktop.getDesktop().open(
+                                    File(
+                                        Paths.get("").toAbsolutePath().toString() + "\\config\\themes\\"
+                                    )
+                                )
+                            },
+                            buttonText = "Open Themes Folder"
+                        )
+                        buttonElement(
+                            buttonEvent = {
+                                Desktop.getDesktop().open(
+                                    File(
+                                        Paths.get("").toAbsolutePath().toString() + "\\config\\themes\\"
+                                    )
+                                )
+                            },
+                            buttonText = "Open Themes Folder"
+                        )
+                    }
+                }
+            ),
+            menuButton(
+                pageTitle = "View Help Menu",
+                buttonEvent = {
+                    Desktop.getDesktop().open(
+                        File(
+                            Paths.get("").toAbsolutePath().toString() + "\\config\\"
+                        )
+                    )
+                }
+            )
+        ),
+        "App Settings"
+    )
+
+    val genMenu = SettingsMenu(
+        listOf(
+            menuPage(
+                pageTitle = "Add Generator",
+                pageSize = 4,
+                menuPage = {
+                    Column {
+                        buttonElement(
+                            buttonEvent = {
+                                Global.generatorType.value = GeneratorType.SQUARE
+                            },
+                            buttonText = "Square Generator"
+                        )
+                        buttonElement(
+                            buttonEvent = {
+
+                            },
+                            buttonText = "Does Not Exist"
+                        )
+                        buttonElement(
+                            buttonEvent = {
+
+                            },
+                            buttonText = "Does Not Exist"
+                        )
+                        buttonElement(
+                            buttonEvent = {
+
+                            },
+                            buttonText = "Does Not Exist"
+                        )
+                    }
+                }
+            ),
+            menuPage(
+                pageTitle = "Add Cut Type",
+                pageSize = 1,
+                menuPage = {}
+            ),
+            menuPage(
+                pageTitle = "Select Output",
+                pageSize = 2,
+                menuPage = {
+                    Column {
+                        buttonElement(
+                            buttonEvent = {
+                                Global.outputLocation = SelectOutputPath()
+                                if (Global.outputLocation == null) {
+                                    AlertBox.DisplayAlert("No Location Selected")
+                                } else {
+                                    AlertBox.DisplayAlert("Output Location set to: ${Global.outputLocation}")
+                                }
+                            },
+                            buttonText = "Select Output Location"
+                        )
+                        buttonElement(
+                            buttonEvent = {
+                                if (Global.outputLocation != null) {
+                                    Desktop.getDesktop().open(File(Global.outputLocation!!))
+                                } else {
+                                    AlertBox.DisplayAlert("No output location selected")
+                                }
+                            },
+                            buttonText = "Open In File Explorer"
+                        )
+                    }
+                }
+            )
+        ),
+        "Gen. Settings"
+    )
 
     // Theme Setting + Listener
     ViewModel.loadedThemes = launchThemes()
@@ -108,20 +262,10 @@ fun App() {
                         }
 
                         IconButton(onClick = {
-                            vm.settingsCardState = !vm.settingsCardState
-                            vm.imageModifier = if (vm.menuCardState || vm.settingsCardState) {
-                                Modifier
-                                    .size(width = (vm.screenWidth*vm.xScale/2)-10.dp, height = (vm.screenHeight-230.dp)*vm.yScale)
-                                    .blur(
-                                        radiusX = 10.dp,
-                                        radiusY = 10.dp,
-                                        edgeTreatment = BlurredEdgeTreatment.Unbounded
-                                    )
-                                    .offset(5.dp, 5.dp)
+                            if (genMenu.isOpen) {
+                                genMenu.closeMenu()
                             } else {
-                                Modifier
-                                    .size(width = (vm.screenWidth*vm.xScale/2)-10.dp, height = (vm.screenHeight-230.dp)*vm.yScale)
-                                    .offset(5.dp, 5.dp)
+                                genMenu.openMenu()
                             }
                         }) {
                             Icon(
@@ -131,23 +275,10 @@ fun App() {
                             )
                         }
                         IconButton(onClick = {
-                            vm.menuCardState = !vm.menuCardState
-                            vm.imageModifier = if (vm.menuCardState || vm.settingsCardState) {
-                                Modifier
-                                    .size(width = (vm.screenWidth*vm.xScale/2)-10.dp, height = (vm.screenHeight-230.dp)*vm.yScale)
-                                    .blur(
-                                        radiusX = 10.dp,
-                                        radiusY = 10.dp,
-                                        edgeTreatment = BlurredEdgeTreatment.Unbounded
-                                    )
-                                    .offset(5.dp, 5.dp)
+                            if (appMenu.isOpen) {
+                                appMenu.closeMenu()
                             } else {
-                                Modifier
-                                    .size(
-                                        width = (vm.screenWidth * vm.xScale / 2) - 10.dp,
-                                        height = (vm.screenHeight - 230.dp) * vm.yScale
-                                    )
-                                    .offset(5.dp, 5.dp)
+                                appMenu.openMenu()
                             }
                         }) {
                             Icon(
@@ -179,7 +310,7 @@ fun App() {
                         vm.xScale = (with(density) { it.size.width.toDp() }) / vm.screenWidth
                         vm.yScale = (with(density) { it.size.height.toDp() }) / vm.screenHeight
 
-                        vm.imageModifier = if (vm.menuCardState || vm.settingsCardState) {
+                        vm.imageModifier = if (appMenu.isOpen || genMenu.isOpen) {
                             Modifier
                                 .size(
                                     width = (vm.screenWidth * vm.xScale / 2) - 10.dp,
@@ -229,208 +360,10 @@ fun App() {
                 bottomBar(vm)
 
                 // Main Menu
-                createMenu(
-                    xOffset = menuOffset, yOffset = 5.dp, width = 300.dp, height = menuSize, titleSize = 50.dp,
-                    gapSize = 5.dp, page = vm.menuPage, elevation = 20.dp,
-                    menuTitle = "Main Menu", returnTitle = "Return to main", borderWidth = 1.dp,
-                    exitOperation = {
-                        vm.menuPage = 0
-                    },
-                    closeOperation = {
-                        vm.menuCardState = !vm.menuCardState
-                        vm.imageModifier = if (vm.menuCardState || vm.settingsCardState) {
-                            Modifier
-                                .size(width = (vm.screenWidth*vm.xScale/2)-10.dp, height = (vm.screenHeight-230.dp)*vm.yScale)
-                                .blur(
-                                    radiusX = 10.dp,
-                                    radiusY = 10.dp,
-                                    edgeTreatment = BlurredEdgeTreatment.Unbounded
-                                )
-                                .offset(5.dp, 5.dp)
-                        } else {
-                            Modifier
-                                .size(width = (vm.screenWidth*vm.xScale/2)-10.dp, height = (vm.screenHeight-230.dp)*vm.yScale)
-                                .offset(5.dp, 5.dp)
-                        }
-                    },
-                    menuPages = {
-                        // Main Menu
-                        horizontalVisibilityPane(
-                            visibility = (vm.menuPage == 0), animationWidth = -2, duration = 369, paneContent = {
-                                Column {
-                                    buttonElement(
-                                        buttonEvent = {
-//                                            make thing
-                                        },
-                                        buttonText = "Open Config Folder"
-                                    )
-                                    buttonElement(
-                                        buttonEvent = {
-                                            vm.menuPage = 1
-                                        },
-                                        buttonText = "Select Theme"
-                                    )
-                                    buttonElement(
-                                        buttonEvent = {
-                                            HelpMenu.ShowHelpMenu()
-                                        },
-                                        buttonText = "GET HELP"
-                                    )
-                                }
-                            }
-                        )
-                        // Theme Selection
-                        horizontalVisibilityPane(
-                            visibility = (vm.menuPage == 1), animationWidth = 2, duration = 369, paneContent = {
-                                Column {
-                                    LazyColumn(
-                                        Modifier
-                                            .height(200.dp * vm.yScale)
-                                    ) {
-                                        items(ViewModel.loadedThemes.size) { item ->
-                                            buttonElement(
-                                                buttonText = "Theme ${item + 1}: ${ViewModel.loadedThemes[item].themeData.name}",
-                                                height = ViewModel.loadedThemes[item].height,
-                                                buttonHeight = ViewModel.loadedThemes[item].height - 10.dp,
-                                                buttonEvent = {
-                                                    ThemeSwitcher.initiateChange(ViewModel.loadedThemes[item].themeData)
-                                                }
-                                            )
-                                        }
-                                    }
-                                    buttonElement(
-                                        buttonEvent = {
-                                            Desktop.getDesktop().open(
-                                                File(
-                                                    Paths.get("").toAbsolutePath().toString() + "\\config\\themes\\"
-                                                )
-                                            )
-                                        },
-                                        buttonText = "Open Themes Folder"
-                                    )
-                                }
-                            }
-                        )
-                    }
-                )
+                appMenu.createMenu()
 
                 // Settings Menu
-                createMenu(
-                    xOffset = settingsOffset, yOffset = 5.dp, width = 300.dp, height = settingsSize, titleSize = 50.dp,
-                    gapSize = 5.dp, page = vm.settingsPage, elevation = 20.dp,
-                    menuTitle = "Crunch Settings", returnTitle = "Return to main", borderWidth = 1.dp,
-                    exitOperation = {
-                        vm.settingsPage = 0
-                    },
-                    closeOperation = {
-                        vm.settingsCardState = !vm.settingsCardState
-                        vm.imageModifier = if (vm.menuCardState || vm.settingsCardState) {
-                            Modifier
-                                .size(
-                                    width = (vm.screenWidth * vm.xScale / 2) - 10.dp,
-                                    height = (vm.screenHeight - 230.dp) * vm.yScale
-                                )
-                                .blur(
-                                    radiusX = 10.dp,
-                                    radiusY = 10.dp,
-                                    edgeTreatment = BlurredEdgeTreatment.Unbounded
-                                )
-                                .offset(5.dp, 5.dp)
-                        } else {
-                            Modifier
-                                .size(width = (vm.screenWidth*vm.xScale/2)-10.dp, height = (vm.screenHeight-230.dp)*vm.yScale)
-                                .offset(5.dp, 5.dp)
-                        }
-                    },
-                    menuPages = {
-                        horizontalVisibilityPane(
-                            visibility = (vm.settingsPage == 0), animationWidth = -2, duration = 369, paneContent = {
-                                Column {
-                                    buttonElement(
-                                        buttonEvent = {
-                                            vm.settingsPage = 1
-                                            vm.configGenerator = true
-                                        },
-                                        buttonText = "Select Generator"
-                                    )
-                                    buttonElement(
-                                        buttonEvent = {
-                                            vm.configSlices = true
-                                        },
-                                        buttonText = "Select Cut Type"
-                                    )
-                                    buttonElement(
-                                        buttonEvent = {
-                                            vm.settingsPage = 2
-                                        },
-                                        buttonText = "Select Output"
-                                    )
-                                }
-                            }
-                        )
-
-                        // Generator Type Selection
-                        horizontalVisibilityPane(
-                            visibility = (vm.settingsPage == 1), animationWidth = 2, duration = 369, paneContent = {
-                                Column {
-                                    buttonElement(
-                                        buttonEvent = {
-                                            Global.generatorType.value = GeneratorType.SQUARE
-                                            vm.selectedGenerator = 1
-                                        },
-                                        buttonText = "Square Generator"
-                                    )
-                                    buttonElement(
-                                        buttonEvent = {
-
-                                        },
-                                        buttonText = "Does Not Exist"
-                                    )
-                                    buttonElement(
-                                        buttonEvent = {
-
-                                        },
-                                        buttonText = "Does Not Exist"
-                                    )
-                                    buttonElement(
-                                        buttonEvent = {
-
-                                        },
-                                        buttonText = "Does Not Exist"
-                                    )
-                                }
-                            }
-                        )
-
-                        horizontalVisibilityPane(
-                            visibility = (vm.settingsPage == 2), animationWidth = 2, duration = 369, paneContent = {
-                                Column {
-                                    buttonElement(
-                                        buttonEvent = {
-                                            Global.outputLocation = SelectOutputPath()
-                                            if (Global.outputLocation == null) {
-                                                AlertBox.DisplayAlert("No Location Selected")
-                                            } else {
-                                                AlertBox.DisplayAlert("Output Location set to: ${Global.outputLocation}")
-                                            }
-                                        },
-                                        buttonText = "Select Output Location"
-                                    )
-                                    buttonElement(
-                                        buttonEvent = {
-                                            if (Global.outputLocation != null) {
-                                                Desktop.getDesktop().open(File(Global.outputLocation!!))
-                                            } else {
-                                                AlertBox.DisplayAlert("No output location selected")
-                                            }
-                                        },
-                                        buttonText = "Open In File Explorer"
-                                    )
-                                }
-                            }
-                        )
-                    }
-                )
+                genMenu.createMenu()
             }
             AlertBox.CreateAlert(
                 screenWidth = vm.screenWidth,

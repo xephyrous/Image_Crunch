@@ -1,14 +1,19 @@
 package ui
 
 import androidx.compose.animation.*
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.sharp.Close
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -17,10 +22,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.TextUnit
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import androidx.compose.ui.unit.*
 
 // Set of functions to make composable easier
 // Passes inputs in a more user-friendly way when designing app
@@ -196,78 +198,135 @@ fun createCard(
     )
 }
 
-// TODO: REWORK THIS
-/**
- * Creates a menu GUI object
- *
- * @param xOffset The horizontal offset of the menu object (Dp)
- * @param yOffset The vertical offset of the menu object (Dp)
- * @param width The normal size of the menu (Dp)
- * @param height The size of the main menu area (Dp)
- * @param titleSize The standard size of the title bar (Dp)
- * @param gapSize The size of the gap between the menu objects (Dp)
- * @param page The menu page handler
- * @param elevation The elevation of the menu in dot points (Dp)
- * @param menuTitle The title of the menu
- * @param returnTitle The return button text
- * @param borderWidth The width of the menu border
- * @param exitOperation The function to be run when the exit button is clicked
- * @param closeOperation The function to be run when the menu is closed
- * @param menuPages The GUI objects of the menu pages
- */
-@Composable
-fun createMenu(
-    xOffset: Dp,
-    yOffset: Dp,
-    width: Dp,
-    height: Dp,
-    titleSize: Dp,
-    gapSize: Dp,
-    page: Int,
-    elevation: Dp, // Elevation
-    menuTitle: String, // Title
-    returnTitle: String, // Return button text
-    borderWidth: Dp = 1.dp,
-    exitOperation: () -> Unit, // the exit button
-    closeOperation: () -> Unit,
-    menuPages: @Composable BoxScope.() -> Unit // the main menu pages
+// i reworked it, im not doccing it tho...
+abstract class menuItem(
+    val itemTitle: String,
+)
+
+class menuPage(
+    val pageSize: Int,
+    val menuPage: @Composable AnimatedVisibilityScope.() -> Unit,
+    pageTitle: String
+) : menuItem(pageTitle)
+
+class menuButton(
+    val buttonEvent: () -> Unit,
+    pageTitle: String
+) : menuItem(pageTitle)
+
+class SettingsMenu(
+    private val menuItems: List<menuItem>,
+    private val name: String
 ) {
-    createCard(
-        xOffset = xOffset, yOffset = yOffset, width = width - titleSize - gapSize,
-        height = titleSize, elevation = elevation, borderWidth = borderWidth,
-        cardContent = {
-            textElement(
-                displayedText = menuTitle, textOffset = 10.dp,
-                fontSize = 30.sp, font = FontWeight.Normal,
-            )
-        }
-    )
-    createCard(
-        xOffset = xOffset + (width - titleSize), yOffset = yOffset, width = titleSize,
-        height = titleSize, elevation = elevation, borderWidth = borderWidth,
-        cardContent = {
-            IconButton(onClick = closeOperation, modifier = Modifier.align(Alignment.Center)) {
-                Icon(
-                    imageVector = Icons.Sharp.Close,
-                    contentDescription = "Close Button",
-                    tint = ViewModel.themeColor.icon
+    companion object {
+        private var openPages: ArrayList<SettingsMenu> = arrayListOf()
+    }
+
+    var isOpen = false
+
+    // Controllers
+    private var onHome = true
+    private var pageNum by mutableStateOf(0)
+    private var currentSize by mutableStateOf(menuItems.size)
+
+    fun openMenu() {
+        openPages.add(this)
+        this.isOpen = true
+    }
+
+    fun closeMenu() {
+        openPages.remove(this)
+        this.isOpen = false
+    }
+
+    @Composable
+    fun createMenu() {
+        // Animated Offsets
+        val xOffset by animateDpAsState(if (this.isOpen) 10.dp + (openPages.indexOf(this) * 310.dp) else (-310).dp)
+        val size by animateDpAsState(currentSize.coerceAtLeast(1) * 50.dp)
+
+        // Menu
+        createCard(
+            xOffset = xOffset, yOffset = 5.dp, width = 245.dp,
+            height = 50.dp, elevation = 20.dp, borderWidth = 1.dp,
+            cardContent = {
+                textElement(
+                    displayedText = name, textOffset = 10.dp,
+                    fontSize = 30.sp, font = FontWeight.Normal,
                 )
             }
-        }
-    )
-    createCard(
-        xOffset = xOffset,
-        yOffset = (if (page == 0) yOffset + height else yOffset + height + titleSize + (gapSize * 2)),
-        width = width, height = titleSize, elevation = elevation, borderWidth = borderWidth,
-        cardContent = {
-            buttonElement(
-                buttonEvent = exitOperation, buttonText = returnTitle
-            )
-        }
-    )
-    createCard(
-        xOffset = xOffset, yOffset = yOffset + gapSize + titleSize,
-        width = width, height = height, elevation = elevation, borderWidth = borderWidth,
-        cardContent = menuPages
-    )
+        )
+        createCard(
+            xOffset = xOffset + (250.dp), yOffset = 5.dp, width = 50.dp,
+            height = 50.dp, elevation = 20.dp, borderWidth = 1.dp,
+            cardContent = {
+                IconButton(onClick = { closeMenu() }, modifier = Modifier.align(Alignment.Center)) {
+                    Icon(
+                        imageVector = Icons.Sharp.Close,
+                        contentDescription = "Close Button",
+                        tint = ViewModel.themeColor.icon
+                    )
+                }
+            }
+        )
+        createCard(
+            xOffset = xOffset,
+            yOffset = (if (onHome) (60.dp) else (size + 65.dp)),
+            width = 300.dp, height = 50.dp, elevation = 20.dp, borderWidth = 1.dp,
+            cardContent = {
+                buttonElement(
+                    buttonEvent = {
+                        currentSize = menuItems.size
+                        onHome = true
+                    }, buttonText = "Return to Home"
+                )
+            }
+        )
+        createCard(
+            xOffset = xOffset, yOffset = 60.dp,
+            width = 300.dp, height = size, elevation = 20.dp, borderWidth = 1.dp,
+            cardContent = {
+                horizontalVisibilityPane(
+                    visibility = (onHome),
+                    animationWidth = 2,
+                    duration = 369,
+                    paneContent = {
+                        LazyColumn {
+                            items(menuItems.size) { item ->
+                                when(menuItems[item]) {
+                                    is menuPage -> {
+                                        buttonElement(
+                                            buttonText = menuItems[item].itemTitle,
+                                            buttonEvent = {
+                                                onHome = false
+                                                currentSize = (menuItems[item] as menuPage).pageSize
+                                                pageNum = item
+                                            }
+                                        )
+                                    }
+
+                                    is menuButton -> {
+                                        buttonElement(
+                                            buttonText = menuItems[item].itemTitle,
+                                            buttonEvent = (menuItems[item] as menuButton).buttonEvent
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    }
+                )
+                for (i in menuItems.indices) {
+                    if (menuItems[i] is menuPage) {
+                        horizontalVisibilityPane(
+                            visibility = (pageNum == i && !onHome),
+                            animationWidth = 2,
+                            duration = 369,
+                            paneContent = (menuItems[i] as menuPage).menuPage
+                        )
+                    }
+                }
+            }
+        )
+    }
 }

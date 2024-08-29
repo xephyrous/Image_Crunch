@@ -17,13 +17,14 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import utils.storage.ThemeButton
 import utils.storage.ThemeData
+import utils.storage.ThemeStorage
 
 /**
  * Represents the theme switcher and confirmation boxes
  */
 object ThemeSwitcher {
-    private var currentTheme by mutableStateOf(ThemeButton(ThemeData("")))
-    private var newTheme by mutableStateOf(ThemeButton(ThemeData("")))
+    private var currentTheme by mutableStateOf(ThemeStorage(ThemeData("")))
+    private var newTheme by mutableStateOf(ThemeStorage(ThemeData("")))
 
     private var displayed by mutableStateOf(false)
 
@@ -84,35 +85,33 @@ object ThemeSwitcher {
         newColor: ThemeData
     ) {
         displayed = true
-        currentTheme = ViewModel.themeBase
-        newTheme = ThemeButton(newColor)
+        currentTheme = ViewModel.themeColor
+        newTheme = ThemeStorage(newColor)
         println("Current theme: ${currentTheme.name} | New theme: ${newTheme.name}")
-        ViewModel.themeColor = newTheme.exportData()
+        ViewModel.themeColor = newTheme
         startCountdown()
     }
 
     private fun confirmChange() {
-        ViewModel.themeColor = newTheme.exportData()
-        ViewModel.themeBase = newTheme
+        ViewModel.themeColor = newTheme
 
-        newTheme = ThemeButton(ThemeData(""))
-        currentTheme = ThemeButton(ThemeData(""))
+        newTheme = ThemeStorage(ThemeData(""))
+        currentTheme = ThemeStorage(ThemeData(""))
 
         displayed = false
 
-        println("Current theme: ${ViewModel.themeBase.name}")
         println("Current theme: ${ViewModel.themeColor.name}")
+        println("Card: ${ViewModel.themeColor.card["cGrad1"]}")
     }
 
     private fun rejectChange() {
-        ViewModel.themeColor = currentTheme.exportData()
+        ViewModel.themeColor = currentTheme
 
-        currentTheme = ThemeButton(ThemeData(""))
-        newTheme = ThemeButton(ThemeData(""))
+        currentTheme = ThemeStorage(ThemeData(""))
+        newTheme = ThemeStorage(ThemeData(""))
 
         displayed = false
 
-        println("Current theme: ${ViewModel.themeBase.name}")
         println("Current theme: ${ViewModel.themeColor.name}")
     }
 
