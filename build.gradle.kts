@@ -26,6 +26,7 @@ dependencies {
     implementation(kotlin("reflect"))
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-swing:1.7.3")
+    implementation("com.mohamedrejeb.dnd:compose-dnd:0.2.0")
 }
 
 compose.desktop {
