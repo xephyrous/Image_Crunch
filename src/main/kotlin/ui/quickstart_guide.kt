@@ -52,7 +52,7 @@ object HelpMenu {
      * @param borderWidth The width of the card border
      */
     @Composable
-    fun CreateHelpMenu(
+    fun createHelpMenu(
         screenWidth: Dp,
         screenHeight: Dp,
         borderWidth: Dp = 1.dp,
@@ -371,7 +371,7 @@ object HelpMenu {
     /**
      * Displays the HelpMenu GUI object
      */
-    fun ShowHelpMenu() {
+    fun showHelpMenu() {
         page = 0
         displayed = true
     }

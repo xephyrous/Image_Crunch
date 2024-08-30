@@ -37,7 +37,7 @@ import java.awt.image.BufferedImage
  * @property nodeInputStream An input stream for writing to the [displayedNodes]
  * @property imageBitmapPainter A bitmap painter for updating the graphics of the [displayedImage]
  * @property nodeBitmapPainter A bitmap painter for updating the graphics of the [displayedNodes]
- * @property menuPage The current page of the main menu
+ * @property MenuPage The current page of the main menu
  * @property screenWidth The width of the target screen
  * @property screenHeight The height of the target screen
  * @property imageModifier Controls the modifiers of the displayed image and nodes
@@ -46,7 +46,7 @@ import java.awt.image.BufferedImage
  */
 object ViewModel {
     // Application theme
-    var themeColor by mutableStateOf<ThemeStorage>(ThemeStorage(ThemeData("")))
+    var themeColor by mutableStateOf(ThemeStorage(ThemeData("")))
 
     // Loaded Themes
     var loadedThemes: ArrayList<ThemeButton> by mutableStateOf(arrayListOf())

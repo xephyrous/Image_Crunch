@@ -44,7 +44,7 @@ object ThemeSwitcher {
             exit = scaleOut(
                 transformOrigin = TransformOrigin.Center
             ),
-        ){
+        ) {
             createCard(
                 xOffset = screenWidth / 4, yOffset = screenHeight / 4, width = screenWidth / 2,
                 height = screenHeight / 2, elevation = 50.dp, borderWidth = borderWidth,
@@ -132,7 +132,7 @@ object ThemeSwitcher {
     }
 }
 
-fun ThemeListToButtons(themes: ArrayList<ThemeData>): ArrayList<ThemeButton> {
+fun themeListToButtons(themes: ArrayList<ThemeData>): ArrayList<ThemeButton> {
     val themeButtons: ArrayList<ThemeButton> = arrayListOf()
     for (theme in themes) {
         themeButtons.add(ThemeButton(theme))

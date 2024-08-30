@@ -26,9 +26,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import ui.ViewModel
-import utils.app.ImageFileSelection
-import utils.app.SelectOutputPath
 import utils.app.getThemes
+import utils.app.imageFileSelection
+import utils.app.selectOutputPath
 import utils.images.*
 import utils.storage.AppTheme
 import utils.storage.GeneratorType
@@ -44,14 +44,14 @@ import ui.ViewModel as vm
  */
 @Suppress("DuplicatedCode")
 @Composable
-fun App() {
+fun app() {
     // Configuration Settings
     val density = LocalDensity.current
 
     // me n u
     val appMenu = SettingsMenu(
         listOf(
-            menuButton(
+            MenuButton(
                 pageTitle = "Open Config",
                 buttonEvent = {
                     Desktop.getDesktop().open(
@@ -61,7 +61,7 @@ fun App() {
                     )
                 }
             ),
-            menuPage(
+            MenuPage(
                 pageTitle = "Select Theme",
                 pageSize = 5,
                 menuPage = {
@@ -96,7 +96,7 @@ fun App() {
                     }
                 }
             ),
-            menuPage(
+            MenuPage(
                 pageTitle = "test menu",
                 pageSize = 2,
                 menuPage = {
@@ -124,14 +124,10 @@ fun App() {
                     }
                 }
             ),
-            menuButton(
+            MenuButton(
                 pageTitle = "View Help Menu",
                 buttonEvent = {
-                    Desktop.getDesktop().open(
-                        File(
-                            Paths.get("").toAbsolutePath().toString() + "\\config\\"
-                        )
-                    )
+                    HelpMenu.showHelpMenu()
                 }
             )
         ),
@@ -140,7 +136,7 @@ fun App() {
 
     val genMenu = SettingsMenu(
         listOf(
-            menuPage(
+            MenuPage(
                 pageTitle = "Add Generator",
                 pageSize = 4,
                 menuPage = {
@@ -172,23 +168,23 @@ fun App() {
                     }
                 }
             ),
-            menuPage(
+            MenuPage(
                 pageTitle = "Add Cut Type",
                 pageSize = 1,
                 menuPage = {}
             ),
-            menuPage(
+            MenuPage(
                 pageTitle = "Select Output",
                 pageSize = 2,
                 menuPage = {
                     Column {
                         buttonElement(
                             buttonEvent = {
-                                Global.outputLocation = SelectOutputPath()
+                                Global.outputLocation = selectOutputPath()
                                 if (Global.outputLocation == null) {
-                                    AlertBox.DisplayAlert("No Location Selected")
+                                    AlertBox.displayAlert("No Location Selected")
                                 } else {
-                                    AlertBox.DisplayAlert("Output Location set to: ${Global.outputLocation}")
+                                    AlertBox.displayAlert("Output Location set to: ${Global.outputLocation}")
                                 }
                             },
                             buttonText = "Select Output Location"
@@ -198,7 +194,7 @@ fun App() {
                                 if (Global.outputLocation != null) {
                                     Desktop.getDesktop().open(File(Global.outputLocation!!))
                                 } else {
-                                    AlertBox.DisplayAlert("No output location selected")
+                                    AlertBox.displayAlert("No output location selected")
                                 }
                             },
                             buttonText = "Open In File Explorer"
@@ -230,7 +226,7 @@ fun App() {
                         // holy spaghetti
                         IconButton(onClick = {
                             vm.imageDisplay = false
-                            val tempImage = ImageFileSelection()
+                            val tempImage = imageFileSelection()
                             if (tempImage != null) {
                                 vm.displayedImage = fileToBufferedImage(tempImage)
                                 Global.loadedImage.value = fileToBufferedImage(tempImage)
@@ -241,17 +237,19 @@ fun App() {
                                     generateNodes(GeneratorType.SQUARE)
                                 )
 
-                                vm.imageInputStream = loadImageBitmap(inputStream = bufferedImageToOutputStream(vm.displayedImage!!))
-                                vm.nodeInputStream = loadImageBitmap(inputStream = bufferedImageToOutputStream(vm.displayedNodes!!))
+                                vm.imageInputStream =
+                                    loadImageBitmap(inputStream = bufferedImageToOutputStream(vm.displayedImage!!))
+                                vm.nodeInputStream =
+                                    loadImageBitmap(inputStream = bufferedImageToOutputStream(vm.displayedNodes!!))
 
                                 vm.imageBitmapPainter = BitmapPainter(vm.imageInputStream!!)
                                 vm.nodeBitmapPainter = BitmapPainter(vm.nodeInputStream!!)
 
                                 vm.imageDisplay = true
 
-                                AlertBox.DisplayAlert("Image successfully loaded and displayed")
+                                AlertBox.displayAlert("Image successfully loaded and displayed")
                             } else {
-                                AlertBox.DisplayAlert("Image failed to load")
+                                AlertBox.displayAlert("Image failed to load")
                             }
                         }) {
                             Icon(
@@ -335,8 +333,8 @@ fun App() {
                 // Image Display box
                 Box(
                     modifier = Modifier
-                        .size(width = (vm.screenWidth/2)*vm.xScale, height = (vm.screenHeight)*vm.yScale)
-                ){
+                        .size(width = (vm.screenWidth / 2) * vm.xScale, height = (vm.screenHeight) * vm.yScale)
+                ) {
                     // IMAGE SCOPE
                     if (vm.imageDisplay) {
                         Image(
@@ -357,7 +355,7 @@ fun App() {
                 }
 
                 // Bottom Bar Settings - From bottom_bar_selection.kt
-                bottomBar(vm)
+                BottomBar.createBottomBar()
 
                 // Main Menu
                 appMenu.createMenu()
@@ -365,13 +363,13 @@ fun App() {
                 // Settings Menu
                 genMenu.createMenu()
             }
-            AlertBox.CreateAlert(
+            AlertBox.createAlert(
                 screenWidth = vm.screenWidth,
                 screenHeight = vm.screenHeight
             )
         }
 
-        HelpMenu.CreateHelpMenu(
+        HelpMenu.createHelpMenu(
             screenWidth = vm.screenWidth, screenHeight = vm.screenHeight
         )
 
@@ -382,11 +380,11 @@ fun App() {
 }
 
 fun launchThemes(): ArrayList<ThemeButton> {
-    val themes = ThemeListToButtons(getThemes())
+    val themes = themeListToButtons(getThemes())
 
     when (themes.size) {
         0 -> {
-            AlertBox.DisplayAlert("Error Finding Themes, This could be caused by no themes being available to read")
+            AlertBox.displayAlert("Error Finding Themes, This could be caused by no themes being available to read")
         }
 
         1 -> {

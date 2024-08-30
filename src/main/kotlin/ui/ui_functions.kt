@@ -47,7 +47,7 @@ fun buttonElement(
     fontSize: TextUnit = 18.sp,
     buttonEvent: () -> Unit,
     buttonText: String,
-){
+) {
     Box(
         modifier = Modifier.size(height = height * ViewModel.yScale, width = width * ViewModel.xScale)
     ) {
@@ -84,7 +84,7 @@ fun textElement(
     textOffset: Dp,
     fontSize: TextUnit,
     font: FontWeight = FontWeight.Normal,
-){
+) {
     Box(
         modifier = Modifier.size(height = height * ViewModel.yScale, width = width * ViewModel.xScale)
     ) {
@@ -114,7 +114,7 @@ fun horizontalVisibilityPane(
     animationWidth: Int = 2,
     duration: Int = 250,
     paneContent: @Composable (AnimatedVisibilityScope.() -> Unit)
-){
+) {
     AnimatedVisibility(
         visible = visibility,
         enter = slideInHorizontally(
@@ -141,7 +141,7 @@ fun verticalVisibilityPane(
     animationHeight: Int = 2,
     duration: Int = 250,
     paneContent: @Composable (AnimatedVisibilityScope.() -> Unit)
-){
+) {
     AnimatedVisibility(
         visible = visibility,
         enter = slideInVertically(
@@ -191,7 +191,8 @@ fun createCard(
                         start = Offset(0f, 0f),
                         end = Offset(Float.POSITIVE_INFINITY, 0f),
                         tileMode = TileMode.Clamp
-                    )).fillMaxSize(),
+                    )
+                ).fillMaxSize(),
                 content = cardContent
             )
         }
@@ -199,23 +200,23 @@ fun createCard(
 }
 
 // i reworked it, im not doccing it tho...
-abstract class menuItem(
+abstract class MenuItem(
     val itemTitle: String,
 )
 
-class menuPage(
+class MenuPage(
     val pageSize: Int,
     val menuPage: @Composable AnimatedVisibilityScope.() -> Unit,
     pageTitle: String
-) : menuItem(pageTitle)
+) : MenuItem(pageTitle)
 
-class menuButton(
+class MenuButton(
     val buttonEvent: () -> Unit,
     pageTitle: String
-) : menuItem(pageTitle)
+) : MenuItem(pageTitle)
 
 class SettingsMenu(
-    private val menuItems: List<menuItem>,
+    private val menuItems: List<MenuItem>,
     private val name: String
 ) {
     companion object {
@@ -293,22 +294,22 @@ class SettingsMenu(
                     paneContent = {
                         LazyColumn {
                             items(menuItems.size) { item ->
-                                when(menuItems[item]) {
-                                    is menuPage -> {
+                                when (menuItems[item]) {
+                                    is MenuPage -> {
                                         buttonElement(
                                             buttonText = menuItems[item].itemTitle,
                                             buttonEvent = {
                                                 onHome = false
-                                                currentSize = (menuItems[item] as menuPage).pageSize
+                                                currentSize = (menuItems[item] as MenuPage).pageSize
                                                 pageNum = item
                                             }
                                         )
                                     }
 
-                                    is menuButton -> {
+                                    is MenuButton -> {
                                         buttonElement(
                                             buttonText = menuItems[item].itemTitle,
-                                            buttonEvent = (menuItems[item] as menuButton).buttonEvent
+                                            buttonEvent = (menuItems[item] as MenuButton).buttonEvent
                                         )
                                     }
                                 }
@@ -317,12 +318,12 @@ class SettingsMenu(
                     }
                 )
                 for (i in menuItems.indices) {
-                    if (menuItems[i] is menuPage) {
+                    if (menuItems[i] is MenuPage) {
                         horizontalVisibilityPane(
                             visibility = (pageNum == i && !onHome),
                             animationWidth = 2,
                             duration = 369,
-                            paneContent = (menuItems[i] as menuPage).menuPage
+                            paneContent = (menuItems[i] as MenuPage).menuPage
                         )
                     }
                 }

@@ -22,8 +22,8 @@ import kotlin.concurrent.timerTask
  * Represents an Alert Box and its interaction functions
  */
 object AlertBox {
-    var text: String = ""
-    var displayed by mutableStateOf(false)
+    private var text: String = ""
+    private var displayed by mutableStateOf(false)
 
     /**
      * Creates an Alert GUI object
@@ -32,7 +32,7 @@ object AlertBox {
      * @param borderWidth The width of the card border
      */
     @Composable
-    fun CreateAlert(
+    fun createAlert(
         screenWidth: Dp,
         screenHeight: Dp,
         borderWidth: Dp = 1.dp,
@@ -74,7 +74,7 @@ object AlertBox {
      * @param displayedText The text to be displayed in the alert
      * @param displayTime The amount of time, in milliseconds, that the alert is displayed for
      */
-    fun DisplayAlert(
+    fun displayAlert(
         displayedText: String,
         displayTime: Long = 3000
     ) {
@@ -107,19 +107,5 @@ object AlertBox {
         if (!this@AlertBox.displayed) return true
         delay(checkPeriod)
         return waitForCondition(maxDelay - checkPeriod, checkPeriod)
-    }
-
-    /**
-     * Waits for a condition (If the alert is not displayed) to be met before returning
-     * @see DisplayAlert For usage in thread closing
-     *
-     * @param maxDelay The longest the condition can be delayed before returning false
-     * @param checkPeriod How often the condition is checked, a polling rate
-     */
-    tailrec suspend fun WaitForCondition(maxDelay: Long, checkPeriod: Long) : Boolean {
-        if(maxDelay < 0) return false
-        if(!displayed) return true
-        delay(checkPeriod)
-        return WaitForCondition(maxDelay - checkPeriod, checkPeriod)
     }
 }
