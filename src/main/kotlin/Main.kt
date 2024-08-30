@@ -22,14 +22,15 @@ import ui.app
 import ui.ViewModel
 import ui.launchThemes
 
-fun main() = application {
+fun main() {
     ViewModel.loadedThemes = launchThemes()
     ViewModel.themeColor = ViewModel.loadedThemes[0].exportData()
 
-    val state = rememberWindowState(
-        size = DpSize(1200.dp, 800.dp),
-        position = WindowPosition(150.dp, 150.dp)
-    )
+    application {
+        val state = rememberWindowState(
+            size = DpSize(1200.dp, 800.dp),
+            position = WindowPosition(150.dp, 150.dp)
+        )
 
     Window(title = "Image Crunch v0.1.a", onCloseRequest = ::exitApplication, state = state) {
         app()
