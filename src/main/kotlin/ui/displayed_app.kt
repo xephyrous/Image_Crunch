@@ -63,7 +63,7 @@ fun app() {
             ),
             MenuPage(
                 pageTitle = "Select Theme",
-                pageSize = 5,
+                pageSize = 6,
                 menuPage = {
                     Column {
                         LazyColumn(
@@ -76,8 +76,6 @@ fun app() {
                                     height = ViewModel.loadedThemes[item].height,
                                     buttonHeight = ViewModel.loadedThemes[item].height - 10.dp,
                                     buttonEvent = {
-                                        println(ViewModel.loadedThemes[item].themeData.name)
-                                        println()
                                         ThemeSwitcher.initiateChange(ViewModel.loadedThemes[item].themeData)
                                     }
                                 )
@@ -92,6 +90,12 @@ fun app() {
                                 )
                             },
                             buttonText = "Open Themes Folder"
+                        )
+                        buttonElement(
+                            buttonEvent = {
+                                ViewModel.loadedThemes = launchThemes()
+                            },
+                            buttonText = "Fetch Themes"
                         )
                     }
                 }
@@ -206,9 +210,6 @@ fun app() {
         "Gen. Settings"
     )
 
-    // Theme Setting + Listener
-    ViewModel.loadedThemes = launchThemes()
-
     AppTheme {
         Scaffold(
             topBar = {
@@ -224,6 +225,7 @@ fun app() {
                     backgroundColor = vm.themeColor.header,
                     actions = {
                         // holy spaghetti
+                        // TODO: some idiot needs to look at this and see if there is a better way to load this image properly because 4:36 am coding is not ideal for writing an efficient image-loader
                         IconButton(onClick = {
                             vm.imageDisplay = false
                             val tempImage = imageFileSelection()

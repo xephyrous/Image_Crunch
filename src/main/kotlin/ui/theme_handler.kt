@@ -84,12 +84,13 @@ object ThemeSwitcher {
     fun initiateChange(
         newColor: ThemeData
     ) {
-        displayed = true
-        currentTheme = ViewModel.themeColor
-        newTheme = ThemeStorage(newColor)
-        println("Current theme: ${currentTheme.name} | New theme: ${newTheme.name}")
-        ViewModel.themeColor = newTheme
-        startCountdown()
+        if (!displayed) {
+            displayed = true
+            currentTheme = ViewModel.themeColor
+            newTheme = ThemeStorage(newColor)
+            ViewModel.themeColor = newTheme
+            startCountdown()
+        }
     }
 
     private fun confirmChange() {
@@ -99,9 +100,6 @@ object ThemeSwitcher {
         currentTheme = ThemeStorage(ThemeData(""))
 
         displayed = false
-
-        println("Current theme: ${ViewModel.themeColor.name}")
-        println("Card: ${ViewModel.themeColor.card["cGrad1"]}")
     }
 
     private fun rejectChange() {
@@ -111,15 +109,12 @@ object ThemeSwitcher {
         newTheme = ThemeStorage(ThemeData(""))
 
         displayed = false
-
-        println("Current theme: ${ViewModel.themeColor.name}")
     }
 
     private fun startCountdown() {
         Thread(kotlinx.coroutines.Runnable {
             countdown = 15
             while (countdown > 0 && displayed) {
-                println(countdown.toString())
                 runBlocking {
                     delay(1000)
                 }

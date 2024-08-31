@@ -223,7 +223,7 @@ class SettingsMenu(
         private var openPages: ArrayList<SettingsMenu> = arrayListOf()
     }
 
-    var isOpen = false
+    var isOpen by mutableStateOf(false)
 
     // Controllers
     private var onHome = true
@@ -289,7 +289,7 @@ class SettingsMenu(
             cardContent = {
                 horizontalVisibilityPane(
                     visibility = (onHome),
-                    animationWidth = 2,
+                    animationWidth = -2,
                     duration = 369,
                     paneContent = {
                         LazyColumn {
