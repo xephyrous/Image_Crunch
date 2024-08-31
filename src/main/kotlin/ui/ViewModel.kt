@@ -21,9 +21,7 @@ import ui.ViewModel.nodeInputStream
 import ui.ViewModel.screenHeight
 import ui.ViewModel.screenWidth
 import ui.ViewModel.themeColor
-import utils.storage.ThemeButton
-import utils.storage.ThemeData
-import utils.storage.ThemeStorage
+import utils.storage.*
 import java.awt.image.BufferedImage
 
 /**
@@ -50,6 +48,9 @@ object ViewModel {
 
     // Loaded Themes
     var loadedThemes: ArrayList<ThemeButton> by mutableStateOf(arrayListOf())
+
+    // Image Filters
+    var filters: ArrayList<Filter> by mutableStateOf(arrayListOf(Slice(1, 1),Slice(2, 2),Slice(3, 3),Slice(4, 4)))
 
     // Image Displays
     var displayedImage by mutableStateOf<BufferedImage?>(null)
