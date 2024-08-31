@@ -18,8 +18,8 @@ import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
-import ui.app
 import ui.ViewModel
+import ui.app
 import ui.launchThemes
 
 fun main() {
@@ -32,7 +32,8 @@ fun main() {
             position = WindowPosition(150.dp, 150.dp)
         )
 
-    Window(title = "Image Crunch v0.1.a", onCloseRequest = ::exitApplication, state = state) {
-        app()
+        Window(title = "Image Crunch v0.1.a", onCloseRequest = ::exitApplication, state = state) {
+            app()
+        }
     }
 }
