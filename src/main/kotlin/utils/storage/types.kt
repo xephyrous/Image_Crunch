@@ -157,8 +157,13 @@ fun mapCast(list: ArrayList<Pair<String, Any>>, mapType: KClass<*>, targetType: 
  *
  * @property name The name of the theme
  * @property icon The icon color
+ * @property header The header color
+ * @property button The button color
+ * @property fab The Floating Action Button Color (Currently Unused)
+ * @property card Map of colors for Card Gradient
  * @property textColors Map of colors for all text variations
- * @property backgroundColors Map of colors for all background variations
+ * @property backgroundColors Map of colors for Background Gradient
+ * @property textFields Map of colors for all textField segments
  */
 class ThemeData(var name: String) {
     var icon: Long = 0
@@ -172,6 +177,21 @@ class ThemeData(var name: String) {
     var textFields: Map<String, Long> = mapOf()
 }
 
+/**
+ * Mutable class for theme data to be read from and inputted into display | Copies Theme Data into a mutable Color rather than a number
+ *
+ * @param tD Initial Theme Data to copy
+ *
+ * @property name The name of the theme
+ * @property icon The icon color
+ * @property header The header color
+ * @property button The button color
+ * @property fab The Floating Action Button Color (Currently Unused)
+ * @property card Map of colors for Card Gradient
+ * @property textColors Map of colors for all text variations
+ * @property backgroundColors Map of colors for Background Gradient
+ * @property textFields Map of colors for all textField segments
+ */
 class ThemeStorage(tD: ThemeData) {
     var name by mutableStateOf(tD.name)
     var icon by mutableStateOf(Color(tD.icon))
@@ -201,8 +221,13 @@ class ThemeStorage(tD: ThemeData) {
  */
 
 /**
- * Theme Switching Button Data Holder
+ * Theme Switching Button Data Holder - Converted to a Composable during runtime
  *
+ * @param tD The passed theme Data
+ *
+ * @property name The name of the theme - Doubles as button text
+ * @property themeData The button's stored theme
+ * @property height Controller for buttons height
  */
 class ThemeButton(tD: ThemeData) {
     var name = tD.name

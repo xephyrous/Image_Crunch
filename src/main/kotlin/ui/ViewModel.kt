@@ -50,7 +50,15 @@ object ViewModel {
     var loadedThemes: ArrayList<ThemeButton> by mutableStateOf(arrayListOf())
 
     // Image Filters
-    var filters: ArrayList<Filter> by mutableStateOf(arrayListOf(Slice(1, 1),Slice(2, 2),Slice(3, 3),Slice(4, 4)))
+    var filters: ArrayList<Filter> by mutableStateOf(
+        arrayListOf(
+            Slice("balls1", 1, 1),
+            Slice("poopy2", 2, 2),
+            Slice("Squawk3", 3, 3),
+            Slice("meow4", 4, 4),
+            Slice("woof5", 5, 5)
+        )
+    )
 
     // Image Displays
     var displayedImage by mutableStateOf<BufferedImage?>(null)

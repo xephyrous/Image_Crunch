@@ -74,13 +74,13 @@ object BottomBar {
                             ReorderableItem(
                                 state = reorderState,
                                 key = item,
-                                data = item.toString(),
+                                data = ViewModel.filters[item].name,
                                 onDrop = {},
                                 onDragEnter = {}
                             ) {
                                 buttonElement(
-                                    buttonText = item.toString(),
-                                    buttonEvent = {}
+                                    buttonText = ViewModel.filters[item].name,
+                                    buttonEvent = { selectedFilter = item }
                                 )
                             }
                         }

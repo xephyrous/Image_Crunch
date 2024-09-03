@@ -15,15 +15,16 @@ import androidx.compose.runtime.Composable
 * You wanted custom filters so you have to deal with my terms now
 */
 
-abstract class Filter() {
+abstract class Filter(var name: String) {
     @Composable abstract fun display()
 }
 
 // Example of a slice filter and how it would be setup or smth idk
 class Slice(
+    name: String,
     var rows: Int,
     var cols: Int
-) : Filter() {
+) : Filter(name) {
     fun updateRows(rows: Int) {
         this.rows = rows
     }
