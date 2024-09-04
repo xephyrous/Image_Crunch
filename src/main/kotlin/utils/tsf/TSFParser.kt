@@ -1,110 +1,31 @@
-package utils.app
+package utils.tsf
 
-import androidx.compose.runtime.key
 import utils.storage.*
+import utils.tsf.Internal.keywordFlags
+import utils.tsf.Internal.keywords
 import java.io.BufferedReader
 import java.io.File
 import java.io.FileReader
-import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
-import kotlin.math.sign
 import kotlin.reflect.KClass
 import kotlin.reflect.KMutableProperty1
-
-/**
- * The level of error strictness during parsing
- *
- * @property STRICT Fatal error, program exits, callback function is called if set
- * @property WARNING Minor error, prints warning of error, callback function is called if set
- * @property LENIENT Insignificant error, callback function is called if set
- */
-enum class TSFParseLevel {
-    STRICT,
-    WARNING,
-    LENIENT,
-}
-
-/**
- * Flags for keyword functionality
- */
-private enum class TSFKeywordFlag(val value: Int) {
-    NONE(0b00000000),
-    SKIP(0b00000001),
-    COLLECTION(0b00000010),
-    TYPED(0b00000100)
-}
-
-/**
- * A map of kotlin types with differing tsf names
- */
-private val keywordConversions: Map<String, String> = mapOf(
-    "Map" to "NamedMap",
-    "HashMap" to "NamedHMap"
-)
-
-/**
- * A map of .tsf keywords and their kotlin class equivalents
- */
-private val keywords: Map<String, KClass<*>> = mapOf(
-    "Object" to Object::class,
-    "String" to String::class,
-    "Bool" to Boolean::class,
-    "Int" to Int::class,
-    "Short" to Short::class,
-    "Long" to Long::class,
-    "Double" to Double::class,
-    "Char" to Char::class,
-    "NamedMap" to Map::class,
-    "NamedHMap" to HashMap::class,
-)
-
-/**
- *  List of flags for each keyword, used for parsing
- */
-private val keywordFlags: Map<String, Int> = mapOf(
-    "Object" to (TSFKeywordFlag.SKIP.value),
-    "String" to (TSFKeywordFlag.NONE.value),
-    "Bool" to (TSFKeywordFlag.NONE.value),
-    "Int" to (TSFKeywordFlag.NONE.value),
-    "Short" to (TSFKeywordFlag.NONE.value),
-    "Long" to (TSFKeywordFlag.NONE.value),
-    "Double" to (TSFKeywordFlag.NONE.value),
-    "Char" to (TSFKeywordFlag.NONE.value),
-    "NamedMap" to (TSFKeywordFlag.COLLECTION.value or TSFKeywordFlag.TYPED.value),
-    "NamedHMap" to (TSFKeywordFlag.COLLECTION.value or TSFKeywordFlag.TYPED.value),
-    "Group" to (TSFKeywordFlag.COLLECTION.value or TSFKeywordFlag.TYPED.value)
-)
-
-/**
- * Internal Kotlin class members to avoid during parsing
- */
-private val parseMask = arrayListOf(
-    "equals",
-    "hashCode",
-    "toString"
-)
-
-private val specialChars = arrayListOf(
-    ":",
-    "{",
-    "}",
-    ","
-)
+import kotlin.reflect.KProperty1
+import kotlin.reflect.full.memberProperties
 
 /**
  * A .tsf (Tirana Storage Format) file parser object
  *
  * @param _class The class to parse into
- * @param configFile The file to parse from
+ * @param inFile The file to parse from
  * @param parseLevel The level of error strictness for parsing
  */
 class TSFParser <T> (
     private val _class: T,
-    private var configFile: File,
+    private var inFile: File,
     private var parseLevel: TSFParseLevel = TSFParseLevel.STRICT
 ) {
-    private val parseCallbackFunctions: ArrayList<() -> Unit> = ArrayList(TSFParseLevel.entries.count())
+    private val parseCallbackFunctions: ArrayList<(String) -> Unit> = ArrayList(TSFParseLevel.entries.count())
     private val classMap: HashMap<String, String> = hashMapOf()
 
     /**
@@ -112,7 +33,7 @@ class TSFParser <T> (
      *
      * @param func The function to be set as the callback
      */
-    fun setParseCallbackFun(func: () -> Unit, parseLevel: TSFParseLevel) {
+    fun setParseCallbackFun(func: (String) -> Unit, parseLevel: TSFParseLevel) {
         parseCallbackFunctions[parseLevel.ordinal] = func
     }
 
@@ -121,23 +42,23 @@ class TSFParser <T> (
      */
     init {
         // Check file validity
-        if(!configFile.exists() || !configFile.canRead()) {
-            throw InvalidTSFFile("File $configFile does not exist or is unreadable!")
+        if(!inFile.exists() || !inFile.canRead()) {
+            throw InvalidTSFFile("File $inFile does not exist or is unreadable!")
         }
 
-        if(configFile.extension != "tsf") {
-            throw InvalidTSFFile("Invalid file extension!\nExpected: .tsf | Received: .${configFile.extension}")
+        if(inFile.extension != "tsf") {
+            throw InvalidTSFFile("Invalid file extension!\nExpected: .tsf | Received: .${inFile.extension}")
         }
 
         // Add class member names to classMap
-        _class!!::class.members.forEach {
-            if(parseMask.contains(it.name)) { return@forEach }
+        _class!!::class.memberProperties.forEach {
+            if(Internal.parseMask.contains(it.name)) { return@forEach }
 
             // Coerce the member's return type to be a simple name
             // (Remove collection type specifications and kotlin class jargon)
             classMap[it.name] = "^[^<]*".toRegex().findAll(
                 it.returnType.toString()
-                .replace("\\bkotlin(?:\\.[^.A-Z<>]*)*\\.".toRegex(), "")
+                    .replace("\\bkotlin(?:\\.[^.A-Z<>]*)*\\.".toRegex(), "")
             ).first().value
         }
 
@@ -148,19 +69,8 @@ class TSFParser <T> (
 
     private fun reservedKeywordCheck(token: String, line: Int) {
         if(keywords.contains(token)) {
-            throw InvalidTSFFile("Reserved keyword '${token}' used on line $line [$configFile]")
+            throw InvalidTSFFile("Reserved keyword '${token}' used on line $line [$inFile]")
         }
-    }
-
-    private fun keywordConversionCheck(keyword: String) : String {
-        try {
-            val converted = keywordConversions[keyword]
-            if(converted != null) { return converted  }
-        } catch(e: Exception) {
-            return keyword
-        }
-
-        return keyword
     }
 
     /**
@@ -172,26 +82,26 @@ class TSFParser <T> (
      *
      * @return An instance of the initialized class
      */
-    fun parse() : T {
+    fun parse() : Result<T> {
         // Parse in from file
-        val reader = BufferedReader(FileReader(configFile))
+        val reader = BufferedReader(FileReader(inFile))
         var line: String?
         val splitLine: MutableList<Array<String>> = MutableList(0) { arrayOf("") }
-        var flattenedFile: String = ""
+        var flattenedFile = ""
 
-        var storedVars: MutableMap<String, Pair<String, Any>> = mutableMapOf() // Name, Type, Value
-        var storedGroups: MutableMap<String, Pair<Pair<KClass<*>, String>, ArrayList<Pair<String, Any>>>> = mutableMapOf() // Name, (Group Type, Member Type), Group Values (Name, Value)
-        var groupData: ArrayList<Pair<String, Any>> = arrayListOf()
+        val storedVars: MutableMap<String, Pair<String, Any?>> = mutableMapOf() // Name, Type, Value
+        val storedGroups: MutableMap<String, Pair<Pair<KClass<*>, String>, ArrayList<Pair<String, Any>>>> = mutableMapOf() // Name, (Group Type, Member Type), Group Values (Name, Value)
+        val groupData: ArrayList<Pair<String, Any>> = arrayListOf()
 
         var linePos = 1
 
         while (reader.readLine().also { line = it } != null) {
             // Remove all inline comments
-            line = line!!.replace("//.*".toRegex(), "");
+            line = line!!.replace("//.*".toRegex(), "")
 
             // Trim input and separate tokens
             line = line!!.trim()
-            specialChars.forEach { line = line!!.replace(it, " $it ") }
+            Internal.specialChars.forEach { line = line!!.replace(it, " $it ") }
 
             // Replace spaces in string literals with temporary token
             line = Regex("\".+\"").replace(line!!) { result ->
@@ -227,7 +137,7 @@ class TSFParser <T> (
             // Check for valid type
             if (keywords.keys.contains(currLine[0]) || inGroup) {
                 // [Collection type]
-                if (keywordFlags[currLine[0]]?.and(TSFKeywordFlag.COLLECTION.value) != 0 || inGroup) {
+                if (keywordFlags[currLine[0]]?.and(Internal.TSFKeywordFlag.COLLECTION.value) != 0 || inGroup) {
                     // Collection declaration checks
                     if(!inGroup) {
                         _type = currLine[0]
@@ -236,16 +146,16 @@ class TSFParser <T> (
                         _name = currLine[1]
 
                         if (currLine[2] != ":") {
-                            throw InvalidTSFFile("Illegal character '${currLine[2]}' on line $linePos [$configFile]")
+                            throw InvalidTSFFile("Illegal character '${currLine[2]}' on line $linePos [$inFile]")
                         }
 
                         if(!keywords.contains(currLine[3])) {
-                            throw InvalidTSFFile("Invalid type in collection '$_name' on line $linePos [$configFile]")
+                            throw InvalidTSFFile("Invalid type in collection '$_name' on line $linePos [$inFile]")
                         }
                         _mType = currLine[3]
 
                         if(currLine[4] != "{") {
-                            throw InvalidTSFFile("Missing collection definition on line $linePos [$configFile]")
+                            throw InvalidTSFFile("Missing collection definition on line $linePos [$inFile]")
                         }
 
                         inGroup = true
@@ -272,7 +182,7 @@ class TSFParser <T> (
                     reservedKeywordCheck(currLine[0], linePos)
 
                     if (currLine[1] != ":") {
-                        throw InvalidTSFFile("Illegal character '${currLine[2]}' in collection '$_name' on line $linePos [$configFile]")
+                        throw InvalidTSFFile("Illegal character '${currLine[2]}' in collection '$_name' on line $linePos [$inFile]")
                     }
 
                     // Store value
@@ -287,7 +197,7 @@ class TSFParser <T> (
                             "Char" -> groupData.add(Pair(currLine[0], currLine[2][0]))
                         }
                     } catch (e: Exception) {
-                        throw InvalidTSFFile("Failed to cast variable '$_name' to type '$_type' on line $linePos [$configFile]")
+                        throw InvalidTSFFile("Failed to cast variable '$_name' to type '$_type' on line $linePos [$inFile]")
                     }
 
                     return@forEach
@@ -300,13 +210,15 @@ class TSFParser <T> (
                 _name = currLine[1]
 
                 if (currLine[2] != ":") {
-                    throw InvalidTSFFile("Illegal character '${currLine[2]}' on line $linePos [$configFile]")
+                    throw InvalidTSFFile("Illegal character '${currLine[2]}' on line $linePos [$inFile]")
                 }
 
                 // Build type/value pair
                 try {
                     when(_type) {
-                        "String" -> storedVars[_name] = Pair("String", currLine[3])
+                        "String" -> storedVars[_name] = Pair("String", currLine[3]
+                            .removePrefix("\"")
+                            .removeSuffix("\""))
                         "Boolean" -> storedVars[_name] = Pair("Boolean", currLine[3].toBoolean())
                         "Int" -> storedVars[_name] = Pair("Int", currLine[3].toInt())
                         "Short" -> storedVars[_name] = Pair("Short", currLine[3].toShort())
@@ -315,7 +227,7 @@ class TSFParser <T> (
                         "Char" -> storedVars[_name] = Pair("Char", currLine[3][0])
                     }
                 } catch (e: Exception) {
-                    throw InvalidTSFFile("Failed to cast variable '$_name' to type '$_type' on line $linePos [$configFile]")
+                    throw InvalidTSFFile("Failed to cast variable '$_name' to type '$_type' on line $linePos [$inFile]")
                 }
 
                 linePos++
@@ -330,22 +242,31 @@ class TSFParser <T> (
             try {
                 classMap.forEach { (key, value) ->
                     try {
-                        // Attempt to find and each variable
-                        val member = _class!!::class.java.getDeclaredField(key)
+                        // Attempt to find and each variable, accounting for delegates
+                        var _memberName = key
+                        if (isFieldDelegate(_class as Any, key)) {
+                            _memberName += "\$delegate"
+                        }
+
+                        val member = _class!!::class.java.getDeclaredField(_memberName)
                         val property = _class!!::class.members
-                            .filterIsInstance<KMutableProperty1<T, Any?>>()
+                            .filterIsInstance<KProperty1<T, Any?>>()
                             .find { it.name == key }
 
                         member.isAccessible = true
 
                         // [Collection type]
-                        if(keywordFlags[value]?.and(TSFKeywordFlag.COLLECTION.ordinal) != 0) {
+                        if(
+                            keywordFlags[value]?.and(Internal.TSFKeywordFlag.COLLECTION.ordinal) != 0
+                             && property is KMutableProperty1<T, Any?>
+                             && storedGroups[key] != null
+                          ) {
                             try {
                                 val parameter = storedGroups[key]
-                                member.set(_class,
+                                property.setter.call(_class,
                                     mapCast(
                                         parameter!!.second,
-                                        property?.returnType?.classifier as KClass<*>,
+                                        property.returnType.classifier as KClass<*>,
                                         parameter.first.first
                                     ),
                                 )
@@ -358,7 +279,19 @@ class TSFParser <T> (
                         }
 
                         // [Primitive type]
-                        member.set(_class, anyCast(storedVars[key]!!.second, property?.returnType?.classifier as KClass<*>))
+                        if (
+                            storedVars[key]?.second == null
+                             && property is KMutableProperty1<T, Any?>
+                             && property.returnType.isMarkedNullable
+                        ) {
+                            property.setter.call(_class, null)
+                        } else if (
+                            property is KMutableProperty1<T, Any?>
+                             && !property.returnType.isMarkedNullable
+                             && storedVars[key]?.second != null
+                        ) {
+                            property.setter.call(_class, anyCast(storedVars[key]!!.second, property.returnType.classifier as KClass<*>))
+                        }
                     } catch (e: Exception) {
                         errStr = key
                         e.printStackTrace()
@@ -368,25 +301,28 @@ class TSFParser <T> (
 
                 _break = true
             } catch (_: Exception) {
+                // Handles errors in parsing according to parse level, calls a callback set by user if defined
                 when (parseLevel) {
-                    // Handles errors in parsing according to parse level, calls a callback set by user if defined
                     TSFParseLevel.STRICT -> {
-                        parseCallbackFunctions[TSFParseLevel.STRICT.ordinal]()
+                        parseCallbackFunctions[TSFParseLevel.STRICT.ordinal](errStr)
                         throw InvalidTSFFile("Non-Matching Variable in TSF file! [$errStr]")
                     }
 
                     TSFParseLevel.WARNING -> {
-                        parseCallbackFunctions[TSFParseLevel.WARNING.ordinal]()
-                        throw DecoratedWarning("TSF", "Non-Matching Variable in TSF file! [$errStr]")
+                        parseCallbackFunctions[TSFParseLevel.WARNING.ordinal](errStr)
+                        return Result.failure(DecoratedWarning("TSF", "Non-Matching Variable in TSF file! [$errStr]"))
                     }
 
                     TSFParseLevel.LENIENT -> {
-                        parseCallbackFunctions[TSFParseLevel.LENIENT.ordinal]()
+                        parseCallbackFunctions[TSFParseLevel.LENIENT.ordinal](errStr)
+                        return _class!!::class.constructors.firstOrNull { it.parameters.isEmpty() }?.call()
+                            ?.let { Result.success(it) }
+                            ?: Result.failure(DecoratedWarning("TSF", "Non-Matching Variable in TSF file! [$errStr]"))
                     }
                 }
             }
         }
 
-        return _class
+        return Result.success(_class)
     }
 }
