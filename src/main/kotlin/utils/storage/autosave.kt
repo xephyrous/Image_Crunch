@@ -25,7 +25,7 @@ const val AUTO_SAVE_SLEEP_DURATION: Long = 15000
  * A fallback UI function for if an internal error occurs with the auto-saving.
  */
 val AUTO_SAVE_FAIL_UI_CALLBACK: (String, List<Int>) -> Unit = { name, codes ->
-    AlertBox.DisplayAlert("Auto-save failed for class object '$name', disabling auto-save for class instance. <Error Code ${codes.joinToString(".")}>")
+    AlertBox.displayAlert("Auto-save failed for class object '$name', disabling auto-save for class instance. <Error Code ${codes.joinToString(".")}>")
 }
 
 /**

@@ -11,9 +11,9 @@ import java.io.File
 import java.nio.file.InvalidPathException
 import java.nio.file.Paths
 
-val TSF_PARSER_ERROR_CALLBACK: (String) -> Unit = { errStr -> AlertBox.DisplayAlert("Non-Matching Variable in TSF file! [$errStr], aborting!") }
-val TSF_PARSER_WARNING_CALLBACK: (String) -> Unit = { errStr -> AlertBox.DisplayAlert("Non-Matching Variable in TSF file! [$errStr], the file will not be loaded!") }
-val TSF_PARSER_LENIENT_CALLBACK: (String) -> Unit = { errStr -> AlertBox.DisplayAlert("Non-Matching Variable in TSF file! [$errStr], the default class will be used!") }
+val TSF_PARSER_ERROR_CALLBACK: (String) -> Unit = { errStr -> AlertBox.displayAlert("Non-Matching Variable in TSF file! [$errStr], aborting!") }
+val TSF_PARSER_WARNING_CALLBACK: (String) -> Unit = { errStr -> AlertBox.displayAlert("Non-Matching Variable in TSF file! [$errStr], the file will not be loaded!") }
+val TSF_PARSER_LENIENT_CALLBACK: (String) -> Unit = { errStr -> AlertBox.displayAlert("Non-Matching Variable in TSF file! [$errStr], the default class will be used!") }
 
 
 /**
