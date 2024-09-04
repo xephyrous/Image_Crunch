@@ -8,6 +8,11 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import utils.storage.GeneratorType.*
 import java.awt.Dimension
+import java.security.MessageDigest
+import kotlin.IllegalArgumentException
+import kotlin.properties.ReadOnlyProperty
+import kotlin.properties.ReadWriteProperty
+import kotlin.reflect.KCallable
 import kotlin.reflect.KClass
 
 /**
@@ -118,7 +123,7 @@ class LockType<T>(lockVal: T) {
  *
  * @return The inputted value cast to the target type
  */
-fun anyCast(value: Any, targetType: KClass<*>): Any {
+fun anyCast(value: Any?, targetType: KClass<*>): Any {
     return when(targetType) {
         String::class -> value as String
         Boolean::class -> value as Boolean
@@ -281,3 +286,51 @@ open class DecoratedWarning(type: String, message: String) : Exception(message) 
  * TODO : Document InvalidTSFile()
  */
 class InvalidTSFFile(message: String) : DecoratedError("TSF", message)
+
+/**
+ * Generates a stable/static hash for a given object
+ * @param obj The object to be hashed
+ * @return The hash as a [String]
+ */
+fun getStableHash(obj: Any): String {
+    val messageDigest = MessageDigest.getInstance("SHA-1")
+    val bytes = obj.toString().toByteArray()
+    val hashBytes = messageDigest.digest(bytes)
+    return hashBytes.joinToString("") { String.format("%02x", it) }
+}
+
+/**
+ * TODO : Document
+ */
+fun extractClass(obj: KCallable<*>): KClass<*> {
+    return obj.returnType.classifier as KClass<*>
+}
+
+/**
+ * TODO : Document
+ */
+fun extractClassParam(obj: KCallable<*>, index: Int): KClass<*> {
+    if (index >= obj.returnType.arguments.size) {
+        throw IndexOutOfBoundsException("Invalid type parameter index of $index!")
+    }
+
+    return obj.returnType.arguments[index].type?.classifier as KClass<*>
+}
+
+/**
+ * TODO : Document
+ */
+fun isFieldDelegate(instance: Any, name: String): Boolean {
+    val _class = instance::class.java
+
+    return try {
+        val field = _class.getDeclaredField("$name\$delegate")
+        field.isAccessible = true
+
+        val fieldType = field.type
+        ReadWriteProperty::class.java.isAssignableFrom(fieldType) ||
+                ReadOnlyProperty::class.java.isAssignableFrom(fieldType)
+    } catch (e: NoSuchFieldException) {
+        false
+    }
+}
