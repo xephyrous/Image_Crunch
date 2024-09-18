@@ -26,6 +26,8 @@ import androidx.compose.ui.unit.*
 
 // Set of functions to make composable easier
 // Passes inputs in a more user-friendly way when designing app
+// Note: "User-Friendly" is subjective.
+// Default Element size is 300x50
 
 /**
  * Creates a row containing a button
@@ -97,6 +99,34 @@ fun textElement(
             textAlign = TextAlign.Center,
             fontWeight = font
         )
+    }
+}
+
+@Composable
+fun numberBarElement(
+    height: Dp = 50.dp,
+    width: Dp = 300.dp,
+    barHeight: Dp = 40.dp,
+    barWidth: Dp = 250.dp,
+) {
+    Box(
+        modifier = Modifier.size(height = height * ViewModel.yScale, width = width * ViewModel.xScale)
+    ) {
+        // Scrollable Bar
+    }
+}
+
+@Composable
+fun textFieldElement(
+    height: Dp = 50.dp,
+    width: Dp = 300.dp,
+    fieldHeight: Dp = 40.dp,
+    fieldWidth: Dp = 250.dp,
+) {
+    Box(
+        modifier = Modifier.size(height = height * ViewModel.yScale, width = width * ViewModel.xScale)
+    ) {
+        // Text Field
     }
 }
 

@@ -79,6 +79,8 @@ object BottomBar {
                                 onDragEnter = {}
                             ) {
                                 buttonElement(
+                                    width = 50.dp,
+                                    buttonWidth = 40.dp,
                                     buttonText = ViewModel.filters[item].name,
                                     buttonEvent = { selectedFilter = item }
                                 )

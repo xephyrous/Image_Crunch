@@ -100,34 +100,6 @@ fun app() {
                     }
                 }
             ),
-            MenuPage(
-                pageTitle = "test menu",
-                pageSize = 2,
-                menuPage = {
-                    Column {
-                        buttonElement(
-                            buttonEvent = {
-                                Desktop.getDesktop().open(
-                                    File(
-                                        Paths.get("").toAbsolutePath().toString() + "\\config\\themes\\"
-                                    )
-                                )
-                            },
-                            buttonText = "Open Themes Folder"
-                        )
-                        buttonElement(
-                            buttonEvent = {
-                                Desktop.getDesktop().open(
-                                    File(
-                                        Paths.get("").toAbsolutePath().toString() + "\\config\\themes\\"
-                                    )
-                                )
-                            },
-                            buttonText = "Open Themes Folder"
-                        )
-                    }
-                }
-            ),
             MenuButton(
                 pageTitle = "View Help Menu",
                 buttonEvent = {
