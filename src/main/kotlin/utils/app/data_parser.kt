@@ -3,17 +3,17 @@ package utils.app
 import ui.AlertBox
 import utils.storage.ConfigData
 import utils.storage.DecoratedError
-import utils.storage.InvalidTSFFile
+import utils.storage.InvalidXSFFile
 import utils.storage.ThemeData
-import utils.tsf.TSFParseLevel
-import utils.tsf.TSFParser
+import utils.xsf.XSFParseLevel
+import utils.xsf.XSFParser
 import java.io.File
 import java.nio.file.InvalidPathException
 import java.nio.file.Paths
 
-val TSF_PARSER_ERROR_CALLBACK: (String) -> Unit = { errStr -> AlertBox.displayAlert("Non-Matching Variable in TSF file! [$errStr], aborting!") }
-val TSF_PARSER_WARNING_CALLBACK: (String) -> Unit = { errStr -> AlertBox.displayAlert("Non-Matching Variable in TSF file! [$errStr], the file will not be loaded!") }
-val TSF_PARSER_LENIENT_CALLBACK: (String) -> Unit = { errStr -> AlertBox.displayAlert("Non-Matching Variable in TSF file! [$errStr], the default class will be used!") }
+val XSF_PARSER_ERROR_CALLBACK: (String) -> Unit = { errStr -> AlertBox.displayAlert("Non-Matching Variable in XSF file! [$errStr], aborting!") }
+val XSF_PARSER_WARNING_CALLBACK: (String) -> Unit = { errStr -> AlertBox.displayAlert("Non-Matching Variable in XSF file! [$errStr], the file will not be loaded!") }
+val XSF_PARSER_LENIENT_CALLBACK: (String) -> Unit = { errStr -> AlertBox.displayAlert("Non-Matching Variable in XSF file! [$errStr], the default class will be used!") }
 
 
 /**
@@ -31,16 +31,16 @@ fun getThemes(startPath: String = "\\config\\themes\\"): ArrayList<ThemeData> {
 
     files?.forEach {
         try {
-            val parser = TSFParser(ThemeData(""), it).apply {
-                setParseCallbackFun(TSF_PARSER_ERROR_CALLBACK, TSFParseLevel.STRICT)
-                setParseCallbackFun(TSF_PARSER_WARNING_CALLBACK, TSFParseLevel.WARNING)
-                setParseCallbackFun(TSF_PARSER_LENIENT_CALLBACK, TSFParseLevel.LENIENT)
+            val parser = XSFParser(ThemeData(""), it).apply {
+                setParseCallbackFun(XSF_PARSER_ERROR_CALLBACK, XSFParseLevel.STRICT)
+                setParseCallbackFun(XSF_PARSER_WARNING_CALLBACK, XSFParseLevel.WARNING)
+                setParseCallbackFun(XSF_PARSER_LENIENT_CALLBACK, XSFParseLevel.LENIENT)
             }
 
             parser.parse().onSuccess {  themeData ->
                 themes.add(themeData)
             }
-        } catch(e: InvalidTSFFile) {
+        } catch(e: InvalidXSFFile) {
             throw DecoratedError("Theme Loader", "Error loading theme file '${it.name}'")
         }
     }
@@ -67,16 +67,16 @@ fun getConfigData(startPath: String = "\\config\\"): ConfigData {
         if(it.extension != "tsf") { return@forEach }
 
         try {
-            val parser = TSFParser(ConfigData(), it).apply {
-                setParseCallbackFun(TSF_PARSER_ERROR_CALLBACK, TSFParseLevel.STRICT)
-                setParseCallbackFun(TSF_PARSER_WARNING_CALLBACK, TSFParseLevel.WARNING)
-                setParseCallbackFun(TSF_PARSER_LENIENT_CALLBACK, TSFParseLevel.LENIENT)
+            val parser = XSFParser(ConfigData(), it).apply {
+                setParseCallbackFun(XSF_PARSER_ERROR_CALLBACK, XSFParseLevel.STRICT)
+                setParseCallbackFun(XSF_PARSER_WARNING_CALLBACK, XSFParseLevel.WARNING)
+                setParseCallbackFun(XSF_PARSER_LENIENT_CALLBACK, XSFParseLevel.LENIENT)
             }
 
             parser.parse().onSuccess {  configData ->
                 config = configData
             }
-        } catch(e: InvalidTSFFile) {
+        } catch(e: InvalidXSFFile) {
             throw DecoratedError("Config Loader", "Error loading config file '${it.name}'")
         }
     }

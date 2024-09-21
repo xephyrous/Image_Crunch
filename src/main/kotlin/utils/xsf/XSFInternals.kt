@@ -1,6 +1,6 @@
-package utils.tsf
+package utils.xsf
 
-import kotlin.reflect.KCallable
+import utils.storage.DecoratedError
 import kotlin.reflect.KClass
 
 /**
@@ -10,22 +10,22 @@ import kotlin.reflect.KClass
  * @property WARNING Minor error, prints warning of error, callback function is called if set
  * @property LENIENT Insignificant error, callback function is called if set
  */
-enum class TSFParseLevel {
+enum class XSFParseLevel {
     STRICT,
     WARNING,
     LENIENT,
 }
 
 /**
- * Houses the internal variables for the TSF file format
- * @see TSFParser
- * @see TSFFile
+ * Houses the internal variables for the XSF file format
+ * @see XSFParser
+ * @see XSFFile
  */
 object Internal {
     /**
      * Flags for keyword functionality
      */
-    enum class TSFKeywordFlag(val value: Int) {
+    enum class XSFKeywordFlag(val value: Int) {
         NONE(0b00000000),
         SKIP(0b00000001),
         COLLECTION(0b00000010),
@@ -33,7 +33,7 @@ object Internal {
     }
 
     /**
-     * A map of kotlin types with differing tsf names
+     * A map of kotlin types with differing XSF names
      */
     val keywordConversions: Map<String, String> = mapOf(
         "Map" to "NamedMap",
@@ -41,7 +41,7 @@ object Internal {
     )
 
     /**
-     * A map of .tsf keywords and their kotlin class equivalents
+     * A map of .xsf keywords and their kotlin class equivalents
      */
     val keywords: Map<String, KClass<*>> = mapOf(
         "Object" to Object::class,
@@ -60,17 +60,17 @@ object Internal {
      *  List of flags for each keyword, used for parsing
      */
     val keywordFlags: Map<String, Int> = mapOf(
-        "Object" to (TSFKeywordFlag.SKIP.value),
-        "String" to (TSFKeywordFlag.NONE.value),
-        "Bool" to (TSFKeywordFlag.NONE.value),
-        "Int" to (TSFKeywordFlag.NONE.value),
-        "Short" to (TSFKeywordFlag.NONE.value),
-        "Long" to (TSFKeywordFlag.NONE.value),
-        "Double" to (TSFKeywordFlag.NONE.value),
-        "Char" to (TSFKeywordFlag.NONE.value),
-        "NamedMap" to (TSFKeywordFlag.COLLECTION.value or TSFKeywordFlag.TYPED.value),
-        "NamedHMap" to (TSFKeywordFlag.COLLECTION.value or TSFKeywordFlag.TYPED.value),
-        "Group" to (TSFKeywordFlag.COLLECTION.value or TSFKeywordFlag.TYPED.value)
+        "Object" to (XSFKeywordFlag.SKIP.value),
+        "String" to (XSFKeywordFlag.NONE.value),
+        "Bool" to (XSFKeywordFlag.NONE.value),
+        "Int" to (XSFKeywordFlag.NONE.value),
+        "Short" to (XSFKeywordFlag.NONE.value),
+        "Long" to (XSFKeywordFlag.NONE.value),
+        "Double" to (XSFKeywordFlag.NONE.value),
+        "Char" to (XSFKeywordFlag.NONE.value),
+        "NamedMap" to (XSFKeywordFlag.COLLECTION.value or XSFKeywordFlag.TYPED.value),
+        "NamedHMap" to (XSFKeywordFlag.COLLECTION.value or XSFKeywordFlag.TYPED.value),
+        "Group" to (XSFKeywordFlag.COLLECTION.value or XSFKeywordFlag.TYPED.value)
     )
 
     /**

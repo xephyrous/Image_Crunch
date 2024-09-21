@@ -1,8 +1,8 @@
-package utils.tsf
+package utils.xsf
 
 import utils.storage.*
-import utils.tsf.Internal.keywordFlags
-import utils.tsf.Internal.keywords
+import utils.xsf.Internal.keywordFlags
+import utils.xsf.Internal.keywords
 import java.io.BufferedReader
 import java.io.File
 import java.io.FileReader
@@ -14,18 +14,18 @@ import kotlin.reflect.KProperty1
 import kotlin.reflect.full.memberProperties
 
 /**
- * A .tsf (Tirana Storage Format) file parser object
+ * A .xsf (Xephyr Storage Format) file parser object
  *
  * @param _class The class to parse into
  * @param inFile The file to parse from
  * @param parseLevel The level of error strictness for parsing
  */
-class TSFParser <T> (
+class XSFParser <T> (
     private val _class: T,
     private var inFile: File,
-    private var parseLevel: TSFParseLevel = TSFParseLevel.STRICT
+    private var parseLevel: XSFParseLevel = XSFParseLevel.STRICT
 ) {
-    private val parseCallbackFunctions: ArrayList<(String) -> Unit> = ArrayList(TSFParseLevel.entries.count())
+    private val parseCallbackFunctions: ArrayList<(String) -> Unit> = ArrayList(XSFParseLevel.entries.count())
     private val classMap: HashMap<String, String> = hashMapOf()
 
     /**
@@ -33,7 +33,7 @@ class TSFParser <T> (
      *
      * @param func The function to be set as the callback
      */
-    fun setParseCallbackFun(func: (String) -> Unit, parseLevel: TSFParseLevel) {
+    fun setParseCallbackFun(func: (String) -> Unit, parseLevel: XSFParseLevel) {
         parseCallbackFunctions[parseLevel.ordinal] = func
     }
 
@@ -43,11 +43,11 @@ class TSFParser <T> (
     init {
         // Check file validity
         if(!inFile.exists() || !inFile.canRead()) {
-            throw InvalidTSFFile("File $inFile does not exist or is unreadable!")
+            throw InvalidXSFFile("File $inFile does not exist or is unreadable!")
         }
 
-        if(inFile.extension != "tsf") {
-            throw InvalidTSFFile("Invalid file extension!\nExpected: .tsf | Received: .${inFile.extension}")
+        if(inFile.extension != "xsf") {
+            throw InvalidXSFFile("Invalid file extension!\nExpected: .xsf | Received: .${inFile.extension}")
         }
 
         // Add class member names to classMap
@@ -62,14 +62,14 @@ class TSFParser <T> (
             ).first().value
         }
 
-        TSFParseLevel.entries.forEach {
+        XSFParseLevel.entries.forEach {
             parseCallbackFunctions.add(it.ordinal) {}
         }
     }
 
     private fun reservedKeywordCheck(token: String, line: Int) {
         if(keywords.contains(token)) {
-            throw InvalidTSFFile("Reserved keyword '${token}' used on line $line [$inFile]")
+            throw InvalidXSFFile("Reserved keyword '${token}' used on line $line [$inFile]")
         }
     }
 
@@ -137,7 +137,7 @@ class TSFParser <T> (
             // Check for valid type
             if (keywords.keys.contains(currLine[0]) || inGroup) {
                 // [Collection type]
-                if (keywordFlags[currLine[0]]?.and(Internal.TSFKeywordFlag.COLLECTION.value) != 0 || inGroup) {
+                if (keywordFlags[currLine[0]]?.and(Internal.XSFKeywordFlag.COLLECTION.value) != 0 || inGroup) {
                     // Collection declaration checks
                     if(!inGroup) {
                         _type = currLine[0]
@@ -146,16 +146,16 @@ class TSFParser <T> (
                         _name = currLine[1]
 
                         if (currLine[2] != ":") {
-                            throw InvalidTSFFile("Illegal character '${currLine[2]}' on line $linePos [$inFile]")
+                            throw InvalidXSFFile("Illegal character '${currLine[2]}' on line $linePos [$inFile]")
                         }
 
                         if(!keywords.contains(currLine[3])) {
-                            throw InvalidTSFFile("Invalid type in collection '$_name' on line $linePos [$inFile]")
+                            throw InvalidXSFFile("Invalid type in collection '$_name' on line $linePos [$inFile]")
                         }
                         _mType = currLine[3]
 
                         if(currLine[4] != "{") {
-                            throw InvalidTSFFile("Missing collection definition on line $linePos [$inFile]")
+                            throw InvalidXSFFile("Missing collection definition on line $linePos [$inFile]")
                         }
 
                         inGroup = true
@@ -182,7 +182,7 @@ class TSFParser <T> (
                     reservedKeywordCheck(currLine[0], linePos)
 
                     if (currLine[1] != ":") {
-                        throw InvalidTSFFile("Illegal character '${currLine[2]}' in collection '$_name' on line $linePos [$inFile]")
+                        throw InvalidXSFFile("Illegal character '${currLine[2]}' in collection '$_name' on line $linePos [$inFile]")
                     }
 
                     // Store value
@@ -197,7 +197,7 @@ class TSFParser <T> (
                             "Char" -> groupData.add(Pair(currLine[0], currLine[2][0]))
                         }
                     } catch (e: Exception) {
-                        throw InvalidTSFFile("Failed to cast variable '$_name' to type '$_type' on line $linePos [$inFile]")
+                        throw InvalidXSFFile("Failed to cast variable '$_name' to type '$_type' on line $linePos [$inFile]")
                     }
 
                     return@forEach
@@ -210,7 +210,7 @@ class TSFParser <T> (
                 _name = currLine[1]
 
                 if (currLine[2] != ":") {
-                    throw InvalidTSFFile("Illegal character '${currLine[2]}' on line $linePos [$inFile]")
+                    throw InvalidXSFFile("Illegal character '${currLine[2]}' on line $linePos [$inFile]")
                 }
 
                 // Build type/value pair
@@ -227,7 +227,7 @@ class TSFParser <T> (
                         "Char" -> storedVars[_name] = Pair("Char", currLine[3][0])
                     }
                 } catch (e: Exception) {
-                    throw InvalidTSFFile("Failed to cast variable '$_name' to type '$_type' on line $linePos [$inFile]")
+                    throw InvalidXSFFile("Failed to cast variable '$_name' to type '$_type' on line $linePos [$inFile]")
                 }
 
                 linePos++
@@ -257,7 +257,7 @@ class TSFParser <T> (
 
                         // [Collection type]
                         if(
-                            keywordFlags[value]?.and(Internal.TSFKeywordFlag.COLLECTION.ordinal) != 0
+                            keywordFlags[value]?.and(Internal.XSFKeywordFlag.COLLECTION.ordinal) != 0
                              && property is KMutableProperty1<T, Any?>
                              && storedGroups[key] != null
                           ) {
@@ -272,7 +272,7 @@ class TSFParser <T> (
                                 )
                             } catch(e: Exception) {
                                 e.printStackTrace()
-                                throw InvalidTSFFile("Group name mismatch in parsing! [$key]")
+                                throw InvalidXSFFile("Group name mismatch in parsing! [$key]")
                             }
 
                             return@forEach
@@ -303,21 +303,21 @@ class TSFParser <T> (
             } catch (_: Exception) {
                 // Handles errors in parsing according to parse level, calls a callback set by user if defined
                 when (parseLevel) {
-                    TSFParseLevel.STRICT -> {
-                        parseCallbackFunctions[TSFParseLevel.STRICT.ordinal](errStr)
-                        throw InvalidTSFFile("Non-Matching Variable in TSF file! [$errStr]")
+                    XSFParseLevel.STRICT -> {
+                        parseCallbackFunctions[XSFParseLevel.STRICT.ordinal](errStr)
+                        throw InvalidXSFFile("Non-Matching Variable in XSF file! [$errStr]")
                     }
 
-                    TSFParseLevel.WARNING -> {
-                        parseCallbackFunctions[TSFParseLevel.WARNING.ordinal](errStr)
-                        return Result.failure(DecoratedWarning("TSF", "Non-Matching Variable in TSF file! [$errStr]"))
+                    XSFParseLevel.WARNING -> {
+                        parseCallbackFunctions[XSFParseLevel.WARNING.ordinal](errStr)
+                        return Result.failure(DecoratedWarning("XSF", "Non-Matching Variable in XSF file! [$errStr]"))
                     }
 
-                    TSFParseLevel.LENIENT -> {
-                        parseCallbackFunctions[TSFParseLevel.LENIENT.ordinal](errStr)
+                    XSFParseLevel.LENIENT -> {
+                        parseCallbackFunctions[XSFParseLevel.LENIENT.ordinal](errStr)
                         return _class!!::class.constructors.firstOrNull { it.parameters.isEmpty() }?.call()
                             ?.let { Result.success(it) }
-                            ?: Result.failure(DecoratedWarning("TSF", "Non-Matching Variable in TSF file! [$errStr]"))
+                            ?: Result.failure(DecoratedWarning("XSF", "Non-Matching Variable in XSF file! [$errStr]"))
                     }
                 }
             }

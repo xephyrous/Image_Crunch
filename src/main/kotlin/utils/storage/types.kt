@@ -283,9 +283,10 @@ open class DecoratedWarning(type: String, message: String) : Exception(message) 
 }
 
 /**
- * TODO : Document InvalidTSFile()
+ * Custom error class for XSF files
+ * @param message The error message to display
  */
-class InvalidTSFFile(message: String) : DecoratedError("TSF", message)
+class InvalidXSFFile(message: String) : DecoratedError("XSF", message)
 
 /**
  * Generates a stable/static hash for a given object

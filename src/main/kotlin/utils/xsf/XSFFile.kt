@@ -1,4 +1,4 @@
-package utils.tsf
+package utils.xsf
 
 import utils.storage.extractClass
 import utils.storage.extractClassParam
@@ -7,7 +7,6 @@ import java.io.FileWriter
 import java.io.IOException
 import java.nio.file.Path
 import java.nio.file.Paths
-import kotlin.io.path.exists
 import kotlin.io.path.isDirectory
 import kotlin.io.path.isWritable
 import kotlin.reflect.*
@@ -16,11 +15,11 @@ import kotlin.reflect.*
  * TODO : Document & Finish
  *  + Add support for more than String keys in maps
  */
-class TSFFile(
+class XSFFile(
     var name: String = getStableHash(java.time.Instant.now()),
 ) {
     /**
-     * All allowed variable types in a TSF file
+     * All allowed variable types in a XSF file
      */
     private val _allowedClasses: ArrayList<KClass<*>> = arrayListOf(
         String::class,
@@ -112,11 +111,11 @@ class TSFFile(
      */
     fun save() {
         try {
-            val file = FileWriter("$_path\\$name.tsf", false)
+            val file = FileWriter("$_path\\$name.xsf", false)
             file.write(_contents)
             file.close()
         } catch (err: IOException) {
-            throw IOException("Error in creating and writing to  file [$_path\\$name.tsf]!")
+            throw IOException("Error in creating and writing to  file [$_path\\$name.xsf]!")
         }
     }
 }
