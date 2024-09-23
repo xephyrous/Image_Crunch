@@ -6,7 +6,7 @@ plugins {
     id("org.jetbrains.dokka") version "1.9.10"
 }
 
-group = "com.tirana"
+group = "com.xephyrous"
 version = "1.0-SNAPSHOT"
 
 repositories {

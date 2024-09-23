@@ -9,7 +9,8 @@ import androidx.compose.ui.unit.dp
 import utils.storage.GeneratorType.*
 import java.awt.Dimension
 import java.security.MessageDigest
-import kotlin.IllegalArgumentException
+import kotlin.math.max
+import kotlin.math.min
 import kotlin.properties.ReadOnlyProperty
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KCallable
@@ -41,21 +42,22 @@ enum class GeneratorType {
  * @property bits The array of bits in the mask
  * @property position The position of the top-left corner of the mask
  */
-class Mask(val size: Dimension) {
-    var bits: ImageMask = Array(size.height) {
-        Array(size.width) { 0 }
-    }
-    var position: PositionNode = PositionNode(-1, -1)
+class Mask(
+    val size: Dimension,
+    var position: PositionNode = PositionNode(0, 0)
+) {
+    // All bits initialized to 1 (unmasked) by default
+    var bits: ImageMask = Array(size.height) { Array(size.width) { 1 } }
 
     /**
-     * Used for debugging, prints the mask array showing only 1s
+     * Sets all bits to a value (1 or 0)
+     * @param value The value to set the bits to
      */
-    fun print() {
-        for(y in bits) {
-            for(x in y) {
-                print(1)
+    fun setAll(value: Boolean) {
+        for (y in 0..size.height) {
+            for (x in 0..size.width) {
+                bits[y][x] = value.toInt().toByte()
             }
-            println()
         }
     }
 }
@@ -283,9 +285,10 @@ open class DecoratedWarning(type: String, message: String) : Exception(message) 
 }
 
 /**
- * TODO : Document InvalidTSFile()
+ * Custom error class for XSF files
+ * @param message The error message to display
  */
-class InvalidTSFFile(message: String) : DecoratedError("TSF", message)
+class InvalidXSFFile(message: String) : DecoratedError("XSF", message)
 
 /**
  * Generates a stable/static hash for a given object
@@ -334,3 +337,5 @@ fun isFieldDelegate(instance: Any, name: String): Boolean {
         false
     }
 }
+
+fun Boolean.toInt() = if (this) 1 else 0

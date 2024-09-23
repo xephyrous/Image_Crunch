@@ -62,14 +62,12 @@ fun bufferedImageToOutputStream(input: BufferedImage): ByteArrayInputStream {
  * @param name Output file name.
  */
 fun maskToImage(input: BufferedImage, mask: Mask, name: String) {
-    // Create Output
-    val size = Dimension(mask.bits[1].size, mask.bits.size)
-    val img = BufferedImage(size.width, size.height, BufferedImage.TYPE_INT_ARGB)
+    val img = BufferedImage(mask.size.width, mask.size.height, BufferedImage.TYPE_INT_RGB)
 
-    for (x in 0 until size.width) {
-        for (y in 0 until size.height) {
+    for (y in 0 until mask.size.height) {
+        for (x in 0 until mask.size.width) {
             if (mask.bits[y][x] == 1.toByte()) {
-                img.setRGB(x, y, input.getRGB(x+mask.position.first, y+mask.position.second))
+                img.setRGB(x, y, input.getRGB(x + mask.position.first, y + mask.position.second))
             }
         }
     }

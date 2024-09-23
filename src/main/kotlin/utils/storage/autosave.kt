@@ -4,8 +4,8 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.selects.onTimeout
 import kotlinx.coroutines.selects.select
 import ui.AlertBox
-import utils.tsf.TSFFile
-import utils.tsf.TSFParser
+import utils.xsf.XSFFile
+import utils.xsf.XSFParser
 import java.io.File
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -178,17 +178,17 @@ open class AutoSaveManager {
                     }
                 }.onFailure { internalError(AutoSaveError.INVALID_FILE.ordinal) }
 
-                TSFFile(_saveName).apply {
+                XSFFile(_saveName).apply {
                     loadClass(classInstance)
                     save()
                 }
             } else { // Load in saved class information if the file exists
-                TSFParser(classInstance, filePath).parse().onFailure {
+                XSFParser(classInstance, filePath).parse().onFailure {
                     internalError(AutoSaveError.CLASS_ERROR.ordinal)
                 }
             }
 
-            val parser = TSFParser(
+            val parser = XSFParser(
                 classInstance,
                 filePath
             )
@@ -230,7 +230,7 @@ open class AutoSaveManager {
                     }
                 }
 
-                TSFFile(_saveName).apply {
+                XSFFile(_saveName).apply {
                     setPath(Paths.get("").toAbsolutePath().normalize().toString() + "\\$_path")
                     loadClass(parseResult)
                     save()
