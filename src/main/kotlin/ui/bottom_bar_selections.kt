@@ -15,30 +15,12 @@ import androidx.compose.material.icons.sharp.PlayArrow
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.painter.BitmapPainter
-import androidx.compose.ui.res.loadImageBitmap
 import androidx.compose.ui.unit.dp
 import com.mohamedrejeb.compose.dnd.reorder.ReorderContainer
 import com.mohamedrejeb.compose.dnd.reorder.ReorderableItem
 import com.mohamedrejeb.compose.dnd.reorder.rememberReorderState
-import utils.images.*
-import utils.storage.GeneratorType
 import utils.storage.Global
-
-/**
- * Updates the node mask for the displayed image
- *
- * @param type The type of generator used to generate the mask nodes
- */
-fun updateMask(type: GeneratorType) {
-    ViewModel.nodeDisplay = false
-    ViewModel.displayedNodes = createNodeMask(
-        generateNodes(type)
-    )
-    ViewModel.nodeInputStream = loadImageBitmap(inputStream = bufferedImageToOutputStream(ViewModel.displayedNodes!!))
-    ViewModel.nodeBitmapPainter = BitmapPainter(ViewModel.nodeInputStream!!)
-    ViewModel.nodeDisplay = true
-}
+import utils.storage.GridCutter
 
 object BottomBar {
     var selectedFilter by mutableStateOf(0)
@@ -106,26 +88,19 @@ object BottomBar {
                             Global.loadedImageSize.lock()
                             Global.squareRows.lock()
                             Global.squareColumns.lock()
-                            Global.generatorType.lock()
-                            Global.nodes.lock()
-                            Global.mask.lock()
 
-                            Global.slices.value = runImagePipeline(Global.generatorType.value)
-
-                            Global.slices.lock()
-
-                            for (i in Global.slices.value!!.indices) {
-                                maskToImage(Global.loadedImage.value!!, Global.slices.value!![i], "Output-${i}")
-                            }
+                            // For dataset creation only!
+                            // TODO : Fully implement this!
+                            Global.pipeline.loadImage(Global.loadedImage.value)
+                            Global.pipeline.chain(
+                                GridCutter(Global.squareColumns.value, Global.squareRows.value)
+                            )
+                            Global.pipeline.run()
 
                             Global.loadedImage.unlock()
                             Global.loadedImageSize.unlock()
                             Global.squareRows.unlock()
                             Global.squareColumns.unlock()
-                            Global.generatorType.unlock()
-                            Global.nodes.unlock()
-                            Global.mask.unlock()
-                            Global.slices.unlock()
                         }
                     }, modifier = Modifier.align(Alignment.Center)
                 ) {

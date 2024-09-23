@@ -144,12 +144,6 @@ fun app() {
                     Column {
                         buttonElement(
                             buttonEvent = {
-                                Global.generatorType.value = GeneratorType.SQUARE
-                            },
-                            buttonText = "Square Generator"
-                        )
-                        buttonElement(
-                            buttonEvent = {
 
                             },
                             buttonText = "Does Not Exist"
@@ -232,17 +226,11 @@ fun app() {
                                 Global.loadedImageSize.value = getDim(vm.displayedImage!!)
                             }
                             if (vm.displayedImage != null) {
-                                vm.displayedNodes = createNodeMask(
-                                    generateNodes(GeneratorType.SQUARE)
-                                )
 
                                 vm.imageInputStream =
                                     loadImageBitmap(inputStream = bufferedImageToOutputStream(vm.displayedImage!!))
-                                vm.nodeInputStream =
-                                    loadImageBitmap(inputStream = bufferedImageToOutputStream(vm.displayedNodes!!))
 
                                 vm.imageBitmapPainter = BitmapPainter(vm.imageInputStream!!)
-                                vm.nodeBitmapPainter = BitmapPainter(vm.nodeInputStream!!)
 
                                 vm.imageDisplay = true
 
@@ -342,14 +330,6 @@ fun app() {
                             modifier = vm.imageModifier,
                             contentScale = ContentScale.Fit
                         )
-                        if (vm.nodeDisplay) {
-                            Image(
-                                painter = vm.nodeBitmapPainter!!,
-                                contentDescription = "picture",
-                                modifier = vm.imageModifier,
-                                contentScale = ContentScale.Fit
-                            )
-                        }
                     }
                 }
 

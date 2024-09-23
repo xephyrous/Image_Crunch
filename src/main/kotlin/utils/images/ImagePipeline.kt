@@ -113,9 +113,9 @@ class ImagePipeline {
      * Applies all effectors in the [_effectorChain] to the image loaded in the pipeline
      */
     fun run() {
-            var data: Any = _image.value!!
+        var data: Any = _image.value!!
 
-        _effectorChain.forEach { effector ->
+        _effectorChain.forEachIndexed { index, effector ->
             when (effector.type) {
                 ImageEffectorType.PROVIDER -> {
                     data = (effector as ImageProvider).apply(data as BufferedImage)
@@ -137,6 +137,12 @@ class ImagePipeline {
                     data = (effector as ImageManipulation).apply(data as ImageData)
                 }
             }
+        }
+
+        // Purely for dataset creation
+        // TODO : Finish implementing this!
+        (data as ArrayList<Mask>).forEachIndexed { index, mask ->
+            maskToImage(_image.value!!, mask, "imageMask$index")
         }
     }
 }

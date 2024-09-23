@@ -46,19 +46,18 @@ class Mask(
     val size: Dimension,
     var position: PositionNode = PositionNode(0, 0)
 ) {
-    var bits: ImageMask = Array(size.height) {
-        Array(size.width) { 0 }
-    }
+    // All bits initialized to 1 (unmasked) by default
+    var bits: ImageMask = Array(size.height) { Array(size.width) { 1 } }
 
     /**
-     * Used for debugging, prints the mask array showing only 1s
+     * Sets all bits to a value (1 or 0)
+     * @param value The value to set the bits to
      */
-    fun print() {
-        for(y in bits) {
-            for(x in y) {
-                print(1)
+    fun setAll(value: Boolean) {
+        for (y in 0..size.height) {
+            for (x in 0..size.width) {
+                bits[y][x] = value.toInt().toByte()
             }
-            println()
         }
     }
 }
@@ -338,3 +337,5 @@ fun isFieldDelegate(instance: Any, name: String): Boolean {
         false
     }
 }
+
+fun Boolean.toInt() = if (this) 1 else 0

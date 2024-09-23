@@ -515,7 +515,7 @@ class GridCutter(private val gridX: Int, private val gridY: Int) : ImageCutter()
             for (x: Int in 0..data.height - spacingY step spacingY) {
                 masks.add(
                     Mask(
-                        Dimension(min(x + spacingX, data.width), min(y + spacingY, data.height)),
+                        Dimension(min(spacingX, data.width - x), min(spacingY, data.height - y)),
                         PositionNode(x, y)
                     )
                 )

@@ -10,14 +10,10 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.unit.dp
 import ui.ViewModel.displayedImage
-import ui.ViewModel.displayedNodes
 import ui.ViewModel.imageBitmapPainter
 import ui.ViewModel.imageDisplay
 import ui.ViewModel.imageInputStream
 import ui.ViewModel.imageModifier
-import ui.ViewModel.nodeBitmapPainter
-import ui.ViewModel.nodeDisplay
-import ui.ViewModel.nodeInputStream
 import ui.ViewModel.screenHeight
 import ui.ViewModel.screenWidth
 import ui.ViewModel.themeColor
@@ -62,13 +58,8 @@ object ViewModel {
 
     // Image Displays
     var displayedImage by mutableStateOf<BufferedImage?>(null)
-    var displayedNodes by mutableStateOf<BufferedImage?>(null)
-
     var imageInputStream by mutableStateOf<ImageBitmap?>(null)
-    var nodeInputStream by mutableStateOf<ImageBitmap?>(null)
-
     var imageBitmapPainter by mutableStateOf<Painter?>(null)
-    var nodeBitmapPainter by mutableStateOf<Painter?>(null)
 
     // Internal variables
     var screenWidth by mutableStateOf(1200.dp)
@@ -83,5 +74,4 @@ object ViewModel {
 
     // Display Settings
     var imageDisplay by mutableStateOf(false)
-    var nodeDisplay by mutableStateOf(true)
 }
