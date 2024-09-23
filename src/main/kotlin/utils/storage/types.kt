@@ -9,7 +9,8 @@ import androidx.compose.ui.unit.dp
 import utils.storage.GeneratorType.*
 import java.awt.Dimension
 import java.security.MessageDigest
-import kotlin.IllegalArgumentException
+import kotlin.math.max
+import kotlin.math.min
 import kotlin.properties.ReadOnlyProperty
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KCallable
@@ -41,11 +42,13 @@ enum class GeneratorType {
  * @property bits The array of bits in the mask
  * @property position The position of the top-left corner of the mask
  */
-class Mask(val size: Dimension) {
+class Mask(
+    val size: Dimension,
+    var position: PositionNode = PositionNode(0, 0)
+) {
     var bits: ImageMask = Array(size.height) {
         Array(size.width) { 0 }
     }
-    var position: PositionNode = PositionNode(-1, -1)
 
     /**
      * Used for debugging, prints the mask array showing only 1s

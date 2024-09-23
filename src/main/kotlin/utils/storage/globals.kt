@@ -1,5 +1,6 @@
 package utils.storage
 
+import utils.images.ImagePipeline
 import java.awt.Dimension
 import java.awt.image.BufferedImage
 
@@ -24,4 +25,6 @@ object Global {
 
     // Cut Noise
     var cutNoise: LockType<Float> = LockType(0.0F)
+
+    val pipeline: ImagePipeline = ImagePipeline()
 }
