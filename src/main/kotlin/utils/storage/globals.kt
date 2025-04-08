@@ -6,7 +6,9 @@ import java.awt.image.BufferedImage
 
 /**
  * All global variables are stored as LockType<T> to prevent possible race conditions
- * with a user changing settings during generation
+ * with a user changing settings during generation.
+ *
+ * TODO(Refactor to use all LockTypes)
  */
 object Global {
     var loadedImageSize: LockType<Dimension?> = LockType(null)

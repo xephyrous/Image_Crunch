@@ -47,6 +47,7 @@ object HelpMenu {
 
     /**
      * Creates the HelpMenu GUI object
+     *
      * @param screenWidth The screen width in dot points (Dp)
      * @param screenHeight The screen height in dot points (Dp)
      * @param borderWidth The width of the card border

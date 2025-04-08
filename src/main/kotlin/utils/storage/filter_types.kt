@@ -3,23 +3,28 @@ package utils.storage
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 
-/*
-* Good Morning Dev Guys
-*
-* To make a new filter object, just tell me what kind of variables are required for it to run
-* e.g. number of rows + columns
-*
-* You can then input this into the extended class and I will make a corresponding ui element for it.
-* Everything else in terms of filters displays should be handled elsewhere.
-*
-* You wanted custom filters so you have to deal with my terms now
-*/
+/**
+ * Good Morning Dev Guys
+ *
+ * To make a new filter object, just tell me what kind of variables are required for it to run
+ * e.g. number of rows + columns
+ *
+  * You can then input this into the extended class and I will make a corresponding ui element for it.
+ * Everything else in terms of filters displays should be handled elsewhere.
+ *
+ * You wanted custom filters so you have to deal with my terms now
+ */
 
+/**
+ * TODO(Document This!)
+ */
 abstract class Filter(var name: String) {
     @Composable abstract fun display()
 }
 
-// Example of a slice filter and how it would be setup or smth idk
+/**
+ * Example of a slice filter and how it would be setup or smth idk
+ */
 class Slice(
     name: String,
     var rows: Int,

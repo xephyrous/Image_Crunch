@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ImageBitmap
@@ -72,6 +73,15 @@ object ViewModel {
         Modifier.size(width = (screenWidth / 2) - 10.dp, height = screenHeight - 230.dp).offset(5.dp, 5.dp)
     )
 
+    // Load project list
+    var projectList = mutableListOf(
+        Pair("Project A", "path/to/project_a"),
+        Pair("Project B", "path/to/project_b"),
+        Pair("Project C", "path/to/project_c")
+    )
+    var currentProject = mutableStateOf(projectList.first())
+
     // Display Settings
     var imageDisplay by mutableStateOf(false)
+    var sideNavExpanded by mutableStateOf(false)
 }

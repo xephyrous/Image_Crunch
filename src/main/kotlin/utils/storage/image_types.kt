@@ -19,41 +19,31 @@ enum class PipelineErrorType {
 
 /**
  * An image byte mask.
+ *
  * ***Only for use in the Mask class!***
  */
 typealias ImageMask = Array<Array<Byte>>
 
-/**
- * Represents the types of image effectors
- */
+/** Represents the types of image effectors */
 enum class ImageEffectorType {
-    /**
-     * Provides an ImageData object, always the first effector in the chain
-     */
+    /** Provides an ImageData object, always the first effector in the chain */
     PROVIDER,
-    /**
-     * Applies a filter to the image, only changes individual pixel values
-     */
+    /** Applies a filter to the image, only changes individual pixel values */
     FILTER,
 
-    /**
-     * Applies an effect to the image, modifies any pixel's value
-     */
+    /** Applies an effect to the image, modifies any pixel's value */
     EFFECT,
 
-    /**
-     * Performs a manipulation of the image's pixels
-     */
+    /** Performs a manipulation of the image's pixels */
     MANIPULATION,
 
-    /**
-     * Adds a cut to the image
-     */
+    /** Adds a cut to the image */
     CUTTER
 }
 
 /**
  * Custom image holder for improved pixel data access and processing
+ *
  * @param image The base image to convert to data
  */
 class ImageData(private val image: BufferedImage) {
@@ -74,6 +64,7 @@ class ImageData(private val image: BufferedImage) {
 
     /**
      * Converts coordinates on the stored image to the corresponding position in the [ByteArray]
+     *
      * @param x The x-coordinate of the pixel in the image.
      * @param y The y-coordinate of the pixel in the image,
      * @return The index of the pixel at the coordinates ([x], [y])
@@ -88,6 +79,7 @@ class ImageData(private val image: BufferedImage) {
 
     /**
      * A helper function for [indexOf] to accept a Pair<Int, Int>
+     *
      * @param pos A position on the parent image to convert to an index
      * @return The index of the pixel at the coordinate [pos]
      */
@@ -97,7 +89,9 @@ class ImageData(private val image: BufferedImage) {
 
     /**
      * Returns the color at a specified index in [_data]
+     *
      * Automatically determines if the image has an alpha channel
+     *
      * @param index The index of the pixel to get the color of
      * @return The color of the pixel
      */
@@ -118,6 +112,7 @@ class ImageData(private val image: BufferedImage) {
 
     /**
      * Returns the color of a given pixel in RGB.
+     *
      * @param index The index of the pixel in the image data ([_data])
      * @return The color (in RGB) of the pixel at the given index
      */
@@ -131,6 +126,7 @@ class ImageData(private val image: BufferedImage) {
 
     /**
      * Returns the color of a given pixel in RGBA.
+     *
      * @param index The index of the pixel in the image data ([_data])
      * @return The color (in RGBA) of the pixel at the given index
      */
@@ -145,6 +141,7 @@ class ImageData(private val image: BufferedImage) {
 
     /**
      * Returns the image data ([_data])
+     *
      * @return The image data ([_data]) as a [BufferedImage]
      */
     fun getImage(): Result<BufferedImage> {
@@ -157,6 +154,7 @@ class ImageData(private val image: BufferedImage) {
 
     /**
      * Returns the image data ([_data])
+     *
      * @return The image data ([_data]) as a [ByteArray]
      */
     fun data(): ByteArray {
@@ -166,31 +164,25 @@ class ImageData(private val image: BufferedImage) {
 
 /**
  * Represents an exposed view of an image
+ *
  * @param image A reference to the parent class's stored image
  */
 abstract class ImageDataView(image: ImageData) {
-    /**
-     * Holds a reference to the parent image
-     */
+    /** Holds a reference to the parent image */
     val _image: ImageData = image
 
-    /**
-     * @return The value at a given coordinate
-     */
+    /** @return The value at a given coordinate */
     abstract operator fun get(pos: Pair<Int, Int>): Color?
 
-    /**
-     * Sets the value at a given coordinate
-     */
+    /** Sets the value at a given coordinate */
     abstract operator fun set(pos: Pair<Int, Int>, value: Color)
 
-    /**
-     * Steps the view to its next position/orientation on the image
-     */
+    /** Steps the view to its next position/orientation on the image */
     abstract fun next(): Result<Unit>
 
     /**
      * Sets the values of a range of coordinates
+     *
      * @param startIndex The starting position of the range
      * @param endIndex The ending position of the range
      * @param value The color to set the pixels to
@@ -205,6 +197,7 @@ abstract class ImageDataView(image: ImageData) {
 
     /**
      * Sets the color of any given coordinates
+     *
      * @param indexes The indexes to set the color at
      * @param value The color to set the pixels to
      */
@@ -215,6 +208,7 @@ abstract class ImageDataView(image: ImageData) {
 
 /**
  * A rect of [_size] dimensions that moves over the image
+ *
  * @param image A reference to the parent image
  * @param snap Whether the rect should move by one pixel each step (`false`), or snap to the edge of the last rect (`true`).
  * (Defaults to `false`)
@@ -223,18 +217,15 @@ class RectView(
     private val image: ImageData,
     size: Int, private val snap: Boolean = false
 ) : ImageDataView(image) {
-    /**
-     * The size of the rect (width, height)
-     */
+    /** The size of the rect (width, height) */
     private val _size: Pair<Int, Int> = Pair(3, 3)
 
-    /**
-     * The top-left corner of the current rect (x, y)
-     */
+    /** The top-left corner of the current rect (x, y) */
     private val _pos: Pair<Int, Int> = Pair(0, 0)
 
     /**
      * Checks if a given position is within the current rect, and does not extend past the image's bounds
+     *
      * @param pos The coordinates to check
      * @return Whether the given position is withing the current rect & image bounds
      */
@@ -243,9 +234,7 @@ class RectView(
                 && pos.second in _pos.second..(_pos.second + _size.second).coerceIn(0.._image.height)
     }
 
-    /**
-     * Override of [ImageDataView.get]
-     */
+    /** Override of [ImageDataView.get] */
     override fun get(pos: Pair<Int, Int>): Color? {
         if (!boundsCheck(pos)) {
             return null
@@ -254,9 +243,7 @@ class RectView(
         return _image.colorAt(_image.indexOf(pos))
     }
 
-    /**
-     * Override of [ImageDataView.set]
-     */
+    /** Override of [ImageDataView.set] */
     override fun set(pos: Pair<Int, Int>, value: Color) {
         if (!boundsCheck(pos)) {
             throw IndexOutOfBoundsException("Invalid position in image!")
@@ -265,9 +252,7 @@ class RectView(
         // image.data()[image.indexOf()]
     }
 
-    /**
-     * Override of [ImageDataView.next]
-     */
+    /** Override of [ImageDataView.next] */
     override fun next(): Result<Unit> {
         TODO("Not yet implemented")
     }
@@ -277,23 +262,17 @@ class RectView(
  * TODO : Document & Finish RowView
  */
 class RowView(image: ImageData) : ImageDataView(image) {
-    /**
-     * Override of [ImageDataView.get]
-     */
+    /** Override of [ImageDataView.get] */
     override fun get(pos: Pair<Int, Int>): Color? {
         TODO("Not yet implemented")
     }
 
-    /**
-     * Override of [ImageDataView.set]
-     */
+    /** Override of [ImageDataView.set] */
     override fun set(pos: Pair<Int, Int>, value: Color) {
         TODO("Not yet implemented")
     }
 
-    /**
-     * Override of [ImageDataView.next]
-     */
+    /** Override of [ImageDataView.next] */
     override fun next(): Result<Unit> {
         TODO("Not yet implemented")
     }
@@ -303,23 +282,17 @@ class RowView(image: ImageData) : ImageDataView(image) {
  * TODO : Document & Finish ColumnView
  */
 class ColumnView(image: ImageData) : ImageDataView(image) {
-    /**
-     * Override of [ImageDataView.get]
-     */
+    /** Override of [ImageDataView.get] */
     override fun get(pos: Pair<Int, Int>): Color? {
         TODO("Not yet implemented")
     }
 
-    /**
-     * Override of [ImageDataView.set]
-     */
+    /** Override of [ImageDataView.set] */
     override fun set(pos: Pair<Int, Int>, value: Color) {
         TODO("Not yet implemented")
     }
 
-    /**
-     * Override of [ImageDataView.next]
-     */
+    /** Override of [ImageDataView.next] */
     override fun next(): Result<Unit> {
         TODO("Not yet implemented")
     }
@@ -329,23 +302,17 @@ class ColumnView(image: ImageData) : ImageDataView(image) {
  * TODO : Document & Finish CardinalView
  */
 class CardinalView(image: ImageData) : ImageDataView(image) {
-    /**
-     * Override of [ImageDataView.get]
-     */
+    /** Override of [ImageDataView.get] */
     override fun get(pos: Pair<Int, Int>): Color? {
         TODO("Not yet implemented")
     }
 
-    /**
-     * Override of [ImageDataView.set]
-     */
+    /** Override of [ImageDataView.set] */
     override fun set(pos: Pair<Int, Int>, value: Color) {
         TODO("Not yet implemented")
     }
 
-    /**
-     * Override of [ImageDataView.next]
-     */
+    /** Override of [ImageDataView.next] */
     override fun next(): Result<Unit> {
         TODO("Not yet implemented")
     }
@@ -355,23 +322,17 @@ class CardinalView(image: ImageData) : ImageDataView(image) {
  * TODO : Document & Finish DiagonalView
  */
 class DiagonalView(image: ImageData) : ImageDataView(image) {
-    /**
-     * Override of [ImageDataView.get]
-     */
+    /** Override of [ImageDataView.get] */
     override fun get(pos: Pair<Int, Int>): Color? {
         TODO("Not yet implemented")
     }
 
-    /**
-     * Override of [ImageDataView.set]
-     */
+    /** Override of [ImageDataView.set] */
     override fun set(pos: Pair<Int, Int>, value: Color) {
         TODO("Not yet implemented")
     }
 
-    /**
-     * Override of [ImageDataView.next]
-     */
+    /** Override of [ImageDataView.next] */
     override fun next(): Result<Unit> {
         TODO("Not yet implemented")
     }
@@ -381,23 +342,17 @@ class DiagonalView(image: ImageData) : ImageDataView(image) {
  * TODO : Document & Finish PolarView
  */
 class PolarView(image: ImageData) : ImageDataView(image) {
-    /**
-     * Override of [ImageDataView.get]
-     */
+    /** Override of [ImageDataView.get] */
     override fun get(pos: Pair<Int, Int>): Color? {
         TODO("Not yet implemented")
     }
 
-    /**
-     * Override of [ImageDataView.set]
-     */
+    /** Override of [ImageDataView.set] */
     override fun set(pos: Pair<Int, Int>, value: Color) {
         TODO("Not yet implemented")
     }
 
-    /**
-     * Override of [ImageDataView.next]
-     */
+    /** Override of [ImageDataView.next] */
     override fun next(): Result<Unit> {
         TODO("Not yet implemented")
     }
@@ -441,6 +396,9 @@ abstract class ImageFilter : ImageEffector<ImageData, Unit>() {
 
     /**
      * Changes a pixel color by a given function
+     *
+     * @param pixelValue The color of the current pixel
+     * @return The new color of the current pixel
      */
     abstract fun pixelMod(pixelValue: Color): Color
 
@@ -496,12 +454,29 @@ abstract class ImageCutter : ImageEffector<ImageData, ArrayList<Mask>>() {
 
 /**
  * Cuts an image into a grid of [gridX] x [gridY] tiles
+ *
  * @param gridX The number of columns to cut
  * @param gridY The number of rows to cut
  */
-class GridCutter(private val gridX: Int, private val gridY: Int) : ImageCutter() {
+class GridCutter(private var gridX: Int, private var gridY: Int) : ImageCutter() {
+
+    /**
+     *
+     */
+    fun setGridX(xVal: Int) {
+
+    }
+
+    /**
+     *
+     */
+    fun setGridY(yVal: Int) {
+
+    }
+
     /**
      * Cuts the loaded image into a grid of [gridX] x [gridY] tiles
+     *
      * @param data The image to cut
      * @return The cut pieces of the image as an [ArrayList] of [Mask]s
      */
@@ -527,4 +502,7 @@ class GridCutter(private val gridX: Int, private val gridY: Int) : ImageCutter()
 
 }
 
+/**
+ * TODO : Document ImagePipelineError
+ */
 class ImagePipelineError(message: String, code: PipelineErrorType) : DecoratedError("PIPELINE", message, code.ordinal)

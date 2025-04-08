@@ -16,27 +16,30 @@ import kotlin.reflect.KMutableProperty1
 import kotlin.reflect.KProperty
 import kotlin.reflect.full.hasAnnotation
 
-/**
- * The time delay in between thread checks (polling rate)
- */
+/** The time delay in between thread checks (polling rate) */
 const val AUTO_SAVE_SLEEP_DURATION: Long = 15000
 
-/**
- * A fallback UI function for if an internal error occurs with the auto-saving.
- */
+/** A fallback UI function for if an internal error occurs with the auto-saving. */
 val AUTO_SAVE_FAIL_UI_CALLBACK: (String, List<Int>) -> Unit = { name, codes ->
     AlertBox.displayAlert("Auto-save failed for class object '$name', disabling auto-save for class instance. <Error Code ${codes.joinToString(".")}>")
 }
 
 /**
  * Annotation for auto-saving classes to denote save path
+ *
+ * @param path The path to the auto-save directory
+ * @param name The name of the tsf file to save or create
+ * @param useHash Whether to prepend
  */
 annotation class AutoSaveProperties(val path: String, val name: String, val useHash: Boolean = false)
 
 /**
  * Custom observable property for auto-saving properties
  */
-class AutoSave<T>(private var value: T, manager: AutoSaveManager) : ReadWriteProperty<AutoSaveManager, T>, AccessStatTracker() {
+class AutoSave<T>(
+    private var value: T,
+    manager: AutoSaveManager
+) : ReadWriteProperty<AutoSaveManager, T>, AccessStatTracker() {
     /**
      * Whether the reads and writes to the variable should be tracked
      */
@@ -84,37 +87,26 @@ open class AccessStatTracker() {
 
 /**
  * A manager for auto-saving classes
- * **`super.init(this::class)` must be called _FIRST_ in a derived class's init block!**
+ *
+ * **Note: `super.init(this::class)` must be called _FIRST_ in a derived class's init block!**
  */
 open class AutoSaveManager {
-    /**
-     * If the auto-saving global thread is running
-     */
+    /** If the auto-saving global thread is running */
     private var _globalThread: Job = Job()
 
-    /**
-     * Alerts when [_globalThread] is safe to stop
-     */
+    /** Alerts when [_globalThread] is safe to stop */
     private var _threadLock: CountDownLatch = CountDownLatch(1)
 
-    /**
-     * Used by [forceSave] to skip thread waits and save immediately
-     */
+    /** Used by [forceSave] to skip thread waits and save immediately */
     private var _skipSignal: CompletableDeferred<Unit> = CompletableDeferred()
 
-    /**
-     * The path to the auto-save directory
-     */
+    /** The path to the auto-save directory */
     private lateinit var _path: Path
 
-    /**
-     * The name of the tsf file to save to or create
-     */
+    /** The name of the tsf file to save to or create */
     private lateinit var _saveName: String
 
-    /**
-     * Stores any changes in class data until they are saved
-     */
+    /** Stores any changes in class data until they are saved */
     private val _dataMap = ConcurrentHashMap<String, Any?>()
 
     /**
@@ -301,23 +293,15 @@ open class AutoSaveManager {
  * Errors used in [AUTO_SAVE_FAIL_UI_CALLBACK] as error codes
  */
 enum class AutoSaveError {
-    /**
-     * A class extending [AutoSaveManager] did not have an [AutoSaveProperties] annotation
-     */
+    /** A class extending [AutoSaveManager] did not have an [AutoSaveProperties] annotation */
     MISSING_ANNOTATION,
 
-    /**
-     * There was an error accessing/loading the .tsf file
-     */
+    /** There was an error accessing/loading the .tsf file */
     INVALID_FILE,
 
-    /**
-     * There was an error loading the class object, or saving the class memebers
-     */
+    /** There was an error loading the class object, or saving the class members */
     CLASS_ERROR,
 
-    /**
-     * There was an error in thread handling
-     */
+    /** There was an error in thread handling */
     THREAD_ERROR
 }

@@ -1,0 +1,12 @@
+package ui.components
+
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.vector.ImageVector
+
+class ComponentItem(
+    val name: String = "",
+    val description: String,
+    val items: List<ComponentItem>? = null,
+    val icon: ImageVector? = null,
+    val content: (@Composable ComponentItem.(navigator: ComponentNavigator) -> Unit)?
+)

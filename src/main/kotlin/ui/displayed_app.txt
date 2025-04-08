@@ -10,6 +10,8 @@ import androidx.compose.material.icons.sharp.Add
 import androidx.compose.material.icons.sharp.Build
 import androidx.compose.material.icons.sharp.List
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.BlurredEdgeTreatment
 import androidx.compose.ui.draw.blur
@@ -25,7 +27,10 @@ import androidx.compose.ui.res.loadImageBitmap
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.konyaco.fluent.component.SideNav
+import com.konyaco.fluent.component.SideNavItem
 import ui.ViewModel
+import ui.components.ComponentItem
 import utils.app.getThemes
 import utils.app.imageFileSelection
 import utils.app.selectOutputPath
@@ -173,13 +178,28 @@ fun app() {
         "Gen. Settings"
     )
 
+    val sideNavOpts: Array<ComponentItem> = arrayOf(
+        ComponentItem(
+            "App Settings",
+            "app-settings",
+            "",
+            icon =
+        ) {},
+        ComponentItem(
+            "Gen. Settings",
+            "gen-settings",
+            "",
+        ) {}
+    )
+
+    // Main application
     AppTheme {
         Scaffold(
             topBar = {
                 TopAppBar(
                     title = {
                         Text(
-                            "Image Chomp",
+                            "Image Crunch",
                             color = vm.themeColor.textColors["text1"] ?: Color(0),
                             fontSize = 30.sp,
                             fontWeight = FontWeight.ExtraBold
@@ -306,13 +326,29 @@ fun app() {
                 }
 
                 // Bottom Bar Settings - From bottom_bar_selection.kt
-                BottomBar.createBottomBar()
+                // BottomBar.createBottomBar()
 
                 // Main Menu
-                appMenu.createMenu()
+                // appMenu.createMenu()
+
+                val selectedItem = remember {
+                    mutableStateOf(sideNavOpts.first())
+                }
+
+                SideNav(
+                    modifier = Modifier.fillMaxHeight(),
+                    expanded = vm.sideNavExpanded,
+                    onExpandStateChange = { vm.sideNavExpanded = it },
+                    title = { Text("Controls") },
+                    footer = { Text("Footer") }
+                ) {
+                    sideNavOpts.forEach {
+                        // Create navigation item
+                    }
+                }
 
                 // Settings Menu
-                genMenu.createMenu()
+                // genMenu.createMenu()
             }
             AlertBox.createAlert(
                 screenWidth = vm.screenWidth,

@@ -21,7 +21,7 @@ class ImagePipeline {
     private var _pieces: LockType<Array<Mask>?> = LockType(null)
 
     /**
-     * A list of linkable image effectors to be enacted on the image
+     * A list of linkable image effector to be enacted on the image
      */
     private var _effectorChain: ArrayList<ImageEffector<*, *>> = arrayListOf()
 
@@ -60,17 +60,13 @@ class ImagePipeline {
 
     /**
      * Adds any number of ImageEffectors to the pipeline
-     * @param effectors Any number of [ImageEffector]s to add to the end of the pipeline chain
+     * @param effector Any number of [ImageEffector]s to add to the end of the pipeline chain
      * @return A result object that contains the success state of the function
      * along with a message, used for UI integration/callbacks.
      */
-    fun chain(vararg effectors: ImageEffector<*, *>): Result<Unit> {
-        if (effectors.isEmpty()) { // No effectors? (https://i.imgflip.com/65939r.jpg?a478752)
-            return Result.success(Unit)
-        }
-
+    fun chain(effector: ImageEffector<*, *>): Result<Unit> {
         if (_effectorChain.size == 0) { // Chain does not start with Unit inputType
-            if (effectors[0].type != ImageEffectorType.PROVIDER) {
+            if (effector.type != ImageEffectorType.PROVIDER) {
                 errorPos = 0
                 return Result.failure(
                     ImagePipelineError(
@@ -80,7 +76,8 @@ class ImagePipeline {
                 )
             }
 
-            if (_effectorChain[0].outputType != effectors[0]) { // Current chain cannot connect with added effectors
+            // Current chain cannot connect with added effector
+            if (_effectorChain[0].outputType != effector) {
                 errorPos = _effectorChain.size
                 return Result.failure(
                     ImagePipelineError(
@@ -91,31 +88,33 @@ class ImagePipeline {
             }
         }
 
-        // Validate added effectors
-        for (i in 0..effectors.size) {
-            try {
-                if (effectors[i - 1].outputType != effectors[i].inputType) {
-                    return Result.failure(
-                        ImagePipelineError(
-                            "Non-Connecting Effector!",
-                            PipelineErrorType.CHAIN_ERROR
-                        )
+        // Validate added effector
+        try {
+            if (effector.outputType != effector.inputType) {
+                return Result.failure(
+                    ImagePipelineError(
+                        "Non-Connecting Effector!",
+                        PipelineErrorType.CHAIN_ERROR
                     )
-                }
-            } catch (_: Exception) { /* (ㆆ_ㆆ) */ }
-        }
+                )
+            }
+        } catch (_: Exception) { /* (ㆆ_ㆆ) */ }
 
-        _effectorChain.addAll(effectors)
+        _effectorChain.add(effector)
         return Result.success(Unit)
     }
 
+    fun rechain(sourcePos: Int, destPos: Int) {
+        
+    }
+
     /**
-     * Applies all effectors in the [_effectorChain] to the image loaded in the pipeline
+     * Applies all effector in the [_effectorChain] to the image loaded in the pipeline
      */
     fun run() {
         var data: Any = _image.value!!
 
-        _effectorChain.forEachIndexed { index, effector ->
+        _effectorChain.forEach { effector ->
             when (effector.type) {
                 ImageEffectorType.PROVIDER -> {
                     data = (effector as ImageProvider).apply(data as BufferedImage)

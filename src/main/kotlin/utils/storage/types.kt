@@ -16,9 +16,7 @@ import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KCallable
 import kotlin.reflect.KClass
 
-/**
- * A single position on an image
- */
+/** A single position on an image */
 typealias PositionNode = Pair<Int, Int>
 
 /**
@@ -38,19 +36,22 @@ enum class GeneratorType {
  * A masked region of an image with its top-left coordinate
  *
  * @param size The size of the mask
- *
- * @property bits The array of bits in the mask
- * @property position The position of the top-left corner of the mask
+ * @param position The position of the top-left corner of the mask
  */
 class Mask(
     val size: Dimension,
     var position: PositionNode = PositionNode(0, 0)
 ) {
-    // All bits initialized to 1 (unmasked) by default
+    /**
+     * The array of bits in the mask
+     *
+     * All bits are initialized to 1 (unmasked) by default
+     */
     var bits: ImageMask = Array(size.height) { Array(size.width) { 1 } }
 
     /**
      * Sets all bits to a value (1 or 0)
+     *
      * @param value The value to set the bits to
      */
     fun setAll(value: Boolean) {
@@ -68,12 +69,9 @@ class Mask(
  *
  * @param T The type of the data being stored
  * @param lockVal The data to be stored, of type [T]
- *
- * @property value The current value of the variable
- * @property locked If the variable is locked
- * @property holdVal Any queued value
  */
 class LockType<T>(lockVal: T) {
+    /** The current value of the variable */
     var value: T = lockVal
         get() {
             if(holdVal != null && !locked) {
@@ -92,26 +90,23 @@ class LockType<T>(lockVal: T) {
             field = newVal
         }
 
+    /** If the variable is locked */
     private var locked: Boolean = false
+
+    /** Any queued value */
     private var holdVal: T? = null
 
-    /**
-     * Returns if the value is locked
-     */
+    /** Returns if the value is locked */
     fun locked(): Boolean {
         return locked
     }
 
-    /**
-     * Locks the value, it cannot be modified
-     */
+    /** Locks the value, it cannot be modified */
     fun lock() {
         locked = true
     }
 
-    /**
-     * Unlocks the property, it can be modified
-     */
+    /** Unlocks the property, it can be modified */
     fun unlock() {
         locked = false
     }
@@ -138,9 +133,7 @@ fun anyCast(value: Any?, targetType: KClass<*>): Any {
     }
 }
 
-/**
- * Casts an ArrayList of name / value pairs to a designated map collection type
- */
+/** Casts an ArrayList of name / value pairs to a designated map collection type */
 fun mapCast(list: ArrayList<Pair<String, Any>>, mapType: KClass<*>, targetType: KClass<*>): Any {
     return when (mapType) {
         Map::class -> {
@@ -162,29 +155,40 @@ fun mapCast(list: ArrayList<Pair<String, Any>>, mapType: KClass<*>, targetType: 
 /**
  * Empty class for theme data to be parsed into
  *
- * @property name The name of the theme
- * @property icon The icon color
- * @property header The header color
- * @property button The button color
- * @property fab The Floating Action Button Color (Currently Unused)
- * @property card Map of colors for Card Gradient
- * @property textColors Map of colors for all text variations
- * @property backgroundColors Map of colors for Background Gradient
- * @property textFields Map of colors for all textField segments
+ * @param name The name of the theme
  */
 class ThemeData(var name: String) {
+    /** The icon color */
     var icon: Long = 0
+
+    /** The header color */
     var header: Long = 0
+
+    /** The button color */
     var button: Long = 0
+
+    /** The border color */
     var border: Long = 0
+
+    /** The floating action button (FAB) color (Currently unused) */
     var fab: Long = 0
+
+    /** [Map] of colors for card gradients */
     var card: Map<String, Long> = mapOf()
+
+    /** [Map] of colors for all text variations */
     var textColors: Map<String, Long> = mapOf()
+
+    /** [Map] of colors for all background gradients */
     var backgroundColors: Map<String, Long> = mapOf()
+
+    /** [Map] of colors for all `textField` segments */
     var textFields: Map<String, Long> = mapOf()
 }
 
 /**
+ * TODO : Remove this! This completely circumvents autosaving and the mutability of ThemeData members!
+ *
  * Mutable class for theme data to be read from and inputted into display | Copies Theme Data into a mutable Color rather than a number
  *
  * @param tD Initial Theme Data to copy
@@ -228,23 +232,32 @@ class ThemeStorage(tD: ThemeData) {
  */
 
 /**
+ * TODO : Is this necessary? Can we kill this?
+ *
  * Theme Switching Button Data Holder - Converted to a Composable during runtime
  *
  * @param tD The passed theme Data
- *
- * @property name The name of the theme - Doubles as button text
- * @property themeData The button's stored theme
- * @property height Controller for buttons height
  */
 class ThemeButton(tD: ThemeData) {
+    /** The name of the theme - Doubles as button text */
     var name = tD.name
+
+    /** The button's stored theme */
     var themeData = tD
+
+    /** Controller for buttons height */
     var height by mutableStateOf(50.dp)
 
+    /**
+     * TODO : Remove this?
+     */
     fun setButtonHeight(height: Dp) {
         this.height = height
     }
 
+    /**
+     * TODO : Remove this?
+     */
     fun exportData(): ThemeStorage {
         return ThemeStorage(themeData)
     }
